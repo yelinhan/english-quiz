@@ -1,0 +1,1002 @@
+[
+ {
+  "id": "chunk-c8280731",
+  "type": "chunk",
+  "ko": "솔직히 말하면",
+  "en": "To be honest, / Honestly,",
+  "example": "To be honest, I'm not a big fan of meetings.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "대화"
+ },
+ {
+  "id": "chunk-6ef59798",
+  "type": "chunk",
+  "ko": "지금까지 얘기한 것 중에",
+  "en": "Out of everything we've talked about,",
+  "example": "Out of everything we've talked about, this part matters most.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "대화"
+ },
+ {
+  "id": "chunk-c2e2a671",
+  "type": "chunk",
+  "ko": "예전에는 ~했는데 (지금은 아님)",
+  "en": "I used to ~",
+  "example": "I used to work late every day, but not anymore.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "대화"
+ },
+ {
+  "id": "chunk-1921f1b3",
+  "type": "chunk",
+  "ko": "관련 없는 질문이긴 한데",
+  "en": "Random question, but / This might be off-topic, but",
+  "example": "Random question, but have you been to Japan?",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "대화"
+ },
+ {
+  "id": "chunk-78b71e0e",
+  "type": "chunk",
+  "ko": "그러고 보니 / 말 나온 김에",
+  "en": "Now that you mention it, / Speaking of which,",
+  "example": "Speaking of which, how did your interview go?",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-9c29cbb2",
+  "type": "chunk",
+  "ko": "뭐랄까 / 어떻게 말해야 하지",
+  "en": "How should I put it... / What's the word...",
+  "example": "It was... how should I put it... kind of awkward.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-d1f2af20",
+  "type": "chunk",
+  "ko": "요점은 / 결론적으로",
+  "en": "Long story short, / Bottom line is,",
+  "example": "Long story short, we missed the deadline.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-5f54f7c5",
+  "type": "chunk",
+  "ko": "내 말은 그게 아니라",
+  "en": "That's not what I meant. / What I meant was...",
+  "example": "What I meant was, we should wait a bit.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-b4a0b3ee",
+  "type": "chunk",
+  "ko": "굳이 따지자면",
+  "en": "If I had to choose, / If anything,",
+  "example": "If I had to choose, I'd say the first option.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-c70ff04c",
+  "type": "chunk",
+  "ko": "확실하진 않은데",
+  "en": "I'm not sure, but / I could be wrong, but",
+  "example": "I could be wrong, but I think it starts at 3.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-00ae0125",
+  "type": "chunk",
+  "ko": "생각해보니",
+  "en": "Come to think of it,",
+  "example": "Come to think of it, I never replied to her.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-dd4de8a4",
+  "type": "chunk",
+  "ko": "어차피 / 어쨌든",
+  "en": "Either way, / Anyway,",
+  "example": "Either way, we have to finish it today.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-4408d218",
+  "type": "chunk",
+  "ko": "~하는 편이다",
+  "en": "I tend to ~",
+  "example": "I tend to overthink things.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-ebc574de",
+  "type": "chunk",
+  "ko": "좀 고민 중이야 (결정 못 함)",
+  "en": "I'm on the fence about ~",
+  "example": "I'm on the fence about taking the offer.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-f2937e04",
+  "type": "chunk",
+  "ko": "그럴 만하다 / 이해가 된다",
+  "en": "That makes sense. / Fair enough.",
+  "example": "Fair enough, that's a good point.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-afecea62",
+  "type": "chunk",
+  "ko": "하마터면 ~할 뻔했다",
+  "en": "I almost ~ / I nearly ~",
+  "example": "I almost missed my stop.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-7d95b369",
+  "type": "chunk",
+  "ko": "별거 아니야 / 큰일 아니야",
+  "en": "It's not a big deal. / No biggie.",
+  "example": "Don't worry, it's not a big deal.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-445298c0",
+  "type": "chunk",
+  "ko": "시간 가는 줄 몰랐어",
+  "en": "I lost track of time.",
+  "example": "We were chatting and I totally lost track of time.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-a951e4c6",
+  "type": "chunk",
+  "ko": "아직 적응 중이야",
+  "en": "I'm still getting used to it.",
+  "example": "New job's good — I'm still getting used to it though.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-73739f11",
+  "type": "chunk",
+  "ko": "막판에 / 임박해서",
+  "en": "at the last minute",
+  "example": "He canceled at the last minute.",
+  "category": "대화 연결",
+  "added": "2026-08-03",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-2b02e1bd",
+  "type": "chunk",
+  "ko": "그럴 수도 있겠네",
+  "en": "Could be. / I guess that's possible.",
+  "example": "Could be. I hadn't thought of that.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-8c36e59d",
+  "type": "chunk",
+  "ko": "나라면 안 그럴 것 같아",
+  "en": "I don't think I would, personally.",
+  "example": "I don't think I would, honestly.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-0f4e3089",
+  "type": "chunk",
+  "ko": "완전 공감해",
+  "en": "I totally get that. / Same here.",
+  "example": "I totally get that — Mondays are rough.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-119fcd57",
+  "type": "chunk",
+  "ko": "그건 좀 아닌 것 같아",
+  "en": "I'm not so sure about that.",
+  "example": "I'm not so sure about that, to be honest.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-32b95704",
+  "type": "chunk",
+  "ko": "어쩐지!",
+  "en": "No wonder!",
+  "example": "No wonder you were tired!",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-7a74d76c",
+  "type": "chunk",
+  "ko": "그럴 줄 알았어",
+  "en": "I knew it. / Figured.",
+  "example": "I knew it. He always does that.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-1933f79b",
+  "type": "chunk",
+  "ko": "별로였어",
+  "en": "It wasn't great. / I'm not a big fan.",
+  "example": "The movie? It wasn't great.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-190a40ee",
+  "type": "chunk",
+  "ko": "진짜 좋았어",
+  "en": "I really liked it. / It was awesome.",
+  "example": "I really liked the ending.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-54763378",
+  "type": "chunk",
+  "ko": "좀 과한 것 같아",
+  "en": "That's a bit much.",
+  "example": "Three meetings a day? That's a bit much.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-dff77384",
+  "type": "chunk",
+  "ko": "아무거나 좋아 / 상관없어",
+  "en": "Either works. / I'm good with whatever.",
+  "example": "Coffee or tea? Either works.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-a59ff5dd",
+  "type": "chunk",
+  "ko": "기대돼",
+  "en": "I'm looking forward to it. / Can't wait.",
+  "example": "Can't wait for the trip!",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-bdca52ce",
+  "type": "chunk",
+  "ko": "안 내키네",
+  "en": "I'm not really feeling it.",
+  "example": "Honestly, I'm not really feeling it today.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-8eaf7ded",
+  "type": "chunk",
+  "ko": "그 정도면 괜찮네",
+  "en": "Not bad at all.",
+  "example": "Not bad at all for a first try.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-407a03af",
+  "type": "chunk",
+  "ko": "솔직히 잘 모르겠어",
+  "en": "Honestly, I'm not sure.",
+  "example": "Honestly, I'm not sure it'll work.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-8e3bcf09",
+  "type": "chunk",
+  "ko": "내 말이!",
+  "en": "Exactly! / Right?",
+  "example": "Right? That's what I said!",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-a2303ece",
+  "type": "chunk",
+  "ko": "듣고 보니 그러네",
+  "en": "Now that you say it, yeah.",
+  "example": "Now that you say it, yeah, it does look off.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-0a45e5ba",
+  "type": "chunk",
+  "ko": "오히려 잘됐네",
+  "en": "That actually works out.",
+  "example": "The flight's delayed? That actually works out for us.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-3e7b6e71",
+  "type": "chunk",
+  "ko": "아쉽다",
+  "en": "That's a bummer. / Too bad.",
+  "example": "Too bad you can't come.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-231d3383",
+  "type": "chunk",
+  "ko": "다행이다",
+  "en": "That's a relief. / Glad to hear it.",
+  "example": "Glad to hear it worked out.",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-b3f0a7e2",
+  "type": "chunk",
+  "ko": "진심이야?",
+  "en": "Are you serious? / For real?",
+  "example": "For real? That's huge!",
+  "category": "의견·반응",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-a60bffdd",
+  "type": "chunk",
+  "ko": "오랜만이야",
+  "en": "It's been a while. / Long time no see.",
+  "example": "Hey! It's been a while.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-23992759",
+  "type": "chunk",
+  "ko": "요즘 정신없어",
+  "en": "It's been crazy lately. / Things have been hectic.",
+  "example": "Work's been crazy lately.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-4ee0e206",
+  "type": "chunk",
+  "ko": "별일 없지?",
+  "en": "How's it going? / Anything new?",
+  "example": "Anything new with you?",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-3cb2aee9",
+  "type": "chunk",
+  "ko": "그냥 그래 / 똑같지 뭐",
+  "en": "Same old, same old.",
+  "example": "How's work? Same old, same old.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-30e83d0a",
+  "type": "chunk",
+  "ko": "밥 한번 먹자",
+  "en": "Let's grab a bite sometime.",
+  "example": "We should grab a bite sometime.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-9b9b609f",
+  "type": "chunk",
+  "ko": "먼저 갈게",
+  "en": "I'm gonna head out.",
+  "example": "It's late — I'm gonna head out.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-5a519b23",
+  "type": "chunk",
+  "ko": "가는 중이야",
+  "en": "I'm on my way.",
+  "example": "Sorry, running late — I'm on my way.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-074c254a",
+  "type": "chunk",
+  "ko": "깜빡했어",
+  "en": "It slipped my mind. / I totally forgot.",
+  "example": "Sorry, it totally slipped my mind.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-20049a4f",
+  "type": "chunk",
+  "ko": "피곤해 죽겠어",
+  "en": "I'm exhausted. / I'm beat.",
+  "example": "Long day — I'm beat.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-bb2a0b1c",
+  "type": "chunk",
+  "ko": "몸이 좀 안 좋아",
+  "en": "I'm a bit under the weather.",
+  "example": "I'm a bit under the weather today.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-01598038",
+  "type": "chunk",
+  "ko": "생각 좀 해볼게",
+  "en": "Let me think about it. / I'll sleep on it.",
+  "example": "Sounds good, but let me sleep on it.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-44e8a1b9",
+  "type": "chunk",
+  "ko": "부럽다",
+  "en": "I'm so jealous. / Lucky you.",
+  "example": "A week in Jeju? Lucky you.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-ceaac62e",
+  "type": "chunk",
+  "ko": "수고했어",
+  "en": "Nice work today. / Good job.",
+  "example": "Nice work today, everyone.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-90ea0bc8",
+  "type": "chunk",
+  "ko": "아까워",
+  "en": "What a waste. / Such a shame.",
+  "example": "We threw all that away? What a waste.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-a9366d38",
+  "type": "chunk",
+  "ko": "잠깐 시간 돼?",
+  "en": "Got a sec? / Do you have a minute?",
+  "example": "Hey, got a sec?",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-442db834",
+  "type": "chunk",
+  "ko": "농담이야",
+  "en": "Just kidding.",
+  "example": "Relax, just kidding.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-474ee89c",
+  "type": "chunk",
+  "ko": "그럴 기분 아니야",
+  "en": "I'm not in the mood.",
+  "example": "I'm not in the mood for a party tonight.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-26212669",
+  "type": "chunk",
+  "ko": "한번 해보자",
+  "en": "Let's give it a shot.",
+  "example": "Never tried it, but let's give it a shot.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-4c7d7888",
+  "type": "chunk",
+  "ko": "(전화) 잘 안 들려",
+  "en": "You're breaking up.",
+  "example": "Sorry, you're breaking up a little.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-8ba2b974",
+  "type": "chunk",
+  "ko": "거의 다 왔어",
+  "en": "I'm almost there.",
+  "example": "Two minutes — I'm almost there.",
+  "category": "일상 회화",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-3c129e63",
+  "type": "chunk",
+  "ko": "확인하고 알려드릴게요",
+  "en": "Let me check and get back to you.",
+  "example": "Let me check and get back to you by end of day.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-c5e465f6",
+  "type": "chunk",
+  "ko": "일정 한번 맞춰보자",
+  "en": "Let's sync up. / Let's figure out a time.",
+  "example": "Let's sync up sometime this week.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-062a720f",
+  "type": "chunk",
+  "ko": "회의 미뤄도 될까요?",
+  "en": "Can we push the meeting?",
+  "example": "Can we push the meeting to 3?",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-064e1f7c",
+  "type": "chunk",
+  "ko": "마감이 언제죠?",
+  "en": "When is this due?",
+  "example": "When's this due, roughly?",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-f9e385b0",
+  "type": "chunk",
+  "ko": "거의 다 됐어요",
+  "en": "I'm wrapping it up. / It's almost done.",
+  "example": "I'm wrapping it up now.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-8df1a29e",
+  "type": "chunk",
+  "ko": "간단히 상황 공유드려요",
+  "en": "Just a quick update —",
+  "example": "Quick update — we're on track.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-117f23ea",
+  "type": "chunk",
+  "ko": "문제가 생겼어요",
+  "en": "We've run into an issue.",
+  "example": "We've run into an issue with the vendor.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-7408e347",
+  "type": "chunk",
+  "ko": "제가 처리할게요",
+  "en": "I'll take care of it. / I'm on it.",
+  "example": "Don't worry, I'm on it.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-d1f4fc42",
+  "type": "chunk",
+  "ko": "이거 담당자가 누구죠?",
+  "en": "Who owns this? / Who's in charge of this?",
+  "example": "Who owns this project?",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-37dfadf8",
+  "type": "chunk",
+  "ko": "우선순위부터 정하죠",
+  "en": "Let's prioritize.",
+  "example": "We can't do it all — let's prioritize.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-8092a3f5",
+  "type": "chunk",
+  "ko": "일단 보류하죠",
+  "en": "Let's put it on hold. / Let's table this.",
+  "example": "Let's table this until next week.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-dd8f6ddf",
+  "type": "chunk",
+  "ko": "다시 한번 설명해 주실래요?",
+  "en": "Could you walk me through it again?",
+  "example": "Could you walk me through the process again?",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-f3f9dd77",
+  "type": "chunk",
+  "ko": "무슨 말인지 알겠어요",
+  "en": "I see what you mean.",
+  "example": "I see what you mean — let's adjust it.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-9a584b42",
+  "type": "chunk",
+  "ko": "좋은 지적이에요",
+  "en": "Good point. / Fair point.",
+  "example": "Fair point, let's add that.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-b4005375",
+  "type": "chunk",
+  "ko": "시간 내주셔서 감사해요",
+  "en": "Thanks for taking the time.",
+  "example": "Thanks for taking the time today.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-baf58b82",
+  "type": "chunk",
+  "ko": "메일로 정리해서 보낼게요",
+  "en": "I'll send a recap. / I'll follow up over email.",
+  "example": "I'll send a recap after the meeting.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-8cd741e5",
+  "type": "chunk",
+  "ko": "저도 공유해 주세요",
+  "en": "Keep me in the loop. / CC me.",
+  "example": "Just CC me on that thread.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-3658dace",
+  "type": "chunk",
+  "ko": "일이 너무 밀렸어요",
+  "en": "I'm swamped. / I'm behind on work.",
+  "example": "Can't today — I'm swamped.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-cfb352bd",
+  "type": "chunk",
+  "ko": "오늘 재택이에요",
+  "en": "I'm working from home. / I'm remote today.",
+  "example": "I'm remote today, ping me on Slack.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-8ea2da1c",
+  "type": "chunk",
+  "ko": "반차 쓸게요",
+  "en": "I'm taking a half day.",
+  "example": "I'm taking a half day on Friday.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-ac8f0fe4",
+  "type": "chunk",
+  "ko": "편하게 연락 주세요",
+  "en": "Feel free to reach out.",
+  "example": "Feel free to reach out anytime.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-fbb1ff3e",
+  "type": "chunk",
+  "ko": "대략적으로요",
+  "en": "Roughly. / Ballpark.",
+  "example": "Ballpark, how much would it cost?",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-3c909461",
+  "type": "chunk",
+  "ko": "아직 확정된 건 없어요",
+  "en": "Nothing's set in stone yet.",
+  "example": "The date? Nothing's set in stone yet.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-062d7967",
+  "type": "chunk",
+  "ko": "진행해도 될까요?",
+  "en": "Are we good to go ahead?",
+  "example": "Are we good to go ahead with this?",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-4fbe91c9",
+  "type": "chunk",
+  "ko": "결론부터 말씀드리면",
+  "en": "To cut to the chase, / The short answer is...",
+  "example": "To cut to the chase, we need more time.",
+  "category": "직장·업무",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-a40a11c6",
+  "type": "chunk",
+  "ko": "(약속) 못 갈 것 같아",
+  "en": "I have to bail.",
+  "example": "Sorry, I have to bail on dinner.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-cc62d0ed",
+  "type": "chunk",
+  "ko": "약속 있어",
+  "en": "I have plans.",
+  "example": "Can't tonight, I have plans.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-7596e135",
+  "type": "chunk",
+  "ko": "재밌었어 (즐거웠어)",
+  "en": "I had a great time.",
+  "example": "I had a great time last night.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-1c1275f0",
+  "type": "chunk",
+  "ko": "스트레스 받아",
+  "en": "It's stressing me out.",
+  "example": "This project is stressing me out.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-38bc4e21",
+  "type": "chunk",
+  "ko": "핸드폰 배터리 다 됐어",
+  "en": "My phone's about to die.",
+  "example": "My phone's about to die, text me instead.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-e0a3d065",
+  "type": "chunk",
+  "ko": "잘 어울려",
+  "en": "It looks good on you. / That really suits you.",
+  "example": "That jacket looks good on you.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-74f7df02",
+  "type": "chunk",
+  "ko": "이해가 안 돼",
+  "en": "I don't get it.",
+  "example": "I don't get why it failed.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-5c951b1a",
+  "type": "chunk",
+  "ko": "아직 멀었어",
+  "en": "Not even close. / There's a long way to go.",
+  "example": "Is it done? Not even close.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-9c12096b",
+  "type": "chunk",
+  "ko": "그때그때 달라",
+  "en": "It depends.",
+  "example": "It depends on the day, honestly.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-5b0e4610",
+  "type": "chunk",
+  "ko": "(음식이) 느끼해",
+  "en": "It's too rich. / It's too greasy.",
+  "example": "The pasta was a bit too rich for me.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-7d8bd37f",
+  "type": "chunk",
+  "ko": "답답해",
+  "en": "It's frustrating.",
+  "example": "It's frustrating when no one replies.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-84f3e338",
+  "type": "chunk",
+  "ko": "알아서 할게",
+  "en": "I'll figure it out.",
+  "example": "Don't worry about me, I'll figure it out.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-be610440",
+  "type": "chunk",
+  "ko": "(보고) 눈치챘어",
+  "en": "I could tell.",
+  "example": "I could tell you were tired.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-ff00ecc1",
+  "type": "chunk",
+  "ko": "그런 편이야",
+  "en": "Kind of, yeah. / Sort of.",
+  "example": "Are you a morning person? Kind of, yeah.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ },
+ {
+  "id": "chunk-56bb28d7",
+  "type": "chunk",
+  "ko": "딱히 이유는 없어",
+  "en": "No particular reason. / Just because.",
+  "example": "Why blue? No particular reason.",
+  "category": "어색해지기 쉬운 표현",
+  "added": "2026-08-04",
+  "source": "시작 세트"
+ }
+]

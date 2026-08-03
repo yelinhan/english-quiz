@@ -1,0 +1,16 @@
+{
+  "name": "Chunky — 영어 회화 퀴즈",
+  "short_name": "Chunky",
+  "description": "매일 영어 회화 표현 퀴즈 + AI 영작 첨삭",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F7FBFA",
+  "theme_color": "#2EC4B6",
+  "lang": "ko",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
