@@ -57,14 +57,28 @@ function show(name) {
 
 function initSettings() {
   const dlg = document.getElementById('settings');
+  const providerSel = document.getElementById('aiProviderInput');
+  const keyInput = document.getElementById('apiKeyInput');
+  const PLACEHOLDER = { anthropic: 'sk-ant-...', openai: 'sk-...', gemini: 'AIza...' };
+  let aiKeys = {}; // 다이얼로그 열려 있는 동안의 공급자별 키 버퍼
+  const syncKeyField = () => {
+    keyInput.value = aiKeys[providerSel.value] || '';
+    keyInput.placeholder = PLACEHOLDER[providerSel.value] || '';
+  };
+  providerSel.onchange = syncKeyField;
+  keyInput.oninput = () => { aiKeys[providerSel.value] = keyInput.value.trim(); };
   document.getElementById('settingsBtn').onclick = () => {
-    document.getElementById('apiKeyInput').value = store.apiKey();
+    aiKeys = store.aiKeys();
+    providerSel.value = store.aiProvider();
+    syncKeyField();
     document.getElementById('goalInput').value = store.goal();
     dlg.showModal();
   };
   document.getElementById('closeSettings').onclick = () => dlg.close();
   document.getElementById('saveSettings').onclick = () => {
-    store.saveApiKey(document.getElementById('apiKeyInput').value.trim());
+    aiKeys[providerSel.value] = keyInput.value.trim();
+    store.saveAiProvider(providerSel.value);
+    store.saveAiKeys(aiKeys);
     const goal = parseInt(document.getElementById('goalInput').value, 10);
     if (goal >= 1) store.saveGoal(goal);
     dlg.close();

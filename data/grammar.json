@@ -1,0 +1,170 @@
+{
+  "관사": {
+    "title": "관사 (a / an / the)",
+    "rule_ko": "처음 언급하거나 여러 개 중 하나면 a/an, 말하는 사람과 듣는 사람이 둘 다 아는 것이면 the, 일반적인 얘기·식사 이름은 무관사예요.",
+    "examples": [
+      { "bad": "I watched the movie yesterday. (처음 언급인데 the)", "good": "I watched a movie yesterday.", "note": "처음 말하는 영화 → a" },
+      { "good": "The movie was pretty boring.", "note": "방금 말한 '그 영화' → the" },
+      { "bad": "I had a lunch.", "good": "I had lunch.", "note": "breakfast/lunch/dinner는 무관사" }
+    ],
+    "why_ko": "한국어에 없는 개념이라 어렵죠. '그'를 붙여도 말이 되는 자리인지 스스로 물어보세요 — 되면 the, 안 되면 a나 무관사예요."
+  },
+  "시제-과거": {
+    "title": "과거 시제",
+    "rule_ko": "이미 끝난 일이고 '언제'인지 정해져 있으면(yesterday, last month...) 무조건 과거형이에요. 현재완료와 같이 못 써요.",
+    "examples": [
+      { "bad": "I have seen him yesterday.", "good": "I saw him yesterday.", "note": "yesterday 같은 과거 시점 표현 → 과거형" },
+      { "good": "I went there last month.", "note": "지난달 = 끝난 일" }
+    ],
+    "why_ko": "'언제?'에 대한 답(yesterday, in 2023, last week)이 문장에 있으면 과거형 — 이것만 기억해도 절반은 해결돼요."
+  },
+  "시제-현재완료": {
+    "title": "현재완료 (have + p.p.)",
+    "rule_ko": "과거의 일이 지금까지 이어질 때: 경험(~해본 적 있다), 계속(~한 지 됐다), 결과(아직/이미 ~했다).",
+    "examples": [
+      { "bad": "I didn't decide yet.", "good": "I haven't decided yet.", "note": "'아직' = yet + 현재완료" },
+      { "good": "I've been there before.", "note": "가본 적 있다 = 경험" },
+      { "good": "I've worked here for 3 years.", "note": "3년째 계속 = for/since + 현재완료" }
+    ],
+    "why_ko": "한국어 '~했어요'가 과거형처럼 보여도, 지금 상태 얘기면 현재완료예요. '아직 못 정했어요'는 지금도 못 정한 상태니까요."
+  },
+  "시제-과거완료": {
+    "title": "과거완료 (had + p.p.)",
+    "rule_ko": "과거의 두 사건 중 더 먼저 일어난 쪽에 써요. 기준이 되는 과거 시점보다 '그 전에' 이미 벌어진 일이면 had + p.p.",
+    "examples": [
+      { "bad": "When I arrived, the meeting started.", "good": "When I arrived, the meeting had already started.", "note": "도착(과거)보다 회의 시작이 먼저" },
+      { "good": "I realized I had left my phone at work.", "note": "깨달은 시점보다 두고 온 게 먼저" },
+      { "good": "The movie had already ended when we got there.", "note": "already와 자주 같이 다녀요" }
+    ],
+    "why_ko": "'~했었다'로 번역하면 헷갈려요. 핵심은 순서 — 과거 사건이 2개 있고 하나가 더 먼저면, 먼저 쪽이 had p.p.예요."
+  },
+  "시제-진행": {
+    "title": "진행형 (be + -ing)",
+    "rule_ko": "특정 순간에 '하고 있는 중'인 동작이에요. 과거의 한 장면(~하고 있는데)이면 과거진행.",
+    "examples": [
+      { "bad": "I took a shower when the package arrived.", "good": "I was taking a shower when the package arrived.", "note": "샤워 '중에' 택배가 옴 → 과거진행" },
+      { "good": "I'm working on it right now.", "note": "지금 하는 중" }
+    ],
+    "why_ko": "'~하고 있는데 / ~하던 중이었어'가 보이면 진행형이에요. 배경 동작(진행) 위에 사건(과거)이 끼어드는 그림을 떠올려보세요."
+  },
+  "시제-미래": {
+    "title": "미래 표현 (will / be going to / 현재진행)",
+    "rule_ko": "말하는 순간 정한 건 will, 미리 마음먹은 계획은 be going to, 확정된 일정은 현재진행형이 자연스러워요.",
+    "examples": [
+      { "good": "I'll get back to you.", "note": "그 자리에서 정함 → will" },
+      { "good": "I'm going to start working out.", "note": "마음먹은 계획 → be going to" },
+      { "good": "I'm taking a day off next Friday.", "note": "확정된 일정 → 현재진행" }
+    ],
+    "why_ko": "전부 will로 쓰면 문법은 맞아도 어색할 때가 있어요. 확정 일정은 현재진행형이 제일 원어민스러워요."
+  },
+  "전치사": {
+    "title": "전치사 (at / on / in / for ...)",
+    "rule_ko": "시간: at 3 / on Monday / in August. 장소: at the station / on the 2nd floor / in Seoul. 식사 메뉴는 for lunch.",
+    "examples": [
+      { "bad": "I'll see you in Monday.", "good": "I'll see you on Monday.", "note": "요일 → on" },
+      { "bad": "What did you eat at lunch?", "good": "What did you have for lunch?", "note": "메뉴 얘기는 for" },
+      { "good": "I've worked here since 2023.", "note": "시작 시점 → since" }
+    ],
+    "why_ko": "한국어 조사와 1:1 대응이 안 돼서 규칙보다 덩어리로 외우는 게 답이에요. on Monday, for lunch처럼 통째로요."
+  },
+  "장소부사": {
+    "title": "장소 부사 (home / here / there)",
+    "rule_ko": "home, here, there는 부사라서 앞에 to를 붙이지 않아요. to는 명사 앞에만 와요.",
+    "examples": [
+      { "bad": "I went to there last month.", "good": "I went there last month.", "note": "there는 부사 → to 없이" },
+      { "bad": "I want to go to home.", "good": "I want to go home.", "note": "go home / get home / head home" },
+      { "good": "I stopped by the store on my way home.", "note": "'집에 가는 길' = way home (to 없음)" }
+    ],
+    "why_ko": "한국어 '~에'를 전부 to로 옮기다 생기는 실수예요. home / here / there 딱 3개만 기억하면 돼요."
+  },
+  "to부정사": {
+    "title": "to부정사 (want to / decide to ...)",
+    "rule_ko": "want, need, decide, plan, hope 같은 동사는 뒤에 to + 동사원형을 받아요.",
+    "examples": [
+      { "bad": "I want going home.", "good": "I want to go home.", "note": "want + to 동사원형" },
+      { "good": "I decided to take the offer.", "note": "decide to ~하기로 하다" },
+      { "good": "I'm planning to visit Busan.", "note": "plan to ~할 계획이다" }
+    ],
+    "why_ko": "어떤 동사가 to를 받는지는 규칙보다 동사별 암기예요. enjoy, finish처럼 -ing을 받는 동사는 '동명사' 카드를 보세요."
+  },
+  "동명사": {
+    "title": "동명사 (enjoy -ing ...)",
+    "rule_ko": "enjoy, finish, keep, mind, avoid 뒤에는 동사원형이 아니라 -ing이 와요.",
+    "examples": [
+      { "bad": "I enjoy to watch movies.", "good": "I enjoy watching movies.", "note": "enjoy + -ing" },
+      { "good": "I just finished writing the report.", "note": "finish + -ing" },
+      { "good": "Keep going — you're almost there!", "note": "keep + -ing (계속 ~하다)" }
+    ],
+    "why_ko": "to부정사와 세트로 외우세요: want/need/decide는 to, enjoy/finish/keep/mind/avoid는 -ing."
+  },
+  "수동태": {
+    "title": "수동태 (be + p.p.)",
+    "rule_ko": "동작을 '당하는' 쪽이 주어일 때 be + 과거분사. 한국어 '~됐다/~받았다'가 보이면 수동태 후보예요.",
+    "examples": [
+      { "bad": "The meeting canceled.", "good": "The meeting was canceled.", "note": "회의가 '취소된' 것" },
+      { "good": "I was told to wait outside.", "note": "'~하라고 들었다' = be told to" },
+      { "bad": "The accident was happened.", "good": "The accident happened.", "note": "happen, arrive 같은 자동사는 수동태 ✕" }
+    ],
+    "why_ko": "빼먹는 것도 문제지만 반대로 자동사(happen, arrive)에 수동태를 쓰는 것도 흔한 실수예요."
+  },
+  "관계대명사": {
+    "title": "관계대명사 (who / which / that)",
+    "rule_ko": "명사 뒤에 설명을 붙일 때 사람은 who, 사물은 which/that. 목적격이면 생략 가능해요.",
+    "examples": [
+      { "good": "The guy who sits next to me is really nice.", "note": "사람 + who" },
+      { "good": "The restaurant (that) we went to last week was great.", "note": "목적격 that은 생략 OK" },
+      { "bad": "The movie what I watched was boring.", "good": "The movie (that) I watched was boring.", "note": "선행사가 있으면 what ✕" }
+    ],
+    "why_ko": "한국어는 꾸미는 말이 명사 앞('내가 본 영화'), 영어는 뒤(the movie I watched) — 어순 감각을 뒤집는 연습이 필요해요."
+  },
+  "비교급": {
+    "title": "비교급 (-er / more ~ than)",
+    "rule_ko": "짧은 단어(1~2음절)는 -er, 긴 단어는 more를 붙이고, 비교 대상 앞에 than을 써요. 둘 다 붙이면 안 돼요.",
+    "examples": [
+      { "bad": "This is more easy than I thought.", "good": "This is easier than I thought.", "note": "easy처럼 짧은 단어 → -er" },
+      { "bad": "It's more busier these days.", "good": "It's busier these days.", "note": "-er와 more 중복 ✕" },
+      { "good": "It was way better than expected.", "note": "'훨씬' = way/much + 비교급" }
+    ],
+    "why_ko": "'생각보다 ~해요'는 통째로 외우세요: 비교급 + than I thought / than expected. 회화에서 정말 자주 써요."
+  },
+  "어순": {
+    "title": "어순 (주어 + 동사 먼저)",
+    "rule_ko": "영어는 주어+동사+목적어가 먼저 나오고, 누구와/어디서/언제는 뒤에 붙어요. 간접의문문은 평서문 어순이에요.",
+    "examples": [
+      { "bad": "Yesterday I with my friend dinner had.", "good": "I had dinner with my friend yesterday.", "note": "S+V+O → 나머지는 뒤로" },
+      { "bad": "I don't know why did it fail.", "good": "I don't know why it failed.", "note": "간접의문문은 '의문사 + 주어 + 동사'" },
+      { "good": "Can you tell me where the station is?", "note": "where is the station ✕ → where the station is" }
+    ],
+    "why_ko": "특히 간접의문문(왜 ~인지, 어디 ~인지)에서 의문문 어순을 그대로 쓰는 게 최다 함정이에요."
+  },
+  "수일치": {
+    "title": "수일치 (주어와 동사)",
+    "rule_ko": "동사는 진짜 주어의 단·복수에 맞춰요. everyone/each는 단수, the number of ~도 단수예요.",
+    "examples": [
+      { "bad": "Everyone were tired.", "good": "Everyone was tired.", "note": "everyone/each/nobody는 단수 취급" },
+      { "bad": "The number of meetings are increasing.", "good": "The number of meetings is increasing.", "note": "주어는 the number(단수)" },
+      { "good": "There are three meetings today.", "note": "There is/are는 뒤의 명사에 맞춰요" }
+    ],
+    "why_ko": "주어와 동사 사이에 수식어가 길게 끼면 틀리기 쉬워요. 동사를 쓰기 전에 '진짜 주어가 뭐지?' 한 번만 확인하세요."
+  },
+  "단어선택": {
+    "title": "단어 선택 (casual하게!)",
+    "rule_ko": "회화에서는 쉬운 단어가 정답이에요. 격식체 단어는 문법이 맞아도 어색하게 들려요.",
+    "examples": [
+      { "bad": "I will purchase a new phone.", "good": "I'm gonna buy a new phone.", "note": "purchase → buy" },
+      { "bad": "I couldn't determine what to eat.", "good": "I couldn't decide what to eat.", "note": "determine → decide" },
+      { "good": "obtain→get · inquire→ask · revise→fix · somewhat→kinda", "note": "격식 → 캐주얼 짝으로 외우기" }
+    ],
+    "why_ko": "제 최우선 교정 포인트예요! 문법보다 단어 선택이 톤을 결정해요. 딱딱한 단어가 떠오르면 더 짧은 단어를 찾아보세요."
+  },
+  "콜로케이션": {
+    "title": "콜로케이션 (같이 다니는 단어 짝)",
+    "rule_ko": "동사+명사는 정해진 짝이 있어요. 한국어를 직역하면 짝이 어긋나기 쉬워요.",
+    "examples": [
+      { "bad": "I did a mistake.", "good": "I made a mistake.", "note": "실수하다 = make a mistake" },
+      { "bad": "I ate medicine.", "good": "I took medicine.", "note": "약을 먹다 = take medicine" },
+      { "good": "Let's grab a bite. / Wanna grab coffee?", "note": "가볍게 먹다/마시다 = grab" }
+    ],
+    "why_ko": "'약을 먹다'처럼 한국어 동사를 그대로 옮기면 틀려요. 짝을 통째로 chunk로 외우는 게 이 단어장의 존재 이유죠!"
+  }
+}

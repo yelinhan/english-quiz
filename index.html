@@ -43,7 +43,15 @@
   <dialog id="settings">
     <h2>설정</h2>
     <label class="field">
-      <span>Anthropic API 키 <small>(영작 첨삭에 사용, 이 기기에만 저장돼요)</small></span>
+      <span>AI 공급자 <small>(영작 첨삭·뜻 자동 생성에 사용)</small></span>
+      <select id="aiProviderInput">
+        <option value="anthropic">Anthropic (Claude)</option>
+        <option value="openai">OpenAI (GPT)</option>
+        <option value="gemini">Google (Gemini)</option>
+      </select>
+    </label>
+    <label class="field">
+      <span>API 키 <small>(공급자별로 이 기기에만 저장돼요)</small></span>
       <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off">
     </label>
     <label class="field">

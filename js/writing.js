@@ -71,7 +71,63 @@ const GRAMMAR_PROMPTS = [
   '지금 막 나가려던 참이었어요.',
   '다음 주에 휴가 가요. 벌써 설레요.',
   '핸드폰을 잃어버렸는데 어디서 잃어버렸는지 모르겠어요.',
+  // 장소 부사: home/here/there는 to 없이 (go to home ✕ → go home ⭕)
+  '이제 집에 가야 해요. 내일 봐요.',
+  '어제는 피곤해서 집에 일찍 갔어요.',
+  '이리 와서 이것 좀 봐주세요.',
+  '지난주에 거기 갔었는데 사람이 진짜 많았어요.',
+  '거기까지 어떻게 가요? 지하철로 갈 수 있어요?',
+  '집에 오는 길에 마트에 들렀어요.',
+  '집에 도착하면 전화할게요.',
+  '어제 몇 시에 집에 들어왔어요?',
 ];
+
+// ---------- 문법 태그 칩 + 설명 카드 ----------
+let grammarCards = null; // data/grammar.json 캐시
+
+function tagChips(tags) {
+  if (!tags || !tags.length) return '';
+  return `<div class="tag-chips">${tags.map((t) =>
+    `<button class="tag-chip" data-tag="${esc(t)}">🏷 ${esc(t)}</button>`).join('')}</div>`;
+}
+
+async function showGrammarCard(tag) {
+  if (!grammarCards) {
+    try {
+      grammarCards = await (await fetch('data/grammar.json', { cache: 'no-cache' })).json();
+    } catch {
+      grammarCards = {};
+    }
+  }
+  const card = grammarCards[tag];
+  let dlg = document.getElementById('grammarDlg');
+  if (!dlg) {
+    dlg = document.createElement('dialog');
+    dlg.id = 'grammarDlg';
+    document.body.appendChild(dlg);
+  }
+  dlg.innerHTML = card ? `
+    <h2>${esc(card.title)}</h2>
+    <p class="g-rule">${esc(card.rule_ko)}</p>
+    ${(card.examples || []).map((ex) => `
+      <div class="g-ex">
+        ${ex.bad ? `<div class="g-bad">✕ ${esc(ex.bad)}</div>` : ''}
+        <div class="g-good">⭕ ${esc(ex.good)}</div>
+        ${ex.note ? `<div class="g-note">${esc(ex.note)}</div>` : ''}
+      </div>`).join('')}
+    ${card.why_ko ? `<p class="g-why">💡 ${esc(card.why_ko)}</p>` : ''}
+    <button class="primary" id="grammarClose">닫기</button>`
+    : `<p class="notice">"${esc(tag)}" 설명 카드가 아직 없어요.</p>
+       <button class="primary" id="grammarClose">닫기</button>`;
+  dlg.querySelector('#grammarClose').onclick = () => dlg.close();
+  dlg.showModal();
+}
+
+function bindTagChips(rootEl) {
+  rootEl.querySelectorAll('.tag-chip').forEach((b) => {
+    b.onclick = () => showGrammarCard(b.dataset.tag);
+  });
+}
 
 export function render(el, ctx) {
   let mode = 'tr'; // 탭에 들어올 때마다 문장 영작이 기본
@@ -94,11 +150,11 @@ export function render(el, ctx) {
       ${mode === 'tr' ? `
       <div class="chip-row">
         <button data-set="all" class="${set === 'all' ? 'on' : ''}">🎲 전체 랜덤</button>
-        <button data-set="grammar" class="${set === 'grammar' ? 'on' : ''}">🎯 관사·시제 집중</button>
+        <button data-set="grammar" class="${set === 'grammar' ? 'on' : ''}">🎯 관사·시제·전치사 집중</button>
       </div>` : ''}
       ${key || mode === 'tr' ? '' : `
         <div class="card-box notice">
-          영작 첨삭에는 Anthropic API 키가 필요해요.<br>
+          영작 첨삭에는 AI API 키가 필요해요 (Anthropic·OpenAI·Gemini 중 택 1).<br>
           오른쪽 위 <b>⚙ 설정</b>에서 키를 입력해주세요. (키는 이 기기에만 저장돼요)
         </div>`}
       ${mode === 'free' ? `
@@ -223,6 +279,7 @@ function showEntry(resultEl, entry, ctx) {
             : `<div class="orig">${esc(entry.input)}</div>
                <div class="fixed">${esc(r.corrected)}</div>`}
           <div class="why">${esc(r.explanation_ko)}</div>
+          ${tagChips(r.tags)}
         </div>
         ${(r.alternatives || []).length ? `
           <p class="notice" style="margin-bottom:4px">이렇게도 말해요:</p>
@@ -231,6 +288,7 @@ function showEntry(resultEl, entry, ctx) {
         <p class="notice">🗣 자연스러운 문장을 소리 내어 3번 읽어보세요!</p>
       </div>`;
     if (r.chunk) bindChunk(resultEl.querySelector('.add-chunk'), r.chunk, ctx);
+    bindTagChips(resultEl);
     return;
   }
   const r = entry.result;
@@ -243,6 +301,7 @@ function showEntry(resultEl, entry, ctx) {
             : `<div class="orig">${esc(c.original)}</div>
                <div class="fixed">${esc(c.corrected)}</div>`}
           <div class="why">${esc(c.explanation_ko)}</div>
+          ${tagChips(c.tags)}
           ${c.chunk ? `<button class="add-chunk" data-i="${i}">＋ 단어장에 추가: ${esc(c.chunk.en)}</button>` : ''}
         </div>`).join('')}
       <p class="notice" style="margin-bottom:0">💬 ${esc(r.overall_feedback_ko || '')}</p>
@@ -252,6 +311,7 @@ function showEntry(resultEl, entry, ctx) {
     const c = r.corrections[Number(btn.dataset.i)];
     if (c?.chunk) bindChunk(btn, c.chunk, ctx);
   });
+  bindTagChips(resultEl);
 }
 
 function bindChunk(btn, chunk, ctx) {

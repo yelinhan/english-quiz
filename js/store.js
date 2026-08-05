@@ -39,8 +39,24 @@ export const store = {
       set('eq.writingDays', days);
     }
   },
-  apiKey: () => localStorage.getItem('eq.apikey') || '',
-  saveApiKey: (k) => localStorage.setItem('eq.apikey', k),
+  aiProvider: () => get('eq.aiProvider', 'anthropic'),
+  saveAiProvider: (p) => set('eq.aiProvider', p),
+  aiKeys: () => {
+    const keys = get('eq.aiKeys', {});
+    // 구버전 단일 키(eq.apikey) 호환
+    if (!keys.anthropic) {
+      const legacy = localStorage.getItem('eq.apikey');
+      if (legacy) keys.anthropic = legacy;
+    }
+    return keys;
+  },
+  saveAiKeys: (k) => set('eq.aiKeys', k),
+  apiKey: () => store.aiKeys()[store.aiProvider()] || '', // 현재 공급자의 키
+  saveApiKey: (k) => {
+    const keys = store.aiKeys();
+    keys[store.aiProvider()] = k;
+    store.saveAiKeys(keys);
+  },
 };
 
 export function todayStr() {
