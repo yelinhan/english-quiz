@@ -660,6 +660,39 @@
   "example_ko": "2분이면 도착해 — 거의 다 왔어."
  },
  {
+  "id": "chunk-fb12d1e5",
+  "type": "chunk",
+  "ko": "영화 보러 가다",
+  "en": "go to the movies / catch a flick",
+  "example": "Wanna catch a flick this weekend?",
+  "category": "일상 회화",
+  "added": "2026-08-05",
+  "source": "전화영어",
+  "example_ko": "이번 주말에 영화 한 편 볼래?"
+ },
+ {
+  "id": "chunk-f99e505e",
+  "type": "chunk",
+  "ko": "~라는 영화",
+  "en": "a movie called ~",
+  "example": "I watched a movie called Hope.",
+  "category": "일상 회화",
+  "added": "2026-08-05",
+  "source": "전화영어",
+  "example_ko": "'Hope'라는 영화를 봤어."
+ },
+ {
+  "id": "chunk-9acc37d6",
+  "type": "chunk",
+  "ko": "좀 애매해 / 모호해",
+  "en": "It's kinda ambiguous. / It's kinda vague.",
+  "example": "The ending was kinda ambiguous.",
+  "category": "일상 회화",
+  "added": "2026-08-05",
+  "source": "전화영어",
+  "example_ko": "결말이 좀 애매했어."
+ },
+ {
   "id": "chunk-3c129e63",
   "type": "chunk",
   "ko": "확인하고 알려드릴게요",

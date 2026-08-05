@@ -1,1 +1,40 @@
-[]
+[
+  {
+    "date": "2026-08-05",
+    "period": { "from": "2026-08-03", "to": "2026-08-05" },
+    "title": "Baseline — 현재 수준 스냅샷",
+    "baseline": true,
+    "summary_ko": "첫 리포트. 이해력·발음·답변 구조는 좋고 수동 어휘도 탄탄함(ambiguous로 어휘 만점). 가장 큰 과제는 문어체 습관을 구어체로 바꾸는 것 — somewhat, which title is 같은 '쓰는 영어'가 말에서 나옴. 관사 누락과 -ed 발음(별도 음절화)도 초기 교정 대상.",
+    "scores": { "casual": 2, "listening": 3, "grammar": 3, "vocab": 3 },
+    "wins_ko": [
+      "의견 → 이유 → 구체적 예시로 이어지는 답변 구조가 좋음",
+      "수업 중 질문 2개를 직접 함 — 수동적이지 않음",
+      "movie → movies 자기 교정 능력 있음",
+      "'ambiguous' 사용으로 튜터에게 어휘 만점 받음"
+    ],
+    "focus_ko": [
+      "격식체 탈출: somewhat → kinda/pretty, which title is → called",
+      "-ed 한 음절 발음 (watched, learned)",
+      "관사 a/the — 특히 a movie, the movies",
+      "good/helpful + for me (to me 아님)"
+    ],
+    "trends": [],
+    "casual_tips": [
+      {
+        "formal_said": "a movie which title is Hope",
+        "casual_better": "a movie called Hope",
+        "note_ko": "튜터 왈: 틀린 건 아닌데 stiff하게 들려요. 그냥 called."
+      },
+      {
+        "formal_said": "it is somewhat ambiguous",
+        "casual_better": "it was kinda ambiguous",
+        "note_ko": "somewhat은 글에서 쓰는 말. 입으로는 kinda, pretty."
+      },
+      {
+        "formal_said": "a very wonderful experience",
+        "casual_better": "a really cool experience",
+        "note_ko": "wonderful은 격식·과장 느낌. really cool/great이 자연스러워요."
+      }
+    ]
+  }
+]

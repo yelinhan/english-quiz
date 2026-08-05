@@ -1,1 +1,40 @@
-[]
+[
+  {
+    "date": "2026-08-03",
+    "topic": "영화 (교재 Lesson 9)",
+    "summary": "좋아하는 영화 장르(sci-fi) 설명하기. 튜터 평가: 질문 이해 완벽, 'ambiguous' 사용으로 어휘 만점. film vs movie 차이, go to the movies / catch a flick / matinee 등 영화 관련 표현 배움.",
+    "upgrades": [
+      {
+        "said": "I watched a movie which title is Hope",
+        "better": "I watched a movie called Hope",
+        "note_ko": "'titled/which title is'는 딱딱하고 어색해요. 원어민은 그냥 called를 써요."
+      },
+      {
+        "said": "I enjoy watching movie",
+        "better": "I enjoy watching movies",
+        "note_ko": "영화 전반을 말할 땐 복수형. 바로 다음 문장에선 스스로 맞게 말했어요."
+      },
+      {
+        "said": "I usually go to movie theater to watch movies",
+        "better": "I usually go to the movies",
+        "note_ko": "관사 누락 + 원어민은 'go to the movies'가 제일 자연스러워요."
+      },
+      {
+        "said": "it is somewhat ambiguous",
+        "better": "it was kinda ambiguous",
+        "note_ko": "somewhat은 격식체·문어체. 말할 땐 kinda나 pretty가 자연스러워요."
+      },
+      {
+        "said": "It is very wonderful experience to me",
+        "better": "It was a really cool experience",
+        "note_ko": "과거 시제 + 관사 a 필요. wonderful보다 cool/great이 캐주얼해요."
+      },
+      {
+        "said": "What source is good to me to learn English",
+        "better": "Do you know any good YouTube channels for learning English?",
+        "note_ko": "good/helpful은 'for me'예요 (to me 아님). 추천 요청 문장은 통으로 외워두면 좋아요."
+      }
+    ],
+    "feedback_ko": "발음·이해력은 좋다는 평가. 교정 포인트: ① -ed 발음을 한 음절로 (watched를 watch-it처럼 두 음절로 말하지 않기) ② 관사 a/the 습관적 누락 ③ good/helpful + for me ④ 격식체 어휘(somewhat, titled)를 캐주얼하게 (kinda, called). 튜터가 폰·자막을 영어로 바꾸는 환경 세팅을 추천했고, 다음 시간에 유튜브 채널을 추천해주기로 함."
+  }
+]
