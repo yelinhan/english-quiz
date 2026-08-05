@@ -1,5 +1,5 @@
 // 앱 셸 cache-first, data/*.json network-first
-const CACHE = 'chunky-v18';
+const CACHE = 'chunky-v19';
 const SHELL = [
   './',
   'index.html',

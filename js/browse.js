@@ -69,17 +69,50 @@ export function render(el, ctx) {
     return (m || []).map((x) => x.trim()).filter(Boolean);
   }
 
+  // "Q? A." 처럼 짧은 질문+답이 한 예문인 경우 합쳐서 해석과 개수를 맞춘다
+  function mergeQuestions(parts) {
+    const out = [];
+    for (let i = 0; i < parts.length; i++) {
+      if (parts[i].endsWith('?') && parts[i].length <= 25 && i + 1 < parts.length) {
+        out.push(parts[i] + ' ' + parts[i + 1]);
+        i++;
+      } else {
+        out.push(parts[i]);
+      }
+    }
+    return out;
+  }
+
+  // 예문·해석을 문장 단위로 짝지음. 개수가 안 맞으면 null (통짜 표시로 폴백)
+  function pairExamples(c) {
+    let en = splitSentences(c.example);
+    let ko = splitSentences(c.example_ko || '');
+    if (!en.length || !ko.length) return null;
+    if (en.length !== ko.length) {
+      en = mergeQuestions(en);
+      ko = mergeQuestions(ko);
+    }
+    if (en.length !== ko.length) return null;
+    return en.map((s, i) => ({ en: s, ko: ko[i] }));
+  }
+
   function openCard(c) {
     const synonyms = c.en.split('/').map((v) => v.trim()).filter(Boolean);
+    const pairs = pairExamples(c);
     const sents = splitSentences(c.example);
     dlg.innerHTML = `
       <button class="dialog-close" id="wdClose">✕</button>
       <h2>${esc(c.ko)}</h2>
       <div class="wd-syns">${synonyms.map((s) => `<span class="wd-syn">${esc(s)}</span>`).join('')}</div>
+      ${pairs ? `
+        <div class="wd-label">예문</div>
+        <ul class="wd-ex">${pairs.map((p) => `
+          <li>${esc(p.en)}<div class="wd-li-ko">${esc(p.ko)}</div></li>`).join('')}</ul>`
+    : `
       ${sents.length ? `
         <div class="wd-label">예문</div>
         <ul class="wd-ex">${sents.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}
-      ${c.example_ko ? `<div class="wd-exko">${esc(c.example_ko)}</div>` : ''}
+      ${c.example_ko ? `<div class="wd-exko">${esc(c.example_ko)}</div>` : ''}`}
       <div class="wd-meta">${esc(c.category || '')}${c.source ? ` · ${esc(c.source)}` : ''}${c.added ? ` · ${esc(c.added)}` : ''}</div>
       <div class="dialog-actions">
         <button class="ghost danger" id="wdDelete">삭제</button>

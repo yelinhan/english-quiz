@@ -459,7 +459,8 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
 }
 .wd-label { font-size: .78rem; color: var(--sub); margin-bottom: 6px; }
 .wd-ex { margin: 0 0 10px; padding-left: 18px; }
-.wd-ex li { font-size: .9rem; line-height: 1.6; margin-bottom: 4px; }
+.wd-ex li { font-size: .9rem; line-height: 1.6; margin-bottom: 8px; }
+.wd-li-ko { font-size: .8rem; color: var(--sub); line-height: 1.5; margin-top: 2px; }
 .wd-exko {
   font-size: .82rem;
   color: var(--sub);
