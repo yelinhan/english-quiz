@@ -1,8 +1,9 @@
-// 예문 빈칸 퀴즈: 예문 속 표현의 핵심 단어를 빈칸으로 뚫고 직접 타이핑해서 맞추기
+// 예문 빈칸 퀴즈: 예문 속 표현 구간 전체를 빈칸으로 뚫고 직접 타이핑해서 맞추기
 import { esc } from './store.js';
 import { buildSession, answerCard, GOOD, AGAIN } from './srs.js';
 
 const norm = (w) => w.toLowerCase().replace(/[^a-z']/g, '');
+const normPhrase = (s) => s.split(/\s+/).map(norm).filter(Boolean).join(' ');
 
 // 예문에서 en 표현과 겹치는 단어 구간을 찾아 빈칸 처리
 function makeCloze(card) {
@@ -38,28 +39,39 @@ function makeCloze(card) {
   return blank(exWords, best, 1);
 }
 
-// 표현(여러 단어)이면 그 중 가장 긴 핵심 단어 하나만, 단어면 그 단어를 빈칸으로
+// 매치 구간의 단어를 전부 빈칸으로. 정답은 구간 전체(구두점 제외)
 function blank(words, start, len) {
-  let bi = start;
-  for (let i = start; i < start + len; i++) {
-    if (norm(words[i]).length > norm(words[bi]).length) bi = i;
-  }
-  const m = words[bi].match(/^([^A-Za-z'’]*)([A-Za-z'’-]+)([^A-Za-z'’]*)$/) || ['', '', words[bi], ''];
-  const answer = m[2];
-  const withMid = (mid) => [...words.slice(0, bi), m[1] + mid + m[3], ...words.slice(bi + 1)]
-    .map((w, i2) => (i2 === bi ? w : esc(w))).join(' ');
+  const parts = words.slice(start, start + len)
+    .map((w) => w.match(/^([^A-Za-z'’]*)([A-Za-z'’-]+)([^A-Za-z'’]*)$/) || ['', '', w, '']);
+  const answer = parts.map((m) => m[2]).join(' ');
+  const render = (mid) => words
+    .map((w, i) => {
+      if (i < start || i >= start + len) return esc(w);
+      const m = parts[i - start];
+      return esc(m[1]) + mid(m[2]) + esc(m[3]);
+    })
+    .join(' ');
   return {
-    display: withMid(`<span class="blank-box" style="width:${Math.min(Math.max(answer.length + 1, 4), 14)}ch"></span>`),
-    reveal: withMid(`<span class="blank">${esc(answer)}</span>`),
+    display: render((core) => `<span class="blank-box" style="width:${Math.min(Math.max(core.length + 1, 3), 14)}ch"></span>`),
+    reveal: render((core) => `<span class="blank">${esc(core)}</span>`),
     answer,
-    hint: (answer[0] || '') + '＿'.repeat(Math.max(answer.length - 1, 1)),
   };
+}
+
+// 힌트: 정답의 앞 n글자를 순서대로 공개 (공백은 항상 표시)
+function hintStr(answer, n) {
+  let left = n;
+  return answer.split(' ')
+    .map((w) => [...w].map((ch) => (left-- > 0 ? ch : '＿')).join(''))
+    .join(' ');
 }
 
 export function render(el, ctx) {
   const session = buildSession(ctx.cards, { filter: (c) => !!c.example });
   let idx = 0;
   let result = null; // null = 입력 대기, { ok, typed } = 채점 완료
+  let hintCount = 0;
+  let typedDraft = '';
 
   function draw() {
     if (idx >= session.length) {
@@ -76,41 +88,57 @@ export function render(el, ctx) {
     const c = session[idx];
     const cz = makeCloze(c);
     const asking = result === null;
+    const letters = cz.answer.replace(/ /g, '').length;
     el.innerHTML = `
       <div class="cardzone">
         <div class="session-info"><span>남은 카드 ${session.length - idx}</span><span class="pill">${esc(c.category || '표현')}</span></div>
         <div class="flashcard">
-          <div class="tag">빈칸에 들어갈 단어는?</div>
           <div class="ko" style="font-size:1.1rem">${asking ? cz.display : cz.reveal}</div>
-          <div class="ex">뜻: ${esc(c.ko)}</div>
+          <div class="ex">${esc(c.example_ko || c.ko)}</div>
           ${asking
-            ? `<div class="cloze-hint">힌트: ${esc(cz.hint)}</div>`
+            ? hintCount > 0 ? `<div class="cloze-hint">힌트: ${esc(hintStr(cz.answer, hintCount))}</div>` : ''
             : result.ok
               ? '<div class="cloze-result ok">⭕ 정답이에요!</div>'
               : `<div class="cloze-result no">✕ 정답: ${esc(cz.answer)}${result.typed ? ` · 내 답: ${esc(result.typed)}` : ''}</div>`}
         </div>
         ${asking ? `
           <div class="cloze-form">
-            <input id="clozeInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="빈칸 단어 입력" />
+            <input id="clozeInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="빈칸 표현 입력" />
             <button class="primary" id="checkBtn">확인</button>
           </div>
-          <button class="ghost" id="giveupBtn">모르겠어요</button>`
+          <div class="cloze-actions">
+            <button class="ghost" id="hintBtn" ${hintCount >= letters ? 'disabled' : ''}>💡 힌트</button>
+            <button class="ghost" id="giveupBtn">모르겠어요</button>
+          </div>`
         : '<button class="primary" id="nextBtn">다음 →</button>'}
       </div>`;
 
     if (asking) {
       const input = el.querySelector('#clozeInput');
+      input.value = typedDraft;
       input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
       const check = () => {
         const typed = input.value.trim();
         if (!typed) return;
-        finish(norm(typed) === norm(cz.answer), typed);
+        finish(normPhrase(typed) === normPhrase(cz.answer), typed);
       };
       el.querySelector('#checkBtn').onclick = check;
       input.onkeydown = (e) => { if (e.key === 'Enter') check(); };
+      el.querySelector('#hintBtn').onclick = () => {
+        typedDraft = input.value;
+        hintCount++;
+        draw();
+      };
       el.querySelector('#giveupBtn').onclick = () => finish(false, '');
     } else {
-      el.querySelector('#nextBtn').onclick = () => { idx++; result = null; draw(); };
+      el.querySelector('#nextBtn').onclick = () => {
+        idx++;
+        result = null;
+        hintCount = 0;
+        typedDraft = '';
+        draw();
+      };
     }
 
     function finish(ok, typed) {

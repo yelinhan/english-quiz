@@ -157,6 +157,9 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cloze-form input:focus { outline: none; border-color: var(--accent); }
 .cloze-form .primary { width: auto; padding: 0 22px; }
+.cloze-actions { display: flex; gap: 8px; width: 100%; }
+.cloze-actions .ghost { flex: 1; }
+.cloze-actions .ghost:disabled { opacity: .4; cursor: default; }
 
 .grade-btns { display: flex; gap: 12px; width: 100%; }
 .grade-btns button {
@@ -237,6 +240,17 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
   padding: 14px;
   resize: vertical;
 }
+.tr-prompt {
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.5;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.tr-prompt.small { font-size: .95rem; padding: 10px 14px; }
 .correction { border-left: 3px solid var(--accent); padding-left: 12px; margin: 14px 0; }
 .correction .orig { color: var(--sub); text-decoration: line-through; font-size: .88rem; }
 .correction .fixed { font-weight: 700; margin: 4px 0; line-height: 1.5; }

@@ -52,6 +52,53 @@ const SCHEMA = {
   additionalProperties: false,
 };
 
+// 문장 영작(한→영 번역 연습) 채점
+const TR_SYSTEM = `You are an English coach for a Korean native speaker (OPIc IH level).
+The learner sees a Korean sentence and writes it in English. Evaluate their attempt:
+1. Naturalness matters more than grammar. Prefer casual conversational English
+   ("kinda", "really", "grab") over stiff textbook English.
+2. "corrected" = the most natural casual version CLOSEST to the learner's own attempt.
+   If the attempt is already natural, set is_natural true and keep corrected identical.
+3. "alternatives" = 1-2 other natural ways a native speaker would say the Korean sentence.
+4. "explanation_ko" = short friendly Korean explanation of what to fix (or praise).
+5. "chunk" = one reusable conversational chunk from the answer worth memorizing
+   (ko/en/example), or null if nothing is genuinely reusable.`;
+
+const TR_SCHEMA = {
+  type: 'object',
+  properties: {
+    corrected: { type: 'string' },
+    is_natural: { type: 'boolean' },
+    explanation_ko: { type: 'string' },
+    alternatives: { type: 'array', items: { type: 'string' } },
+    chunk: {
+      anyOf: [
+        {
+          type: 'object',
+          properties: {
+            ko: { type: 'string' },
+            en: { type: 'string' },
+            example: { type: 'string' },
+          },
+          required: ['ko', 'en', 'example'],
+          additionalProperties: false,
+        },
+        { type: 'null' },
+      ],
+    },
+  },
+  required: ['corrected', 'is_natural', 'explanation_ko', 'alternatives', 'chunk'],
+  additionalProperties: false,
+};
+
+export async function gradeTranslation(ko, attempt, apiKey) {
+  return callClaude({
+    system: TR_SYSTEM,
+    schema: TR_SCHEMA,
+    user: `Korean sentence: ${ko}\nLearner's English attempt: ${attempt}`,
+  }, apiKey);
+}
+
 // 하이라이트로 추가한 표현의 한국어 뜻 자동 생성 (실패해도 조용히 null)
 export async function translateChunk(en, sentence, apiKey) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {

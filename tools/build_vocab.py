@@ -14,6 +14,7 @@ SOURCES = [
     (ROOT / "vocab" / "chunks.md", "chunk"),
     (ROOT / "vocab" / "wordbook.md", "word"),
 ]
+EXAMPLE_KO = ROOT / "vocab" / "example_ko.json"  # card id → 예문 전체 해석
 OUT = ROOT / "app" / "data" / "vocab.json"
 
 
@@ -66,6 +67,11 @@ def main():
                 continue
             seen.add(it["id"])
             items.append(it)
+    ex_ko = json.loads(EXAMPLE_KO.read_text(encoding="utf-8")) if EXAMPLE_KO.exists() else {}
+    for it in items:
+        it["example_ko"] = ex_ko.get(it["id"], "")
+        if it["example"] and not it["example_ko"]:
+            print(f"  ⚠ 예문 해석 없음: {it['id']} ({it['ko']}) → vocab/example_ko.json에 추가 필요")
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"✓ {OUT.relative_to(ROOT)} 생성 — {len(items)}개 표현")
