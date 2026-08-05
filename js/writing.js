@@ -33,10 +33,24 @@ const PROMPTS = [
   '동료가 도와준 덕분에 일이 빨리 끝났어요.',
   '갑자기 단 게 당겨서 편의점에 다녀왔어요.',
   '내일 면접이 있어서 좀 긴장돼요.',
+  '오늘 회의가 3개나 있어서 하루가 순식간에 갔어요.',
+  '회의가 길어져서 점심을 늦게 먹었어요.',
+  '그 부분은 제가 확인하고 다시 말씀드릴게요.',
+  '이번 주까지 끝내야 하는 일이 산더미예요.',
+  '메일을 보냈는데 아직 답장이 없어요.',
+  '발표 자료를 오늘까지 만들어야 해요.',
+  '일정이 빠듯한데 어떻게든 맞춰봐야죠.',
+  '재택근무라서 오늘은 출퇴근 시간을 아꼈어요.',
+  '회의에서 제 의견을 말할 기회가 없었어요.',
+  '동료에게 일을 부탁하기가 좀 미안했어요.',
+  '상사한테 보고했더니 방향을 다시 잡으라고 했어요.',
+  '마감 직전에 요구사항이 바뀌어서 좀 당황했어요.',
+  '이 업무는 우선순위가 낮아서 일단 뒤로 미뤘어요.',
+  '오늘 한 실수가 계속 신경 쓰여요.',
 ];
 
 export function render(el, ctx) {
-  let mode = localStorage.getItem('eq.writingMode') || 'free';
+  let mode = localStorage.getItem('eq.writingMode') || 'tr';
   let prompt = pickPrompt();
 
   function pickPrompt() {
@@ -48,10 +62,10 @@ export function render(el, ctx) {
     el.innerHTML = `
       <h2 class="section-title">✍️ 오늘의 영작</h2>
       <div class="chip-row">
-        <button data-mode="free" class="${mode === 'free' ? 'on' : ''}">자유 영작</button>
         <button data-mode="tr" class="${mode === 'tr' ? 'on' : ''}">문장 영작</button>
+        <button data-mode="free" class="${mode === 'free' ? 'on' : ''}">자유 영작</button>
       </div>
-      ${key ? '' : `
+      ${key || mode === 'tr' ? '' : `
         <div class="card-box notice">
           영작 첨삭에는 Anthropic API 키가 필요해요.<br>
           오른쪽 위 <b>⚙ 설정</b>에서 키를 입력해주세요. (키는 이 기기에만 저장돼요)
@@ -68,10 +82,13 @@ export function render(el, ctx) {
           <p class="notice" style="margin-top:0">아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.</p>
           <div class="tr-prompt">${esc(prompt)}</div>
           <textarea id="writingInput" placeholder="영어로 써보세요..."></textarea>
-          <div style="display:flex; justify-content:space-between; margin-top:10px">
+          <div style="display:flex; justify-content:space-between; gap:8px; margin-top:10px">
             <button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
-            <button class="primary" id="submitBtn" ${key ? '' : 'disabled'}>첨삭 받기</button>
+            ${key
+              ? '<button class="primary" id="submitBtn">첨삭 받기</button>'
+              : '<button class="primary" id="copyBtn">📋 복사해서 Claude에 첨삭받기</button>'}
           </div>
+          ${key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
         </div>`}
       <div id="result"></div>
       <div id="history"></div>`;
@@ -87,14 +104,29 @@ export function render(el, ctx) {
     const resultEl = el.querySelector('#result');
     const submitBtn = el.querySelector('#submitBtn');
     const nextBtn = el.querySelector('#nextPromptBtn');
+    const copyBtn = el.querySelector('#copyBtn');
     if (nextBtn) {
       nextBtn.onclick = () => {
         prompt = pickPrompt();
         draw();
       };
     }
+    if (copyBtn) {
+      copyBtn.onclick = async () => {
+        const text = el.querySelector('#writingInput').value.trim();
+        if (!text) return;
+        const msg = `문장 영작 첨삭 부탁해!\n한국어: ${prompt}\n내 영어: ${text}`;
+        try {
+          await navigator.clipboard.writeText(msg);
+          copyBtn.textContent = '✓ 복사됐어요';
+          setTimeout(() => { copyBtn.textContent = '📋 복사해서 Claude에 첨삭받기'; }, 2000);
+        } catch {
+          window.prompt('아래 내용을 복사해서 Claude에 붙여넣으세요:', msg);
+        }
+      };
+    }
 
-    submitBtn.onclick = async () => {
+    if (submitBtn) submitBtn.onclick = async () => {
       const text = el.querySelector('#writingInput').value.trim();
       if (!text) return;
       submitBtn.disabled = true;

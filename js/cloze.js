@@ -1,6 +1,6 @@
 // 예문 빈칸 퀴즈: 예문 속 표현 구간 전체를 빈칸으로 뚫고 직접 타이핑해서 맞추기
 import { esc } from './store.js';
-import { buildSession, answerCard, GOOD, AGAIN } from './srs.js';
+import { buildSession, answerCard, GOOD, HARD, AGAIN } from './srs.js';
 
 const norm = (w) => w.toLowerCase().replace(/[^a-z']/g, '');
 const normPhrase = (s) => s.split(/\s+/).map(norm).filter(Boolean).join(' ');
@@ -98,7 +98,7 @@ export function render(el, ctx) {
           ${asking
             ? hintCount > 0 ? `<div class="cloze-hint">힌트: ${esc(hintStr(cz.answer, hintCount))}</div>` : ''
             : result.ok
-              ? '<div class="cloze-result ok">⭕ 정답이에요!</div>'
+              ? `<div class="cloze-result ok">⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용 → 어려움으로 기록)</small>' : ''}</div>`
               : `<div class="cloze-result no">✕ 정답: ${esc(cz.answer)}${result.typed ? ` · 내 답: ${esc(result.typed)}` : ''}</div>`}
         </div>
         ${asking ? `
@@ -142,7 +142,8 @@ export function render(el, ctx) {
     }
 
     function finish(ok, typed) {
-      answerCard(session, idx, ok ? GOOD : AGAIN);
+      // 힌트를 봤다면 완전히 기억한 게 아니므로 어려움으로 채점
+      answerCard(session, idx, !ok ? AGAIN : hintCount > 0 ? HARD : GOOD);
       result = { ok, typed };
       ctx.refreshHeader();
       draw();
