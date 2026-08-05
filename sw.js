@@ -1,10 +1,11 @@
 // 앱 셸 cache-first, data/*.json network-first
-const CACHE = 'chunky-v12';
+const CACHE = 'chunky-v13';
 const SHELL = [
   './',
   'index.html',
   'css/style.css',
   'js/app.js',
+  'js/home.js',
   'js/store.js',
   'js/srs.js',
   'js/quiz.js',

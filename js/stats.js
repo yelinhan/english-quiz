@@ -20,8 +20,8 @@ export function todayCount(log) {
   return log.filter((e) => e.d === t).length;
 }
 
-// 월간 캘린더: 하루 학습량을 색 농도로 표시
-function calendarHtml(y, m, byDay, goal) {
+// 월간 캘린더: 하루 학습량을 색 농도로 표시 (홈에서도 사용)
+export function calendarHtml(y, m, byDay, goal) {
   const startDow = new Date(y, m - 1, 1).getDay();
   const daysInMonth = new Date(y, m, 0).getDate();
   const cells = [];

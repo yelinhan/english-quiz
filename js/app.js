@@ -2,6 +2,7 @@
 import { store } from './store.js';
 import { migrate } from './srs.js';
 import { todayCount, computeStreak } from './stats.js';
+import * as home from './home.js';
 import * as quiz from './quiz.js';
 import * as cloze from './cloze.js';
 import * as writing from './writing.js';
@@ -11,10 +12,10 @@ import * as browse from './browse.js';
 import * as stats from './stats.js';
 import { initPicker } from './picker.js';
 
-const views = { quiz, cloze, writing, lessons, tutor, browse, stats };
+const views = { home, quiz, cloze, writing, lessons, tutor, browse, stats };
 const ctx = { cards: [], lessons: [], feedback: [], refreshHeader, reloadCards };
 let vocabBase = [];
-let currentView = 'quiz';
+let currentView = 'home';
 
 async function loadJson(path, fallback) {
   try {
@@ -97,8 +98,9 @@ async function main() {
   document.getElementById('statsBtn').onclick = () => show('stats');
   initSettings();
   initPicker(ctx);
+  ctx.show = show;
   refreshHeader();
-  show('quiz');
+  show('home');
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(() => {});

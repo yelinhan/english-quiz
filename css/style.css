@@ -336,6 +336,25 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 .chart .day { font-size: .68rem; color: var(--sub); }
 .chart .col.today .day { color: var(--accent-ink); font-weight: 700; }
 
+/* ---------- 홈 대시보드 ---------- */
+.todo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px 14px;
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 8px;
+  text-align: left;
+}
+.todo:last-child { margin-bottom: 0; }
+.todo.done { opacity: .55; }
+
 /* ---------- 월간 학습 캘린더 ---------- */
 .cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .cal-nav h3 { margin: 0; font-size: .95rem; }

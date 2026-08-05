@@ -26,6 +26,15 @@ export const store = {
   saveCorrections: (c) => set('eq.corrections', c),
   goal: () => get('eq.goal', 20),
   saveGoal: (g) => set('eq.goal', g),
+  writingDays: () => get('eq.writingDays', []),
+  markWritingDay: () => {
+    const days = get('eq.writingDays', []);
+    const t = todayStr();
+    if (!days.includes(t)) {
+      days.push(t);
+      set('eq.writingDays', days);
+    }
+  },
   apiKey: () => localStorage.getItem('eq.apikey') || '',
   saveApiKey: (k) => localStorage.setItem('eq.apikey', k),
 };

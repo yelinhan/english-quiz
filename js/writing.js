@@ -157,6 +157,7 @@ export function render(el, ctx) {
         const msg = `문장 영작 첨삭해줘!\n한국어: ${prompt}\n내 영어: ${text}`;
         try {
           await navigator.clipboard.writeText(msg);
+          store.markWritingDay(); // 복사 흐름은 첨삭 기록이 안 남아서 홈 체크용 마커
           copyBtn.textContent = '✓ 복사됐어요';
           setTimeout(() => { copyBtn.textContent = '📋 복사해서 Claude에 첨삭받기'; }, 2000);
         } catch {
