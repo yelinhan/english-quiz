@@ -20,9 +20,24 @@
         "note_ko": "관사 누락 + 원어민은 'go to the movies'가 제일 자연스러워요."
       },
       {
-        "said": "it is somewhat ambiguous",
-        "better": "it was kinda ambiguous",
-        "note_ko": "somewhat은 격식체·문어체. 말할 땐 kinda나 pretty가 자연스러워요."
+        "said": "it is like somewhat ambiguous thing",
+        "better": "it was pretty ambiguous",
+        "note_ko": "somewhat은 격식체·문어체 → kinda/pretty. '~한 것(thing)' 직역도 빼요."
+      },
+      {
+        "said": "I couldn't understand what the movie's content is",
+        "better": "I didn't really get what it was about",
+        "note_ko": "'내용' 직역 함정. 영화 내용은 what it's about, 이해하다는 get이 자연스러워요."
+      },
+      {
+        "said": "I found some reviews",
+        "better": "I looked up some reviews",
+        "note_ko": "found는 우연히 발견한 느낌. 일부러 찾아본 건 look up."
+      },
+      {
+        "said": "after I found that, I can understand what the movie is",
+        "better": "and then it finally clicked",
+        "note_ko": "'그제야 이해됐다'는 it clicked가 딱이에요. 과거 얘기는 시제도 과거로."
       },
       {
         "said": "It is very wonderful experience to me",

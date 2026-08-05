@@ -1131,5 +1131,38 @@
   "added": "2026-08-04",
   "source": "시작 세트",
   "example_ko": "왜 파란색이냐고? 딱히 이유는 없어."
+ },
+ {
+  "id": "chunk-f4e6b14f",
+  "type": "chunk",
+  "ko": "무슨 내용인지 잘 모르겠더라",
+  "en": "I didn't really get what it was about.",
+  "example": "Cool movie, but I didn't really get what it was about.",
+  "category": "한국식 영어 탈출",
+  "added": "2026-08-05",
+  "source": "전화영어",
+  "example_ko": "괜찮은 영화였는데, 무슨 내용인지 잘 모르겠더라."
+ },
+ {
+  "id": "chunk-39659ea3",
+  "type": "chunk",
+  "ko": "그제야 이해됐어",
+  "en": "It finally clicked.",
+  "example": "After the interview, it finally clicked.",
+  "category": "한국식 영어 탈출",
+  "added": "2026-08-05",
+  "source": "전화영어",
+  "example_ko": "인터뷰를 보고 나서야 그제야 이해됐어."
+ },
+ {
+  "id": "chunk-6cde904d",
+  "type": "chunk",
+  "ko": "(정보를) 찾아보다",
+  "en": "look up",
+  "example": "I looked up some reviews after the movie.",
+  "category": "한국식 영어 탈출",
+  "added": "2026-08-05",
+  "source": "전화영어",
+  "example_ko": "영화 보고 나서 리뷰를 좀 찾아봤어."
  }
 ]
