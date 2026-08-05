@@ -52,6 +52,14 @@ export function render(el, ctx) {
       ${l.feedback_ko ? `
         <h2 class="section-title">💬 피드백</h2>
         <div class="card-box notice">${esc(l.feedback_ko)}</div>` : ''}
+      ${(l.script_en || []).length ? `
+        <h2 class="section-title">📜 수업 스크립트 (교정판)</h2>
+        <div class="card-box">
+          ${l.script_en.map((s) => `
+            <div class="upgrade-row" style="${s.who === 'me' ? '' : 'color:var(--sub)'}">
+              <strong>${s.who === 'me' ? '🙋 Me' : '🧑‍🏫 Tutor'}</strong> — ${esc(s.text)}
+            </div>`).join('')}
+        </div>` : ''}
       </div>`;
     el.querySelector('#backBtn').onclick = drawList;
     el.scrollIntoView();

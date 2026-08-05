@@ -50,6 +50,21 @@
         "note_ko": "good/helpful은 'for me'예요 (to me 아님). 추천 요청 문장은 통으로 외워두면 좋아요."
       }
     ],
-    "feedback_ko": "발음·이해력은 좋다는 평가. 교정 포인트: ① -ed 발음을 한 음절로 (watched를 watch-it처럼 두 음절로 말하지 않기) ② 관사 a/the 습관적 누락 ③ good/helpful + for me ④ 격식체 어휘(somewhat, titled)를 캐주얼하게 (kinda, called). 튜터가 폰·자막을 영어로 바꾸는 환경 세팅을 추천했고, 다음 시간에 유튜브 채널을 추천해주기로 함."
+    "feedback_ko": "발음·이해력은 좋다는 평가. 교정 포인트: ① -ed 발음을 한 음절로 (watched를 watch-it처럼 두 음절로 말하지 않기) ② 관사 a/the 습관적 누락 ③ good/helpful + for me ④ 격식체 어휘(somewhat, titled)를 캐주얼하게 (kinda, called). 튜터가 폰·자막을 영어로 바꾸는 환경 세팅을 추천했고, 다음 시간에 유튜브 채널을 추천해주기로 함.",
+    "script_en": [
+      { "who": "tutor", "text": "Hi! How are you doing? Are you ready for class? Great — textbook, Lesson 9: movies. You indicated that you like going to the movies. What's your favorite genre, and why do you like it?" },
+      { "who": "me", "text": "Well, I love watching movies — I go to the movies pretty often. My favorite genre is sci-fi, because I love imagining what's going on behind the story. For example, a few days ago I watched a Korean movie called Hope. When it ended, I didn't really get what it was about — it was pretty ambiguous. So I looked up some reviews and interviews with the actors and the director, and then it finally clicked. That was a really cool experience, so I love that kind of movie a lot." },
+      { "who": "tutor", "text": "Good job — you understood the question perfectly, and your pronunciation was good. One thing: 'watched' is one syllable, not 'watch-it.' Pretty much any word ending in -ed blends together — watched, learned." },
+      { "who": "tutor", "text": "Vocabulary — great use of the word 'ambiguous.' That's a 10. Grammar: you said 'I enjoy watching movie' once, then said it right — it's 'movies,' because we're talking about more than one. Remember your articles too: 'I go to a movie theater to watch a movie.' And instead of 'the film is titled Hope,' just say 'the movie is called Hope' — 'is titled' isn't incorrect, but it sounds stiff." },
+      { "who": "me", "text": "What's the difference between 'film' and 'movie'?" },
+      { "who": "tutor", "text": "There's no real difference. I'd say 90% of Americans say 'movie.' People who went to college, or who think of movies as art, say 'film.' Movies are entertainment — like Spider-Man; film is art. I have a film degree, and I called them movies until I started college. People who just watch movies for fun don't call them films." },
+      { "who": "tutor", "text": "Also, Americans say 'going to the movies,' while British people say 'going to the cinema' — they don't really say 'movie theater.' There's slang too: a 'flick.' You want to catch a flick? It comes from the projector light flickering on the screen. Some people also say 'a show' — we're going to the show." },
+      { "who": "tutor", "text": "And there are time words too: a 'matinee' is a movie that shows in the afternoon. It's originally a French word meaning 'morning' — English borrowed it in the 19th century for daytime shows. If you see a movie around 11 or 12, you'd say, 'We're going to see a matinee.'" },
+      { "who": "me", "text": "Can I ask something? Do you know any good YouTube channels for learning English?" },
+      { "who": "tutor", "text": "I can't answer right now, but I'll look for some resources during my break and put three or four channels in your notes. YouTube definitely helps — I use it for Spanish myself." },
+      { "who": "tutor", "text": "Also, little things you can do: change your phone settings to English, keep English subtitles on even when you're watching something in Korean, and change your TV and Siri too. Surround yourself with the language as much as you can, especially if you're not in an English-speaking environment." },
+      { "who": "me", "text": "I've always heard you should find videos you're actually interested in, but I don't know which channels would work for me." },
+      { "who": "tutor", "text": "I'll find you some channels. Talk to you next class!" }
+    ]
   }
 ]
