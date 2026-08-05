@@ -9,6 +9,7 @@
   --accent-soft: #DCEEEA;
   --accent-ink: #0E6A62;
   --warm: #E8833A;
+  --warm-soft: #FDEEDF;
   --bad: #D64545;
   --bad-soft: #FFECEC;
   --shadow: 0 8px 24px rgba(23, 50, 46, .10);
@@ -25,6 +26,7 @@
     --accent-soft: #123A35;
     --accent-ink: #7BE8DC;
     --warm: #F09A57;
+    --warm-soft: #3D2C1C;
     --bad: #F27D7D;
     --bad-soft: #3B2323;
     --shadow: 0 8px 24px rgba(0, 0, 0, .35);
@@ -131,6 +133,30 @@ button { font-family: inherit; cursor: pointer; }
 }
 .flashcard .cloze-hint { font-size: .8rem; color: var(--warm); margin-top: 10px; font-weight: 600; }
 .blank { color: var(--accent); font-weight: 800; letter-spacing: .05em; }
+.blank-box {
+  display: inline-block;
+  height: 1.15em;
+  background: var(--line);
+  border-radius: 6px;
+  vertical-align: text-bottom;
+}
+.cloze-result { font-size: .95rem; font-weight: 700; margin-top: 14px; }
+.cloze-result.ok { color: var(--accent-ink); }
+.cloze-result.no { color: var(--bad); }
+.cloze-form { display: flex; gap: 8px; width: 100%; }
+.cloze-form input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 13px 14px;
+}
+.cloze-form input:focus { outline: none; border-color: var(--accent); }
+.cloze-form .primary { width: auto; padding: 0 22px; }
 
 .grade-btns { display: flex; gap: 12px; width: 100%; }
 .grade-btns button {
@@ -143,6 +169,15 @@ button { font-family: inherit; cursor: pointer; }
 }
 .btn-x { background: var(--bad-soft); color: var(--bad); }
 .btn-o { background: var(--accent); color: #fff; }
+
+/* Anki식 4버튼 채점 */
+.grade-btns.four { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.grade-btns.four button { padding: 11px 0; font-size: .92rem; }
+.grade-btns .sub { display: block; font-size: .68rem; font-weight: 600; opacity: .75; margin-top: 3px; }
+.btn-again { background: var(--bad-soft); color: var(--bad); }
+.btn-hard { background: var(--warm-soft); color: var(--warm); }
+.btn-good { background: var(--accent); color: #fff; }
+.btn-easy { background: var(--accent-soft); color: var(--accent-ink); }
 
 .done-box { text-align: center; padding: 48px 12px; }
 .done-box .big { font-size: 2.4rem; }

@@ -1,6 +1,6 @@
 // 한→영 플래시카드 퀴즈
 import { esc } from './store.js';
-import { grade, buildSession } from './srs.js';
+import { buildSession, answerCard, previewIntervals } from './srs.js';
 
 export function render(el, ctx) {
   const session = buildSession(ctx.cards);
@@ -21,9 +21,10 @@ export function render(el, ctx) {
       return;
     }
     const c = session[idx];
+    const p = previewIntervals(c.id);
     el.innerHTML = `
       <div class="cardzone">
-        <div class="session-info"><span>${idx + 1} / ${session.length}</span><span class="pill">${esc(c.category || '표현')}</span></div>
+        <div class="session-info"><span>남은 카드 ${session.length - idx}</span><span class="pill">${esc(c.category || '표현')}</span></div>
         <div class="flashcard" id="card">
           ${flipped
             ? `<div class="tag">${esc(c.type === 'word' ? 'Word' : 'Chunk')} · ${esc(c.category || '')}</div>
@@ -32,9 +33,11 @@ export function render(el, ctx) {
             : `<div class="ko">${esc(c.ko)}</div>
                <div class="hint">탭해서 정답 보기</div>`}
         </div>
-        <div class="grade-btns" ${flipped ? '' : 'style="visibility:hidden"'}>
-          <button class="btn-x">✕ 몰라요</button>
-          <button class="btn-o">⭕ 알아요</button>
+        <div class="grade-btns four" ${flipped ? '' : 'style="visibility:hidden"'}>
+          <button class="btn-again" data-r="0">다시<span class="sub">${p.again}</span></button>
+          <button class="btn-hard" data-r="1">어려움<span class="sub">${p.hard}</span></button>
+          <button class="btn-good" data-r="2">알맞음<span class="sub">${p.good}</span></button>
+          <button class="btn-easy" data-r="3">쉬움<span class="sub">${p.easy}</span></button>
         </div>
       </div>`;
 
@@ -42,12 +45,13 @@ export function render(el, ctx) {
       flipped = !flipped;
       draw();
     };
-    el.querySelector('.btn-x').onclick = () => answer(false);
-    el.querySelector('.btn-o').onclick = () => answer(true);
+    el.querySelectorAll('.grade-btns button').forEach((b) => {
+      b.onclick = () => answer(Number(b.dataset.r));
+    });
   }
 
-  function answer(ok) {
-    grade(session[idx].id, ok);
+  function answer(rating) {
+    answerCard(session, idx, rating);
     idx++;
     flipped = false;
     ctx.refreshHeader();

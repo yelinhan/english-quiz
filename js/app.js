@@ -1,5 +1,6 @@
 // 초기화, 데이터 로드, 탭 라우팅, 헤더
 import { store } from './store.js';
+import { migrate } from './srs.js';
 import { todayCount, computeStreak } from './stats.js';
 import * as quiz from './quiz.js';
 import * as cloze from './cloze.js';
@@ -66,6 +67,7 @@ function initSettings() {
   document.getElementById('exportData').onclick = () => {
     const dump = {
       exported: new Date().toISOString(),
+      srsVersion: store.srsVersion(),
       srs: store.srs(),
       log: store.log(),
       custom: store.custom(),
@@ -81,6 +83,7 @@ function initSettings() {
 }
 
 async function main() {
+  migrate();
   vocabBase = await loadJson('data/vocab.json', []);
   ctx.lessons = await loadJson('data/lessons.json', []);
   reloadCards();

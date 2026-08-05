@@ -12,6 +12,8 @@ const set = (k, v) => localStorage.setItem(k, JSON.stringify(v));
 export const store = {
   srs: () => get('eq.srs', {}),
   saveSrs: (s) => set('eq.srs', s),
+  srsVersion: () => get('eq.srsVersion', 1),
+  saveSrsVersion: (v) => set('eq.srsVersion', v),
   log: () => get('eq.log', []),
   addLog: (entry) => {
     const l = get('eq.log', []);
