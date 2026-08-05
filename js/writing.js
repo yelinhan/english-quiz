@@ -49,12 +49,38 @@ const PROMPTS = [
   '오늘 한 실수가 계속 신경 쓰여요.',
 ];
 
+// 관사(a/the)·시제를 집중적으로 연습하는 세트 — 한국인이 자주 틀리는 함정 위주
+const GRAMMAR_PROMPTS = [
+  // 관사: a(첫 언급) vs the(아는 것) vs 무관사(일반 복수·식사 등)
+  '어제 영화를 봤는데, 그 영화가 생각보다 별로였어요.',
+  '저는 원래 영화 보는 걸 좋아해요.',
+  '아침에 커피 한 잔 마시면서 하루를 시작해요.',
+  '집 근처에 카페가 새로 생겼는데, 거기 커피가 진짜 맛있어요.',
+  '강아지를 키우고 싶은데 지금 집이 너무 좁아요.',
+  '점심 먹고 나서 산책을 좀 했어요.',
+  '해 지는 거 보러 한강에 갔어요.',
+  '요즘 기타를 배우기 시작했어요.',
+  // 시제: 과거 vs 현재완료, 과거진행, used to, 미래
+  '그 식당 가본 적 있어요. 지난달에 한 번 갔었어요.',
+  '이 회사에서 일한 지 3년 됐어요.',
+  '샤워하고 있는데 택배가 왔어요.',
+  '예전에는 커피를 안 마셨는데 요즘은 매일 마셔요.',
+  '아직 그 영화 못 봤어요. 이번 주말에 보려고요.',
+  '방금 점심 먹었는데 벌써 배고파요.',
+  '어렸을 때는 부산에 살았어요.',
+  '지금 막 나가려던 참이었어요.',
+  '다음 주에 휴가 가요. 벌써 설레요.',
+  '핸드폰을 잃어버렸는데 어디서 잃어버렸는지 모르겠어요.',
+];
+
 export function render(el, ctx) {
   let mode = 'tr'; // 탭에 들어올 때마다 문장 영작이 기본
+  let set = 'all'; // all: 전체 랜덤, grammar: 관사·시제 집중
   let prompt = pickPrompt();
 
   function pickPrompt() {
-    return PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+    const pool = set === 'grammar' ? GRAMMAR_PROMPTS : [...PROMPTS, ...GRAMMAR_PROMPTS];
+    return pool[Math.floor(Math.random() * pool.length)];
   }
 
   function draw() {
@@ -65,6 +91,11 @@ export function render(el, ctx) {
         <button data-mode="tr" class="${mode === 'tr' ? 'on' : ''}">문장 영작</button>
         <button data-mode="free" class="${mode === 'free' ? 'on' : ''}">자유 영작</button>
       </div>
+      ${mode === 'tr' ? `
+      <div class="chip-row">
+        <button data-set="all" class="${set === 'all' ? 'on' : ''}">🎲 전체 랜덤</button>
+        <button data-set="grammar" class="${set === 'grammar' ? 'on' : ''}">🎯 관사·시제 집중</button>
+      </div>` : ''}
       ${key || mode === 'tr' ? '' : `
         <div class="card-box notice">
           영작 첨삭에는 Anthropic API 키가 필요해요.<br>
@@ -79,7 +110,9 @@ export function render(el, ctx) {
           </div>
         </div>` : `
         <div class="card-box">
-          <p class="notice" style="margin-top:0">아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.</p>
+          <p class="notice" style="margin-top:0">${set === 'grammar'
+            ? '아래 문장을 영어로! <b>관사(a/the)와 시제</b>에 특히 신경 써보세요.'
+            : '아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.'}</p>
           <div class="tr-prompt">${esc(prompt)}</div>
           <textarea id="writingInput" placeholder="영어로 써보세요..."></textarea>
           <div style="display:flex; justify-content:space-between; gap:8px; margin-top:10px">
@@ -93,9 +126,16 @@ export function render(el, ctx) {
       <div id="result"></div>
       <div id="history"></div>`;
 
-    el.querySelectorAll('.chip-row button').forEach((b) => {
+    el.querySelectorAll('[data-mode]').forEach((b) => {
       b.onclick = () => {
         mode = b.dataset.mode;
+        draw();
+      };
+    });
+    el.querySelectorAll('[data-set]').forEach((b) => {
+      b.onclick = () => {
+        set = b.dataset.set;
+        prompt = pickPrompt();
         draw();
       };
     });
