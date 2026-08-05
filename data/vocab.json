@@ -1186,5 +1186,16 @@
   "added": "2026-08-05",
   "source": "전화영어",
   "example_ko": "영화 보고 나서 리뷰를 좀 찾아봤어. 주소 좀 찾아볼게. 그 단어가 무슨 뜻인지 찾아봐야 했어."
+ },
+ {
+  "id": "word-5514ee08",
+  "type": "word",
+  "ko": "정신없이 바쁜",
+  "en": "hectic",
+  "example": "This week has been really hectic.",
+  "category": "쉐도잉",
+  "added": "2026-08-06",
+  "source": "쉐도잉",
+  "example_ko": "이번 주 진짜 정신없었어요."
  }
 ]
