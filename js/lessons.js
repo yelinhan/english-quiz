@@ -33,6 +33,8 @@ export function render(el, ctx) {
   function drawDetail(l) {
     el.innerHTML = `
       <button class="ghost" id="backBtn" style="margin-bottom:12px">← 목록으로</button>
+      <p class="notice" style="margin-top:0">💡 마음에 드는 표현을 길게 눌러 하이라이트하면 단어장에 추가할 수 있어요.</p>
+      <div data-pick="수업 리포트">
       <div class="card-box">
         <div class="date" style="font-size:.75rem;color:var(--sub)">${esc(l.date)}</div>
         <h3 style="margin:4px 0 8px">${esc(l.topic || '수업 리포트')}</h3>
@@ -49,7 +51,8 @@ export function render(el, ctx) {
       </div>
       ${l.feedback_ko ? `
         <h2 class="section-title">💬 피드백</h2>
-        <div class="card-box notice">${esc(l.feedback_ko)}</div>` : ''}`;
+        <div class="card-box notice">${esc(l.feedback_ko)}</div>` : ''}
+      </div>`;
     el.querySelector('#backBtn').onclick = drawList;
     el.scrollIntoView();
   }

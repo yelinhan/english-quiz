@@ -8,6 +8,7 @@ import * as writing from './writing.js';
 import * as lessons from './lessons.js';
 import * as browse from './browse.js';
 import * as stats from './stats.js';
+import { initPicker } from './picker.js';
 
 const views = { quiz, cloze, writing, lessons, browse, stats };
 const ctx = { cards: [], lessons: [], refreshHeader, reloadCards };
@@ -93,6 +94,7 @@ async function main() {
   });
   document.getElementById('statsBtn').onclick = () => show('stats');
   initSettings();
+  initPicker(ctx);
   refreshHeader();
   show('quiz');
 

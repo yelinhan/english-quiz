@@ -71,7 +71,7 @@ export function render(el, ctx) {
 
 function renderResult(r) {
   return `
-    <div class="card-box">
+    <div class="card-box" data-pick="영작 첨삭">
       ${(r.corrections || []).map((c, i) => `
         <div class="correction">
           ${c.is_natural

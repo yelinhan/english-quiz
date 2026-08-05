@@ -358,6 +358,36 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
   color: var(--sub);
 }
 
+/* ---------- 표현 하이라이트 → 단어장 추가 ---------- */
+[data-pick]::selection,
+[data-pick] *::selection { background: #FFE289; color: #17322E; }
+#pickBtn {
+  position: fixed;
+  z-index: 60;
+  border: none;
+  border-radius: 99px;
+  background: var(--accent);
+  color: #fff;
+  font-size: .84rem;
+  font-weight: 700;
+  padding: 9px 15px;
+  box-shadow: var(--shadow);
+}
+#pickToast {
+  position: fixed;
+  z-index: 70;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  background: var(--ink);
+  color: var(--bg);
+  border-radius: 99px;
+  padding: 10px 18px;
+  font-size: .85rem;
+  font-weight: 600;
+  box-shadow: var(--shadow);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .flashcard, .prog i { transition: none; }
 }

@@ -52,6 +52,31 @@ const SCHEMA = {
   additionalProperties: false,
 };
 
+// 하이라이트로 추가한 표현의 한국어 뜻 자동 생성 (실패해도 조용히 null)
+export async function translateChunk(en, sentence, apiKey) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 100,
+      messages: [{
+        role: 'user',
+        content: `Give a short natural Korean gloss (vocab-list style, e.g. "옛날에는", "약속 있어") for the English expression "${en}"${sentence ? ` as used in: "${sentence}"` : ''}. Reply with ONLY the Korean gloss.`,
+      }],
+    }),
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const block = (data.content || []).find((b) => b.type === 'text');
+  return block ? block.text.trim() : null;
+}
+
 export async function correctWriting(text, apiKey) {
   let res;
   try {
