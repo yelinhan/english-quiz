@@ -9,10 +9,9 @@ import * as writing from './writing.js';
 import * as lessons from './lessons.js';
 import * as tutor from './tutor.js';
 import * as browse from './browse.js';
-import * as stats from './stats.js';
 import { initPicker } from './picker.js';
 
-const views = { home, quiz, cloze, writing, lessons, tutor, browse, stats };
+const views = { home, quiz, cloze, writing, lessons, tutor, browse };
 const ctx = { cards: [], lessons: [], feedback: [], refreshHeader, reloadCards };
 let vocabBase = [];
 let currentView = 'home';
@@ -95,7 +94,7 @@ async function main() {
   document.querySelectorAll('.tabbar button').forEach((b) => {
     b.onclick = () => show(b.dataset.view);
   });
-  document.getElementById('statsBtn').onclick = () => show('stats');
+  document.getElementById('statsBtn').onclick = () => show('home');
   initSettings();
   initPicker(ctx);
   ctx.show = show;
