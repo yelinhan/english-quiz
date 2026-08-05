@@ -103,6 +103,14 @@ async function main() {
   show('home');
 
   if ('serviceWorker' in navigator) {
+    // 새 서비스워커가 넘겨받으면 한 번 새로고침 — 구/신버전 파일이 섞여 도는 것 방지
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController || reloaded) return;
+      reloaded = true;
+      location.reload();
+    });
     navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 }
