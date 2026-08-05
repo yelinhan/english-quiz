@@ -63,9 +63,10 @@ export function render(el, ctx) {
     drawExport();
   }
 
-  // 예문 문자열을 문장 단위로 분할 (마침표/물음표/느낌표 뒤 대문자·따옴표 시작 기준)
+  // 예문 문자열을 문장 단위로 분할 (구형 Safari 호환을 위해 lookbehind 미사용)
   function splitSentences(s) {
-    return (s || '').split(/(?<=[.?!…"'"'])\s+(?=[A-Z"'"'])/).filter(Boolean);
+    const m = (s || '').match(/[^.?!…]+[.?!…]+["'"']?|[^.?!…]+$/g);
+    return (m || []).map((x) => x.trim()).filter(Boolean);
   }
 
   function openCard(c) {
