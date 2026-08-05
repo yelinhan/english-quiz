@@ -445,6 +445,33 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
   box-shadow: var(--shadow);
 }
 
+/* ---------- 단어장 팝업 카드 ---------- */
+.vocab-item { cursor: pointer; }
+.vocab-item:hover { background: var(--accent-soft); }
+.wd-syns { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.wd-syn {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: .88rem;
+  font-weight: 700;
+}
+.wd-label { font-size: .78rem; color: var(--sub); margin-bottom: 6px; }
+.wd-ex { margin: 0 0 10px; padding-left: 18px; }
+.wd-ex li { font-size: .9rem; line-height: 1.6; margin-bottom: 4px; }
+.wd-exko {
+  font-size: .82rem;
+  color: var(--sub);
+  line-height: 1.6;
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.wd-meta { font-size: .74rem; color: var(--sub); }
+.ghost.danger { color: var(--bad); border-color: var(--bad-soft); }
+
 @media (prefers-reduced-motion: reduce) {
   .flashcard, .prog i { transition: none; }
 }

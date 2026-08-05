@@ -14,7 +14,9 @@ export function render(el, ctx) {
     </div>
     <div class="chip-row" id="chips"></div>
     <div id="list"></div>
-    <div id="exportZone"></div>`;
+    <div id="exportZone"></div>
+    <dialog id="wordDialog"></dialog>`;
+  const dlg = el.querySelector('#wordDialog');
 
   const chipsEl = el.querySelector('#chips');
   const listEl = el.querySelector('#list');
@@ -43,14 +45,104 @@ export function render(el, ctx) {
     listEl.innerHTML = `
       <div class="card-box">
         ${filtered.map((c) => `
-          <div class="vocab-item">
+          <div class="vocab-item" data-id="${esc(c.id)}">
             <div class="ko">${esc(c.ko)} <span class="pill" style="float:right">${esc(c.category || '')}</span></div>
             <div class="en">${esc(c.en)}</div>
             ${c.example ? `<div class="ex">${esc(c.example)}</div>` : ''}
           </div>`).join('') || '<p class="notice">검색 결과가 없어요.</p>'}
         <p class="count-note">${filtered.length}개 표현</p>
       </div>`;
+    listEl.querySelectorAll('.vocab-item').forEach((item) => {
+      item.onclick = () => {
+        const sel = document.getSelection();
+        if (sel && !sel.isCollapsed) return; // 텍스트 드래그 중에는 무시
+        const card = ctx.cards.find((c) => c.id === item.dataset.id);
+        if (card) openCard(card);
+      };
+    });
     drawExport();
+  }
+
+  // 예문 문자열을 문장 단위로 분할 (마침표/물음표/느낌표 뒤 대문자·따옴표 시작 기준)
+  function splitSentences(s) {
+    return (s || '').split(/(?<=[.?!…"'"'])\s+(?=[A-Z"'"'])/).filter(Boolean);
+  }
+
+  function openCard(c) {
+    const synonyms = c.en.split('/').map((v) => v.trim()).filter(Boolean);
+    const sents = splitSentences(c.example);
+    dlg.innerHTML = `
+      <button class="dialog-close" id="wdClose">✕</button>
+      <h2>${esc(c.ko)}</h2>
+      <div class="wd-syns">${synonyms.map((s) => `<span class="wd-syn">${esc(s)}</span>`).join('')}</div>
+      ${sents.length ? `
+        <div class="wd-label">예문</div>
+        <ul class="wd-ex">${sents.map((s) => `<li>${esc(s)}</li>`).join('')}</ul>` : ''}
+      ${c.example_ko ? `<div class="wd-exko">${esc(c.example_ko)}</div>` : ''}
+      <div class="wd-meta">${esc(c.category || '')}${c.source ? ` · ${esc(c.source)}` : ''}${c.added ? ` · ${esc(c.added)}` : ''}</div>
+      <div class="dialog-actions">
+        <button class="ghost danger" id="wdDelete">삭제</button>
+        <button class="ghost" id="wdEdit">수정</button>
+        <button class="primary" id="wdOk">닫기</button>
+      </div>`;
+    dlg.showModal();
+    dlg.querySelector('#wdClose').onclick = () => dlg.close();
+    dlg.querySelector('#wdOk').onclick = () => dlg.close();
+    dlg.querySelector('#wdDelete').onclick = () => removeCard(c);
+    dlg.querySelector('#wdEdit').onclick = () => openEdit(c);
+  }
+
+  function openEdit(c) {
+    const isCustom = c.id.startsWith('custom-');
+    dlg.innerHTML = `
+      <button class="dialog-close" id="wdClose">✕</button>
+      <h2>표현 수정</h2>
+      <label class="field"><span>한국어 뜻</span><input id="edKo" value="${esc(c.ko)}"></label>
+      <label class="field"><span>영어 (동의어는 / 로 구분)</span><input id="edEn" value="${esc(c.en)}"></label>
+      <label class="field"><span>예문</span><input id="edEx" value="${esc(c.example || '')}"></label>
+      <label class="field"><span>예문 해석</span><input id="edExKo" value="${esc(c.example_ko || '')}"></label>
+      ${isCustom ? '' : '<p class="notice">기본 단어장 카드라서 이 수정은 이 기기에만 적용돼요. 영구 반영은 "동기화" 워크플로를 이용해주세요.</p>'}
+      <div class="dialog-actions">
+        <button class="ghost" id="edCancel">취소</button>
+        <button class="primary" id="edSave">저장</button>
+      </div>`;
+    dlg.querySelector('#wdClose').onclick = () => dlg.close();
+    dlg.querySelector('#edCancel').onclick = () => openCard(c);
+    dlg.querySelector('#edSave').onclick = () => {
+      const upd = {
+        ko: dlg.querySelector('#edKo').value.trim(),
+        en: dlg.querySelector('#edEn').value.trim(),
+        example: dlg.querySelector('#edEx').value.trim(),
+        example_ko: dlg.querySelector('#edExKo').value.trim(),
+      };
+      if (!upd.ko || !upd.en) return;
+      if (isCustom) {
+        const custom = store.custom();
+        const i = custom.findIndex((x) => x.id === c.id);
+        if (i >= 0) { custom[i] = { ...custom[i], ...upd }; store.saveCustom(custom); }
+      } else {
+        const ov = store.overrides();
+        ov[c.id] = { ...ov[c.id], ...upd };
+        store.saveOverrides(ov);
+      }
+      ctx.reloadCards();
+      drawList();
+      openCard(ctx.cards.find((x) => x.id === c.id));
+    };
+  }
+
+  function removeCard(c) {
+    if (!confirm(`"${c.ko}" 카드를 삭제할까요?`)) return;
+    if (c.id.startsWith('custom-')) {
+      store.saveCustom(store.custom().filter((x) => x.id !== c.id));
+    } else {
+      const del = store.deleted();
+      if (!del.includes(c.id)) del.push(c.id);
+      store.saveDeleted(del);
+    }
+    ctx.reloadCards();
+    dlg.close();
+    drawList();
   }
 
   function drawExport() {

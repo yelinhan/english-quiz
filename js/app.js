@@ -27,7 +27,12 @@ async function loadJson(path, fallback) {
 }
 
 function reloadCards() {
-  ctx.cards = [...vocabBase, ...store.custom()];
+  // 기본 단어장에 로컬 수정(overrides)·삭제(deleted)를 덧입힌다 (단어장 탭에서 편집)
+  const ov = store.overrides();
+  const del = new Set(store.deleted());
+  ctx.cards = [...vocabBase, ...store.custom()]
+    .filter((c) => !del.has(c.id))
+    .map((c) => (ov[c.id] ? { ...c, ...ov[c.id] } : c));
 }
 
 function refreshHeader() {
@@ -74,6 +79,8 @@ function initSettings() {
       log: store.log(),
       custom: store.custom(),
       corrections: store.corrections(),
+      overrides: store.overrides(),
+      deleted: store.deleted(),
     };
     const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
