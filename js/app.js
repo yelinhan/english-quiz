@@ -6,12 +6,13 @@ import * as quiz from './quiz.js';
 import * as cloze from './cloze.js';
 import * as writing from './writing.js';
 import * as lessons from './lessons.js';
+import * as tutor from './tutor.js';
 import * as browse from './browse.js';
 import * as stats from './stats.js';
 import { initPicker } from './picker.js';
 
-const views = { quiz, cloze, writing, lessons, browse, stats };
-const ctx = { cards: [], lessons: [], refreshHeader, reloadCards };
+const views = { quiz, cloze, writing, lessons, tutor, browse, stats };
+const ctx = { cards: [], lessons: [], feedback: [], refreshHeader, reloadCards };
 let vocabBase = [];
 let currentView = 'quiz';
 
@@ -87,6 +88,7 @@ async function main() {
   migrate();
   vocabBase = await loadJson('data/vocab.json', []);
   ctx.lessons = await loadJson('data/lessons.json', []);
+  ctx.feedback = await loadJson('data/feedback.json', []);
   reloadCards();
 
   document.querySelectorAll('.tabbar button').forEach((b) => {

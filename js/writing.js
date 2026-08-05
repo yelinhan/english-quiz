@@ -50,7 +50,7 @@ const PROMPTS = [
 ];
 
 export function render(el, ctx) {
-  let mode = localStorage.getItem('eq.writingMode') || 'tr';
+  let mode = 'tr'; // 탭에 들어올 때마다 문장 영작이 기본
   let prompt = pickPrompt();
 
   function pickPrompt() {
@@ -96,7 +96,6 @@ export function render(el, ctx) {
     el.querySelectorAll('.chip-row button').forEach((b) => {
       b.onclick = () => {
         mode = b.dataset.mode;
-        localStorage.setItem('eq.writingMode', mode);
         draw();
       };
     });
