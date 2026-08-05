@@ -114,7 +114,21 @@ export function render(el, ctx) {
       copyBtn.onclick = async () => {
         const text = el.querySelector('#writingInput').value.trim();
         if (!text) return;
-        const msg = `문장 영작 첨삭 부탁해!\n한국어: ${prompt}\n내 영어: ${text}`;
+        const msg = [
+          '영어 문장 영작 연습을 했는데 첨삭을 부탁해.',
+          '',
+          '[내 정보] 한국인 영어 학습자, OPIc IH 수준. 외국계 기업 취업을 준비 중이라 자연스럽고 캐주얼한 회화체를 연습하고 있어. 문법 오류보다 "원어민이 실제로 이렇게 말하나"를 기준으로 봐줘. 딱딱한 격식체("somewhat", "extremely")보다 캐주얼한 표현("kinda", "really")을 추천해줘.',
+          '',
+          `[과제 문장(한국어)] ${prompt}`,
+          `[내가 쓴 영어] ${text}`,
+          '',
+          '[원하는 첨삭 형식]',
+          '1. 내 문장을 최대한 살린 자연스러운 교정본',
+          '2. 원어민이 흔히 쓰는 다른 표현 1~2개 (캐주얼한 구어체로)',
+          '3. 뭐가 왜 어색했는지 한국어로 짧고 친근하게 설명 — 특히 한국어 직역 때문에 생긴 어색함이면 꼭 짚어줘',
+          '4. 외울 만한 재사용 가능한 표현이 있으면 "한국어 뜻 | 영어 | 짧은 예문" 표로 제안해줘',
+          '5. 마지막에 소리 내어 읽을 최종 문장 하나를 골라줘',
+        ].join('\n');
         try {
           await navigator.clipboard.writeText(msg);
           copyBtn.textContent = '✓ 복사됐어요';
