@@ -1,0 +1,16 @@
+# 개인 서버에서 실행용 — 이 파일만 서버에 복사해서 `docker compose up -d`
+services:
+  chunky:
+    image: ghcr.io/yelinhan/english-quiz:latest
+    container_name: chunky
+    restart: unless-stopped
+    ports:
+      - "8080:80"   # 서버 상황에 맞게 바꾸세요 (리버스 프록시 뒤라면 expose만 해도 됨)
+
+  # 자동 배포를 원하면 주석 해제 — 5분마다 새 이미지 확인 후 자동 재시작
+  # watchtower:
+  #   image: containrrr/watchtower
+  #   restart: unless-stopped
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: --interval 300 chunky
