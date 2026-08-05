@@ -336,6 +336,30 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 .chart .day { font-size: .68rem; color: var(--sub); }
 .chart .col.today .day { color: var(--accent-ink); font-weight: 700; }
 
+/* ---------- 월간 학습 캘린더 ---------- */
+.cal-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-nav h3 { margin: 0; font-size: .95rem; }
+.cal-nav button { padding: 6px 12px; }
+.cal-dow, .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.cal-dow { margin-bottom: 6px; }
+.cal-dow span { text-align: center; font-size: .68rem; color: var(--sub); }
+.cal-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+  background: var(--bg);
+  color: var(--sub);
+}
+.cal-cell.empty { background: none; }
+.cal-cell.l1 { background: var(--accent-soft); color: var(--accent-ink); }
+.cal-cell.l2 { background: var(--accent); color: #fff; }
+.cal-cell.l3 { background: var(--accent-ink); color: var(--card); font-weight: 700; }
+.cal-cell.today { outline: 2px solid var(--warm); outline-offset: 1px; }
+
 /* ---------- dialog ---------- */
 dialog {
   border: none;

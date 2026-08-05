@@ -20,6 +20,21 @@ export function todayCount(log) {
   return log.filter((e) => e.d === t).length;
 }
 
+// 월간 캘린더: 하루 학습량을 색 농도로 표시
+function calendarHtml(y, m, byDay, goal) {
+  const startDow = new Date(y, m - 1, 1).getDay();
+  const daysInMonth = new Date(y, m, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < startDow; i++) cells.push('<span class="cal-cell empty"></span>');
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ymd = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const n = byDay[ymd] || 0;
+    const lvl = n === 0 ? 0 : n >= goal ? 3 : n >= goal / 2 ? 2 : 1;
+    cells.push(`<span class="cal-cell l${lvl} ${ymd === todayStr() ? 'today' : ''}" title="${ymd}: ${n}장">${d}</span>`);
+  }
+  return cells.join('');
+}
+
 export function render(el, ctx) {
   const log = store.log();
   const streak = computeStreak(log);
@@ -61,8 +76,38 @@ export function render(el, ctx) {
         }).join('')}
       </div>
     </div>
+    <div class="card-box">
+      <div class="cal-nav">
+        <button class="ghost" id="calPrev" aria-label="이전 달">←</button>
+        <h3 id="calTitle"></h3>
+        <button class="ghost" id="calNext" aria-label="다음 달">→</button>
+      </div>
+      <div class="cal-dow">${dayNames.map((d) => `<span>${d}</span>`).join('')}</div>
+      <div class="cal-grid" id="calGrid"></div>
+      <p class="notice" style="margin-bottom:0">색이 진할수록 많이 학습한 날 · 목표(${store.goal()}장) 달성 시 제일 진해져요</p>
+    </div>
     <div class="stat-tiles" style="grid-template-columns:1fr 1fr">
       <div class="tile"><div class="num">${learned}</div><div class="lbl">학습 시작한 카드</div></div>
       <div class="tile"><div class="num">${fresh}</div><div class="lbl">남은 새 카드</div></div>
     </div>`;
+
+  const byDay = {};
+  log.forEach((e) => { byDay[e.d] = (byDay[e.d] || 0) + 1; });
+  let [calY, calM] = todayStr().split('-').map(Number);
+
+  function drawCal() {
+    el.querySelector('#calTitle').textContent = `${calY}년 ${calM}월`;
+    el.querySelector('#calGrid').innerHTML = calendarHtml(calY, calM, byDay, store.goal());
+  }
+  el.querySelector('#calPrev').onclick = () => {
+    calM--;
+    if (calM === 0) { calM = 12; calY--; }
+    drawCal();
+  };
+  el.querySelector('#calNext').onclick = () => {
+    calM++;
+    if (calM === 13) { calM = 1; calY++; }
+    drawCal();
+  };
+  drawCal();
 }
