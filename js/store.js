@@ -7,7 +7,16 @@ const get = (k, dflt) => {
     return dflt;
   }
 };
-const set = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+// 쓰기 리스너: sync.js가 등록해서 변경된 키를 서버로 push
+let onWrite = null;
+export function setStoreListener(fn) {
+  onWrite = fn;
+}
+const set = (k, v) => {
+  localStorage.setItem(k, JSON.stringify(v));
+  if (onWrite) onWrite(k);
+};
 
 export const store = {
   srs: () => get('eq.srs', {}),
@@ -85,4 +94,60 @@ export function shuffle(arr) {
 export function esc(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// 예문 문자열을 문장 단위로 분할. 말줄임표(..., …)는 문장 끝이 아니라 말끝 흐림이므로
+// 경계로 보지 않는다. (구형 Safari 호환을 위해 lookbehind 미사용)
+export function splitSentences(s) {
+  const text = String(s || '');
+  const out = [];
+  let cur = '';
+  let i = 0;
+  while (i < text.length) {
+    const ch = text[i];
+    if (ch === '.' || ch === '?' || ch === '!' || ch === '…') {
+      let j = i;
+      while (j < text.length && '.?!…'.includes(text[j])) j++;
+      const punct = text.slice(i, j);
+      cur += punct;
+      if (j < text.length && (text[j] === '"' || text[j] === "'")) { cur += text[j]; j++; }
+      if (!punct.includes('..') && !punct.includes('…')) {
+        if (cur.trim()) out.push(cur.trim());
+        cur = '';
+      }
+      i = j;
+    } else {
+      cur += ch;
+      i++;
+    }
+  }
+  if (cur.trim()) out.push(cur.trim());
+  return out;
+}
+
+// "Q? A." 처럼 짧은 질문+답이 한 예문인 경우 합쳐서 해석과 개수를 맞춘다
+function mergeQuestions(parts) {
+  const out = [];
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].endsWith('?') && parts[i].length <= 25 && i + 1 < parts.length) {
+      out.push(parts[i] + ' ' + parts[i + 1]);
+      i++;
+    } else {
+      out.push(parts[i]);
+    }
+  }
+  return out;
+}
+
+// 예문·해석을 문장 단위로 짝지음. 개수가 안 맞으면 null (통짜 표시로 폴백)
+export function pairExamples(c) {
+  let en = splitSentences(c.example);
+  let ko = splitSentences(c.example_ko || '');
+  if (!en.length || !ko.length) return null;
+  if (en.length !== ko.length) {
+    en = mergeQuestions(en);
+    ko = mergeQuestions(ko);
+  }
+  if (en.length !== ko.length) return null;
+  return en.map((s, i) => ({ en: s, ko: ko[i] }));
 }

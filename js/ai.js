@@ -12,6 +12,13 @@ const TAGS_RULE = `For "tags": pick 0-3 items from this FIXED list (exact string
 ${GRAMMAR_TAGS.join(', ')}.
 Use [] when nothing was corrected (is_natural true).`;
 
+// 단어장 chunk 필드 공통 규칙 — ko에 따옴표 목록·en에 문장 통짜가 들어가는 것 방지
+const CHUNK_RULE = `For "chunk" (when not null):
+- en: just the reusable expression itself (a few words) — NOT the learner's entire sentence
+- ko: a short vocab-list style Korean gloss, plain text only — no quotation marks, no comma list
+  (if two glosses are both common, join with " / ")
+- example: ONE new short casual sentence using the expression, different from the corrected sentence`;
+
 const SYSTEM = `You are an English writing coach for a Korean native speaker.
 Learner profile: OPIc IH level. Can hold a conversation but sounds stiff/textbook-like.
 Goal: natural, casual, conversational English (aiming to work at a global company within 3 months).
@@ -22,8 +29,8 @@ Correct the learner's sentences with these priorities:
 2. Fix real grammar errors too, but naturalness matters more.
 3. Explanations must be in Korean, short and friendly.
 4. When a correction contains a reusable conversational chunk worth memorizing,
-   include it as a chunk (ko = Korean meaning, en = the chunk, example = a new short casual example).
-   Only suggest a chunk when it's genuinely reusable; otherwise set chunk to null.
+   include it as a chunk. Only when it's genuinely reusable; otherwise set chunk to null.
+   ${CHUNK_RULE}
 5. If a sentence is already natural, set is_natural to true, keep corrected identical,
    and praise briefly in explanation_ko.
 6. ${TAGS_RULE}`;
@@ -76,8 +83,9 @@ The learner sees a Korean sentence and writes it in English. Evaluate their atte
    If the attempt is already natural, set is_natural true and keep corrected identical.
 3. "alternatives" = 1-2 other natural ways a native speaker would say the Korean sentence.
 4. "explanation_ko" = short friendly Korean explanation of what to fix (or praise).
-5. "chunk" = one reusable conversational chunk from the answer worth memorizing
-   (ko/en/example), or null if nothing is genuinely reusable.
+5. "chunk" = one reusable conversational chunk from the answer worth memorizing,
+   or null if nothing is genuinely reusable.
+   ${CHUNK_RULE}
 6. ${TAGS_RULE}`;
 
 const TR_SCHEMA = {
@@ -261,12 +269,23 @@ export function gradeTranslation(ko, attempt) {
   return callAI('quality', TR_SYSTEM, `Korean sentence: ${ko}\nLearner's English attempt: ${attempt}`, TR_SCHEMA);
 }
 
+// AI가 따옴표 목록("A", "B", "C") 형태로 답한 경우 정리 → A / B / C
+function cleanGloss(s) {
+  if (!s) return s;
+  let t = s.trim();
+  const quoted = t.match(/["'“”‘’][^"'“”‘’]+["'“”‘’]/g);
+  if (quoted && quoted.length) {
+    t = quoted.map((q) => q.slice(1, -1).trim()).join(' / ');
+  }
+  return t.replace(/^["'“”‘’]+|["'“”‘’]+$/g, '').trim();
+}
+
 // 하이라이트로 추가한 표현의 한국어 뜻 자동 생성 (실패해도 조용히 null)
 export function translateChunk(en, sentence) {
   return callAI(
     'fast',
     null,
-    `Give a short natural Korean gloss (vocab-list style, e.g. "옛날에는", "약속 있어") for the English expression "${en}"${sentence ? ` as used in: "${sentence}"` : ''}. Reply with ONLY the Korean gloss.`,
+    `Give ONE short natural Korean gloss (vocab-list style, like 옛날에는 or 약속 있어) for the English expression "${en}"${sentence ? ` as used in: "${sentence}"` : ''}. If two glosses are equally common, join them with " / ". Reply with ONLY the gloss text — no quotation marks, no list, no explanation.`,
     null,
-  ).catch(() => null);
+  ).then(cleanGloss).catch(() => null);
 }

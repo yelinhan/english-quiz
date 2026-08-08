@@ -1,5 +1,5 @@
-// 앱 셸 cache-first, data/*.json network-first
-const CACHE = 'chunky-v22';
+// 앱 셸 cache-first, data/*.json network-first, /pb/(동기화 API)는 캐시 안 함
+const CACHE = 'chunky-v29';
 const SHELL = [
   './',
   'index.html',
@@ -8,6 +8,8 @@ const SHELL = [
   'js/home.js',
   'js/store.js',
   'js/srs.js',
+  'js/auth.js',
+  'js/sync.js',
   'js/quiz.js',
   'js/cloze.js',
   'js/writing.js',
@@ -37,6 +39,9 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET' || url.origin !== location.origin) return;
+
+  // 인증·동기화 API는 항상 네트워크로
+  if (url.pathname.startsWith('/pb/')) return;
 
   // 단어장/수업 데이터는 network-first (업데이트 즉시 반영)
   if (url.pathname.includes('/data/')) {

@@ -33,7 +33,8 @@ export function initPicker(ctx) {
     const sentEl = range.startContainer.parentElement;
     picked = {
       en: text,
-      example: (sentEl ? sentEl.textContent : '').trim(),
+      // 목록 글머리표(•)나 잘린 공백이 예문에 섞여 들어가지 않게 정리
+      example: (sentEl ? sentEl.textContent : '').replace(/^\s*•\s*/, '').replace(/\s+/g, ' ').trim(),
       source: host.dataset.pick,
     };
     const r = range.getBoundingClientRect();

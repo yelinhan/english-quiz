@@ -11,6 +11,27 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <div id="authGate" hidden>
+    <div class="gate-card">
+      <h1>Chunky</h1>
+      <p class="gate-sub">로그인하면 학습 기록이 서버에 저장되고<br>다른 기기에서도 이어서 학습할 수 있어요.</p>
+      <label class="field">
+        <span>아이디 <small>(2~30자)</small></span>
+        <input type="text" id="gateId" placeholder="예: chunky" autocomplete="username">
+      </label>
+      <label class="field">
+        <span>비밀번호 <small>(8자 이상)</small></span>
+        <input type="password" id="gatePw" autocomplete="current-password">
+      </label>
+      <div class="auth-actions">
+        <button id="gateLoginBtn" class="primary">로그인</button>
+        <button id="gateSignupBtn" class="ghost">회원가입</button>
+      </div>
+      <p id="gateMsg" class="auth-msg"></p>
+      <button id="gateSkip" class="gate-skip">로그인 없이 계속 <small>기록이 이 기기에만 저장돼요</small></button>
+    </div>
+  </div>
+
   <header class="top">
     <button id="statsBtn" class="streak-area" aria-label="홈으로">
       <span id="streak">🔥 0일 연속</span>
@@ -42,6 +63,30 @@
 
   <dialog id="settings">
     <h2>설정</h2>
+
+    <div id="accountOut">
+      <label class="field">
+        <span>아이디 <small>(로그인하면 학습 기록이 서버에 동기화돼요)</small></span>
+        <input type="text" id="authId" placeholder="예: chunky" autocomplete="username">
+      </label>
+      <label class="field">
+        <span>비밀번호 <small>(8자 이상)</small></span>
+        <input type="password" id="authPw" autocomplete="current-password">
+      </label>
+      <div class="auth-actions">
+        <button id="loginBtn" class="primary">로그인</button>
+        <button id="signupBtn" class="ghost">회원가입</button>
+      </div>
+    </div>
+    <div id="accountIn" hidden>
+      <div class="auth-row">
+        <span id="authWho"></span>
+        <button id="logoutBtn" class="ghost">로그아웃</button>
+      </div>
+    </div>
+    <p id="authMsg" class="auth-msg"></p>
+
+    <hr class="dialog-sep">
     <label class="field">
       <span>AI 공급자 <small>(영작 첨삭·뜻 자동 생성에 사용)</small></span>
       <select id="aiProviderInput">

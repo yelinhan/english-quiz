@@ -6,6 +6,18 @@ services:
     restart: unless-stopped
     ports:
       - "8080:80"   # 서버 상황에 맞게 바꾸세요 (리버스 프록시 뒤라면 expose만 해도 됨)
+    depends_on:
+      - pocketbase
+
+  # 인증 + 유저 데이터 DB. 앱 nginx가 /pb/ 경로로 프록시함.
+  pocketbase:
+    image: ghcr.io/yelinhan/english-quiz-pb:latest
+    container_name: chunky-pb
+    restart: unless-stopped
+    volumes:
+      - ./pb_data:/pb/pb_data   # SQLite DB — 백업은 이 폴더만 복사하면 됨
+    ports:
+      - "127.0.0.1:8090:8090"   # 관리 대시보드용 (서버 로컬 전용, SSH 터널로 접속)
 
   # 자동 배포를 원하면 주석 해제 — 5분마다 새 이미지 확인 후 자동 재시작
   # watchtower:
@@ -13,4 +25,4 @@ services:
   #   restart: unless-stopped
   #   volumes:
   #     - /var/run/docker.sock:/var/run/docker.sock
-  #   command: --interval 300 chunky
+  #   command: --interval 300 chunky chunky-pb

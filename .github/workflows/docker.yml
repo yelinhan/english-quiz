@@ -45,3 +45,24 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Extract metadata (PocketBase)
+        id: meta-pb
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}-pb
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      - name: Build and push PocketBase image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.pb
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta-pb.outputs.tags }}
+          labels: ${{ steps.meta-pb.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -2,6 +2,10 @@
 .github
 tools
 Dockerfile
+Dockerfile.pb
+Dockerfile.pb.dockerignore
 docker-compose.yml
 DEPLOY.md
 .dockerignore
+pb_migrations
+pb_data

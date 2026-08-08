@@ -1,42 +1,84 @@
 // 예문 빈칸 퀴즈: 예문 속 표현 구간 전체를 빈칸으로 뚫고 직접 타이핑해서 맞추기
-import { esc } from './store.js';
+import { esc, splitSentences, pairExamples } from './store.js';
 import { buildSession, answerCard, GOOD, HARD, AGAIN } from './srs.js';
 
 const norm = (w) => w.toLowerCase().replace(/[^a-z']/g, '');
 const normPhrase = (s) => s.split(/\s+/).map(norm).filter(Boolean).join(' ');
 
-// 예문에서 en 표현과 겹치는 단어 구간을 찾아 빈칸 처리
-function makeCloze(card) {
-  if (!card.example) return null;
-  const exWords = card.example.split(' ');
-
-  // en 필드의 각 변형(/ 구분)에 대해 예문 내 연속 일치 구간 탐색
-  const variants = card.en.split('/').map((v) => v.trim()).filter(Boolean);
+// 문장 단어 배열에서 en 변형(/ 구분)들의 연속 일치 구간 탐색 → [시작, 길이] 또는 null
+function findSpan(words, variants) {
   for (const v of variants) {
-    const vWords = v.split(' ').map(norm).filter(Boolean);
-    if (!vWords.length) continue;
-    for (let i = 0; i + vWords.length <= exWords.length; i++) {
+    const vw = v.split(' ').map(norm).filter(Boolean);
+    if (!vw.length) continue;
+    for (let i = 0; i + vw.length <= words.length; i++) {
       let match = true;
-      for (let j = 0; j < vWords.length; j++) {
-        if (norm(exWords[i + j]) !== vWords[j]) { match = false; break; }
+      for (let j = 0; j < vw.length; j++) {
+        if (norm(words[i + j]) !== vw[j]) { match = false; break; }
       }
-      if (match) return blank(exWords, i, vWords.length);
+      if (match) return [i, vw.length];
     }
-    // 부분 일치: 변형의 첫 2단어라도 찾기
-    if (vWords.length >= 2) {
-      for (let i = 0; i + 2 <= exWords.length; i++) {
-        if (norm(exWords[i]) === vWords[0] && norm(exWords[i + 1]) === vWords[1]) {
-          return blank(exWords, i, Math.min(vWords.length, exWords.length - i));
+  }
+  // 부분 일치: 변형의 첫 2단어라도 찾기
+  for (const v of variants) {
+    const vw = v.split(' ').map(norm).filter(Boolean);
+    if (vw.length < 2) continue;
+    for (let i = 0; i + 2 <= words.length; i++) {
+      if (norm(words[i]) === vw[0] && norm(words[i + 1]) === vw[1]) {
+        return [i, Math.min(vw.length, words.length - i)];
+      }
+    }
+  }
+  return null;
+}
+
+// 추가 예문에서 표현 구간을 강조 표시
+function highlight(sentence, variants) {
+  const words = sentence.split(' ');
+  const span = findSpan(words, variants);
+  if (!span) return esc(sentence);
+  return words
+    .map((w, i) => (i >= span[0] && i < span[0] + span[1] ? `<span class="blank">${esc(w)}</span>` : esc(w)))
+    .join(' ');
+}
+
+// 표현이 든 문장 하나만 빈칸 문제로 출제. 나머지 문장은 정답 공개 후에만
+// 추가 예문으로 보여준다 (미리 보이면 답이 노출되므로).
+export function makeCloze(card) {
+  if (!card.example) return null;
+  const variants = card.en.split('/').map((v) => v.trim()).filter(Boolean);
+  const pairs = pairExamples(card);
+  const sents = pairs ? pairs.map((p) => p.en) : splitSentences(card.example);
+  const kos = pairs ? pairs.map((p) => p.ko) : [];
+
+  let qIdx = 0;
+  let span = null;
+  for (let i = 0; i < sents.length; i++) {
+    span = findSpan(sents[i].split(' '), variants);
+    if (span) { qIdx = i; break; }
+  }
+  if (!span) {
+    // 폴백: 전체 예문에서 가장 긴 단어가 있는 문장을 골라 그 단어를 빈칸으로
+    let bestLen = -1;
+    for (let i = 0; i < sents.length; i++) {
+      const ws = sents[i].split(' ');
+      for (let j = 0; j < ws.length; j++) {
+        if (norm(ws[j]).length > bestLen) {
+          bestLen = norm(ws[j]).length;
+          qIdx = i;
+          span = [j, 1];
         }
       }
     }
   }
-  // 폴백: 예문에서 가장 긴 단어를 빈칸으로
-  let best = 0;
-  for (let i = 1; i < exWords.length; i++) {
-    if (norm(exWords[i]).length > norm(exWords[best]).length) best = i;
-  }
-  return blank(exWords, best, 1);
+  const words = sents[qIdx].split(' ');
+  const extras = sents
+    .map((s, i) => ({ html: highlight(s, variants), ko: kos[i] || '', idx: i }))
+    .filter((x) => x.idx !== qIdx);
+  return {
+    ...blank(words, span[0], span[1]),
+    ko: kos[qIdx] || card.example_ko || card.ko,
+    extras,
+  };
 }
 
 // 매치 구간의 단어를 전부 빈칸으로. 정답은 구간 전체(구두점 제외)
@@ -94,12 +136,16 @@ export function render(el, ctx) {
         <div class="session-info"><span>남은 카드 ${session.length - idx}</span><span class="pill">${esc(c.category || '표현')}</span></div>
         <div class="flashcard">
           <div class="ko" style="font-size:1.1rem">${asking ? cz.display : cz.reveal}</div>
-          <div class="ex">${esc(c.example_ko || c.ko)}</div>
+          <div class="ex">${esc(cz.ko)}</div>
           ${asking
             ? hintCount > 0 ? `<div class="cloze-hint">힌트: ${esc(hintStr(cz.answer, hintCount))}</div>` : ''
             : result.ok
               ? `<div class="cloze-result ok">⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용 → 어려움으로 기록)</small>' : ''}</div>`
               : `<div class="cloze-result no">✕ 정답: ${esc(cz.answer)}${result.typed ? ` · 내 답: ${esc(result.typed)}` : ''}</div>`}
+          ${!asking && cz.extras.length ? `
+            <div class="cloze-extra">
+              ${cz.extras.map((x) => `<div>${x.html}${x.ko ? `<div class="cloze-extra-ko">${esc(x.ko)}</div>` : ''}</div>`).join('')}
+            </div>` : ''}
         </div>
         ${asking ? `
           <div class="cloze-form">

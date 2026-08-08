@@ -1,5 +1,5 @@
 // 단어장 열람/검색 + 내 표현 내보내기
-import { store, esc } from './store.js';
+import { store, esc, splitSentences, pairExamples } from './store.js';
 
 export function render(el, ctx) {
   const cards = ctx.cards;
@@ -61,39 +61,6 @@ export function render(el, ctx) {
       };
     });
     drawExport();
-  }
-
-  // 예문 문자열을 문장 단위로 분할 (구형 Safari 호환을 위해 lookbehind 미사용)
-  function splitSentences(s) {
-    const m = (s || '').match(/[^.?!…]+[.?!…]+["'"']?|[^.?!…]+$/g);
-    return (m || []).map((x) => x.trim()).filter(Boolean);
-  }
-
-  // "Q? A." 처럼 짧은 질문+답이 한 예문인 경우 합쳐서 해석과 개수를 맞춘다
-  function mergeQuestions(parts) {
-    const out = [];
-    for (let i = 0; i < parts.length; i++) {
-      if (parts[i].endsWith('?') && parts[i].length <= 25 && i + 1 < parts.length) {
-        out.push(parts[i] + ' ' + parts[i + 1]);
-        i++;
-      } else {
-        out.push(parts[i]);
-      }
-    }
-    return out;
-  }
-
-  // 예문·해석을 문장 단위로 짝지음. 개수가 안 맞으면 null (통짜 표시로 폴백)
-  function pairExamples(c) {
-    let en = splitSentences(c.example);
-    let ko = splitSentences(c.example_ko || '');
-    if (!en.length || !ko.length) return null;
-    if (en.length !== ko.length) {
-      en = mergeQuestions(en);
-      ko = mergeQuestions(ko);
-    }
-    if (en.length !== ko.length) return null;
-    return en.map((s, i) => ({ en: s, ko: ko[i] }));
   }
 
   function openCard(c) {
@@ -186,7 +153,9 @@ export function render(el, ctx) {
     zone.innerHTML = `
       <h2 class="section-title">내가 추가한 표현 (${custom.length}개)</h2>
       <div class="card-box">
-        <p class="notice" style="margin-top:0">아래 내용을 복사해서 Claude Code에 붙여넣고 "동기화해줘"라고 하면 영구 단어장에 반영돼요.</p>
+        <p class="notice" style="margin-top:0">추가한 표현은 로그인만 돼 있으면 계정에 자동 저장·동기화돼요.
+        기본 단어장(모두에게 보이는 단어장)에도 넣고 싶으면 Claude Code에 "커스텀 표현 단어장에 반영해줘"라고 하면
+        DB에서 바로 가져가요 (tools/pull_custom.py). 복사는 백업용이에요.</p>
         <button class="ghost" id="copyBtn">📋 목록 복사하기</button>
         <span id="copyMsg" class="notice"></span>
       </div>`;
