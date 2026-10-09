@@ -91,7 +91,7 @@ function tagChips(tags) {
     `<button class="tag-chip" data-tag="${esc(t)}">🏷 ${esc(t)}</button>`).join('')}</div>`;
 }
 
-async function showGrammarCard(tag) {
+export async function showGrammarCard(tag) {
   if (!grammarCards) {
     try {
       grammarCards = await (await fetch('data/grammar.json', { cache: 'no-cache' })).json();

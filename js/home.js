@@ -2,6 +2,7 @@
 import { store, todayStr, addDays, esc } from './store.js';
 import { counts } from './srs.js';
 import { computeStreak, todayCount, calendarHtml } from './stats.js';
+import { showGrammarCard } from './writing.js';
 
 export function render(el, ctx) {
   const log = store.log();
@@ -27,6 +28,16 @@ export function render(el, ctx) {
   const byDay = {};
   log.forEach((e) => { byDay[e.d] = (byDay[e.d] || 0) + 1; });
   let [calY, calM] = todayStr().split('-').map(Number);
+
+  // 영작 첨삭 태그 집계 → 자주 틀리는 포인트 TOP 5 (기록 한도가 50건이라 전체 집계)
+  const tagCounts = {};
+  store.corrections().forEach((c) => {
+    const lists = c.mode === 'tr'
+      ? [c.result?.tags]
+      : (c.result?.corrections || []).map((x) => x.tags);
+    lists.forEach((tags) => (tags || []).forEach((t) => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+  });
+  const topTags = Object.entries(tagCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
   el.innerHTML = `
     <h2 class="section-title">🏠 오늘</h2>
@@ -76,10 +87,24 @@ export function render(el, ctx) {
       <div class="tile"><div class="num">${accuracy}%</div><div class="lbl">7일 정답률</div></div>
       <div class="tile"><div class="num">${learned}</div><div class="lbl">학습 시작한 카드</div></div>
       <div class="tile"><div class="num">${fresh}</div><div class="lbl">남은 새 카드</div></div>
-    </div>`;
+    </div>
+    ${topTags.length ? `
+    <div class="card-box">
+      <h3 style="margin:0 0 4px; font-size:.9rem">🏷 자주 틀리는 포인트</h3>
+      <p class="notice" style="margin:0 0 10px">영작 첨삭에서 지적된 횟수예요 · 누르면 설명 카드가 떠요</p>
+      ${topTags.map(([t, n]) => `
+        <button class="weak-row" data-tag="${esc(t)}">
+          <span class="weak-name">${esc(t)}</span>
+          <span class="weak-bar"><i style="width:${Math.round((n / topTags[0][1]) * 100)}%"></i></span>
+          <span class="weak-n">${n}회</span>
+        </button>`).join('')}
+    </div>` : ''}`;
 
   el.querySelectorAll('[data-go]').forEach((b) => {
     b.onclick = () => ctx.show(b.dataset.go);
+  });
+  el.querySelectorAll('.weak-row').forEach((b) => {
+    b.onclick = () => showGrammarCard(b.dataset.tag);
   });
 
   function drawCal() {
