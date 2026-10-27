@@ -97,13 +97,13 @@ export function previewIntervals(cardId) {
   return { again: label(AGAIN), hard: label(HARD), good: label(GOOD), easy: label(EASY) };
 }
 
-// 오늘 세션 = 복습 기한 도래 카드 전부 + 새 카드 newLimit개
+// 오늘 세션 = 복습 기한 도래 카드 전부 + 새 카드 newLimit개 (단어장 순서 말고 무작위로)
 export function buildSession(cards, { filter, newLimit = 10 } = {}) {
   const pool = filter ? cards.filter(filter) : cards;
   const srs = store.srs();
   const today = todayStr();
   const due = pool.filter((c) => srs[c.id] && srs[c.id].due <= today);
-  const fresh = pool.filter((c) => !srs[c.id]).slice(0, newLimit);
+  const fresh = shuffle(pool.filter((c) => !srs[c.id])).slice(0, newLimit);
   return shuffle([...due, ...fresh]);
 }
 

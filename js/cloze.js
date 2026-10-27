@@ -1,6 +1,16 @@
 // 예문 빈칸 퀴즈: 예문 속 표현 구간 전체를 빈칸으로 뚫고 직접 타이핑해서 맞추기
-import { esc, splitSentences, pairExamples } from './store.js';
+import { store, esc, splitSentences, pairExamples, todayStr, shuffle } from './store.js';
 import { buildSession, answerCard, GOOD, HARD, AGAIN } from './srs.js';
+
+// srs = 간격 반복 복습(일정 반영), today = 오늘 푼 카드로 연습(일정·기록 안 건드림)
+let mode = 'srs';
+
+// 오늘 플래시카드·빈칸에서 채점한 카드 중 예문 있는 것
+function todaySession(cards) {
+  const today = todayStr();
+  const ids = new Set(store.log().filter((e) => e.d === today).map((e) => e.id));
+  return shuffle(cards.filter((c) => c.example && ids.has(c.id)));
+}
 
 // 아포스트로피는 무시: 폰 키보드가 '를 ’로 바꾸거나 빼먹어도 정답 처리 (we've = we’ve = weve)
 const norm = (w) => w.toLowerCase().replace(/[^a-z]/g, '');
@@ -145,21 +155,42 @@ function hintStr(answer, n) {
 }
 
 export function render(el, ctx) {
-  const session = buildSession(ctx.cards, { filter: (c) => !!c.example });
+  const practice = mode === 'today';
+  const session = practice
+    ? todaySession(ctx.cards)
+    : buildSession(ctx.cards, { filter: (c) => !!c.example });
   let idx = 0;
   let result = null; // null = 입력 대기, { ok, typed } = 채점 완료
   let hintCount = 0;
   let typedDraft = '';
 
+  const modeChips = `
+    <div class="chip-row">
+      <button data-mode="srs" class="${practice ? '' : 'on'}">📅 오늘 복습</button>
+      <button data-mode="today" class="${practice ? 'on' : ''}">🔁 오늘 배운 카드 연습</button>
+    </div>
+    ${practice ? '<p class="count-note" style="margin:0 0 10px">오늘 퀴즈에서 푼 카드로 연습해요. 복습 일정엔 영향 없어요.</p>' : ''}`;
+
+  function show(html) {
+    el.innerHTML = modeChips + html;
+    el.querySelectorAll('[data-mode]').forEach((b) => {
+      b.onclick = () => {
+        if (b.dataset.mode === mode) return;
+        mode = b.dataset.mode;
+        render(el, ctx);
+      };
+    });
+  }
+
   function draw() {
     if (idx >= session.length) {
-      el.innerHTML = `
+      show(`
         <div class="done-box">
           <div class="big">✏️</div>
-          <h3>빈칸 퀴즈 완료!</h3>
+          <h3>${practice ? '연습 완료!' : '빈칸 퀴즈 완료!'}</h3>
           <p>${session.length}문제를 풀었어요.</p>
           <button class="primary" id="againBtn">한 번 더 하기</button>
-        </div>`;
+        </div>`);
       el.querySelector('#againBtn').onclick = () => render(el, ctx);
       return;
     }
@@ -167,7 +198,7 @@ export function render(el, ctx) {
     const cz = makeCloze(c);
     const asking = result === null;
     const letters = cz.answer.replace(/ /g, '').length;
-    el.innerHTML = `
+    show(`
       <div class="cardzone">
         <div class="session-info"><span>남은 카드 ${session.length - idx}</span><span class="pill">${esc(c.category || '표현')}</span></div>
         <div class="flashcard">
@@ -176,7 +207,7 @@ export function render(el, ctx) {
           ${asking
             ? hintCount > 0 ? `<div class="cloze-hint">힌트: ${esc(hintStr(cz.answer, hintCount))}</div>` : ''
             : result.ok
-              ? `<div class="cloze-result ok">⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용 → 어려움으로 기록)</small>' : ''}</div>`
+              ? `<div class="cloze-result ok">⭕ 정답이에요!${hintCount > 0 && !practice ? ' <small>(힌트 사용 → 어려움으로 기록)</small>' : ''}</div>`
               : wrongResultHtml(cz.answer, result.typed)}
           ${!asking && cz.extras.length ? `
             <div class="cloze-extra">
@@ -193,7 +224,7 @@ export function render(el, ctx) {
             <button class="ghost" id="giveupBtn">모르겠어요</button>
           </div>`
         : '<button class="primary" id="nextBtn">다음 →</button>'}
-      </div>`;
+      </div>`);
 
     if (asking) {
       const input = el.querySelector('#clozeInput');
@@ -224,18 +255,25 @@ export function render(el, ctx) {
     }
 
     function finish(ok, typed) {
-      // 힌트를 봤다면 완전히 기억한 게 아니므로 어려움으로 채점
-      answerCard(session, idx, !ok ? AGAIN : hintCount > 0 ? HARD : GOOD);
+      if (practice) {
+        // 연습은 채점 기록 없이, 틀린 카드만 몇 장 뒤에 다시 출제
+        if (!ok) session.splice(Math.min(idx + 4, session.length), 0, session[idx]);
+      } else {
+        // 힌트를 봤다면 완전히 기억한 게 아니므로 어려움으로 채점
+        answerCard(session, idx, !ok ? AGAIN : hintCount > 0 ? HARD : GOOD);
+        ctx.refreshHeader();
+      }
       result = { ok, typed };
-      ctx.refreshHeader();
       draw();
     }
   }
 
   if (session.length === 0) {
-    el.innerHTML = ctx.cards.some((c) => c.example)
-      ? '<p class="notice">오늘 풀 빈칸 퀴즈가 없어요. 내일 다시 만나요!</p>'
-      : '<p class="notice">예문이 있는 카드가 없어요.</p>';
+    show(practice
+      ? '<p class="notice">오늘 퀴즈에서 푼 카드가 아직 없어요. 플래시카드부터 풀어보세요!</p>'
+      : ctx.cards.some((c) => c.example)
+        ? '<p class="notice">오늘 풀 빈칸 퀴즈가 없어요. 내일 다시 만나요!</p>'
+        : '<p class="notice">예문이 있는 카드가 없어요.</p>');
     return;
   }
   draw();
