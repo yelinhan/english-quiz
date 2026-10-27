@@ -48,7 +48,6 @@ export function render(el, ctx) {
           <div class="vocab-item" data-id="${esc(c.id)}">
             <div class="ko">${esc(c.ko)} <span class="pill" style="float:right">${esc(c.category || '')}</span></div>
             <div class="en">${esc(c.en)}</div>
-            ${c.example ? `<div class="ex">${esc(c.example)}</div>` : ''}
           </div>`).join('') || '<p class="notice">검색 결과가 없어요.</p>'}
         <p class="count-note">${filtered.length}개 표현</p>
       </div>`;

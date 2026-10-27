@@ -123,6 +123,14 @@ button { font-family: inherit; cursor: pointer; }
 .flashcard .ko { font-size: 1.45rem; font-weight: 700; line-height: 1.45; text-wrap: balance; }
 .flashcard .en { font-size: 1.25rem; font-weight: 700; line-height: 1.45; color: var(--accent-ink); }
 .flashcard .ex { font-size: .88rem; line-height: 1.6; margin-top: 14px; color: var(--sub); }
+.flashcard .ex-list {
+  width: 100%;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+  font-size: .88rem;
+}
+.flashcard > .ex-ko { font-size: .8rem; margin-top: 6px; text-align: left; width: 100%; }
 .flashcard .hint { font-size: .74rem; margin-top: 16px; color: var(--sub); }
 .flashcard .tag {
   font-size: .64rem;
@@ -153,7 +161,34 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cloze-result { font-size: .95rem; font-weight: 700; margin-top: 14px; }
 .cloze-result.ok { color: var(--accent-ink); }
-.cloze-result.no { color: var(--bad); }
+.cloze-result.no {
+  width: 100%;
+  text-align: left;
+  background: var(--bad-soft);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: grid;
+  gap: 8px;
+}
+.cr-title { color: var(--bad); font-size: .88rem; }
+.cr-row {
+  display: grid;
+  grid-template-columns: 3.2em 1fr;
+  gap: 10px;
+  align-items: baseline;
+}
+.cr-label { font-size: .74rem; font-weight: 600; color: var(--sub); }
+.cr-answer, .cr-mine { font-size: 1rem; line-height: 1.55; letter-spacing: .01em; word-spacing: .08em; }
+.cr-answer { color: var(--accent-ink); }
+.cr-mine { color: var(--ink); font-weight: 500; }
+.cr-missed { background: var(--accent-soft); border-radius: 4px; padding: 0 3px; }
+.cr-wrong {
+  color: var(--bad);
+  font-weight: 700;
+  text-decoration: underline wavy var(--bad);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+}
 .cloze-form { display: flex; gap: 8px; width: 100%; }
 .cloze-form input {
   flex: 1;
@@ -319,7 +354,9 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 .vocab-item { padding: 12px 2px; border-bottom: 1px solid var(--line); }
 .vocab-item .ko { font-size: .82rem; color: var(--sub); }
 .vocab-item .en { font-weight: 700; margin: 3px 0; line-height: 1.45; }
-.vocab-item .ex { font-size: .82rem; color: var(--sub); line-height: 1.5; }
+.ex-list { margin: 0; padding-left: 18px; text-align: left; line-height: 1.5; }
+.ex-list li + li { margin-top: 6px; }
+.ex-ko { font-size: .9em; color: var(--sub); margin-top: 1px; }
 .count-note { font-size: .78rem; color: var(--sub); margin: 6px 0 0; }
 
 /* ---------- stats ---------- */

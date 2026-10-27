@@ -151,3 +151,13 @@ export function pairExamples(c) {
   if (en.length !== ko.length) return null;
   return en.map((s, i) => ({ en: s, ko: ko[i] }));
 }
+
+// 예문을 한 줄에 한 문장씩 + 해석으로. 짝이 안 맞으면 영어만 나누고 해석은 통째로 아래에
+export function exampleListHtml(c) {
+  const pairs = pairExamples(c);
+  const items = pairs || splitSentences(c.example).map((en) => ({ en, ko: '' }));
+  if (!items.length) return '';
+  return `<ul class="ex-list">${items.map((p) => `
+    <li>${esc(p.en)}${p.ko ? `<div class="ex-ko">${esc(p.ko)}</div>` : ''}</li>`).join('')}
+  </ul>${!pairs && c.example_ko ? `<div class="ex-ko">${esc(c.example_ko)}</div>` : ''}`;
+}

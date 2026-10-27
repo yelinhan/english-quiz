@@ -2,7 +2,8 @@
 import { esc, splitSentences, pairExamples } from './store.js';
 import { buildSession, answerCard, GOOD, HARD, AGAIN } from './srs.js';
 
-const norm = (w) => w.toLowerCase().replace(/[^a-z']/g, '');
+// 아포스트로피는 무시: 폰 키보드가 '를 ’로 바꾸거나 빼먹어도 정답 처리 (we've = we’ve = weve)
+const norm = (w) => w.toLowerCase().replace(/[^a-z]/g, '');
 const normPhrase = (s) => s.split(/\s+/).map(norm).filter(Boolean).join(' ');
 
 // 문장 단어 배열에서 en 변형(/ 구분)들의 연속 일치 구간 탐색 → [시작, 길이] 또는 null
@@ -76,7 +77,8 @@ export function makeCloze(card) {
     .filter((x) => x.idx !== qIdx);
   return {
     ...blank(words, span[0], span[1]),
-    ko: kos[qIdx] || card.example_ko || card.ko,
+    // 짝이 안 맞는 여러 문장 해석을 통째로 보여주면 다른 예문까지 섞이므로 표현 뜻으로 대체
+    ko: kos[qIdx] || (sents.length === 1 && card.example_ko) || card.ko,
     extras,
   };
 }
@@ -98,6 +100,40 @@ function blank(words, start, len) {
     reveal: render((core) => `<span class="blank">${esc(core)}</span>`),
     answer,
   };
+}
+
+// 정답과 내 답을 단어 단위로 비교(LCS)해서 서로 다른 단어에 표시
+function diffWords(answer, typed) {
+  const a = answer.split(/\s+/).filter(Boolean);
+  const b = typed.split(/\s+/).filter(Boolean);
+  const dp = Array.from({ length: a.length + 1 }, () => new Array(b.length + 1).fill(0));
+  for (let i = a.length - 1; i >= 0; i--) {
+    for (let j = b.length - 1; j >= 0; j--) {
+      dp[i][j] = norm(a[i]) === norm(b[j]) ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+    }
+  }
+  const aHit = new Set();
+  const bHit = new Set();
+  for (let i = 0, j = 0; i < a.length && j < b.length;) {
+    if (norm(a[i]) === norm(b[j])) { aHit.add(i++); bHit.add(j++); }
+    else if (dp[i + 1][j] >= dp[i][j + 1]) i++;
+    else j++;
+  }
+  const mark = (ws, hit, cls) => ws
+    .map((w, i) => (hit.has(i) ? esc(w) : `<span class="${cls}">${esc(w)}</span>`))
+    .join(' ');
+  return { answer: mark(a, aHit, 'cr-missed'), mine: mark(b, bHit, 'cr-wrong') };
+}
+
+// 오답 결과: 정답 / 내 답을 줄을 나눠 표시. 정답에서 빠뜨린 단어·내 답에서 틀린 단어 강조
+function wrongResultHtml(answer, typed) {
+  const d = typed ? diffWords(answer, typed) : { answer: esc(answer) };
+  return `
+    <div class="cloze-result no">
+      <div class="cr-title">✕ ${typed ? '틀렸어요' : '정답 확인'}</div>
+      <div class="cr-row"><span class="cr-label">정답</span><span class="cr-answer">${d.answer}</span></div>
+      ${typed ? `<div class="cr-row"><span class="cr-label">내 답</span><span class="cr-mine">${d.mine}</span></div>` : ''}
+    </div>`;
 }
 
 // 힌트: 정답의 앞 n글자를 순서대로 공개 (공백은 항상 표시)
@@ -141,7 +177,7 @@ export function render(el, ctx) {
             ? hintCount > 0 ? `<div class="cloze-hint">힌트: ${esc(hintStr(cz.answer, hintCount))}</div>` : ''
             : result.ok
               ? `<div class="cloze-result ok">⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용 → 어려움으로 기록)</small>' : ''}</div>`
-              : `<div class="cloze-result no">✕ 정답: ${esc(cz.answer)}${result.typed ? ` · 내 답: ${esc(result.typed)}` : ''}</div>`}
+              : wrongResultHtml(cz.answer, result.typed)}
           ${!asking && cz.extras.length ? `
             <div class="cloze-extra">
               ${cz.extras.map((x) => `<div>${x.html}${x.ko ? `<div class="cloze-extra-ko">${esc(x.ko)}</div>` : ''}</div>`).join('')}

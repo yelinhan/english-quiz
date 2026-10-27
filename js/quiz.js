@@ -1,5 +1,5 @@
 // 한→영 플래시카드 퀴즈
-import { esc } from './store.js';
+import { esc, exampleListHtml } from './store.js';
 import { buildSession, answerCard, previewIntervals } from './srs.js';
 
 export function render(el, ctx) {
@@ -29,7 +29,7 @@ export function render(el, ctx) {
           ${flipped
             ? `<div class="tag">${esc(c.type === 'word' ? 'Word' : 'Chunk')} · ${esc(c.category || '')}</div>
                <div class="en">${esc(c.en)}</div>
-               ${c.example ? `<div class="ex">${esc(c.example)}</div>` : ''}`
+               ${exampleListHtml(c)}`
             : `<div class="ko">${esc(c.ko)}</div>
                <div class="hint">탭해서 정답 보기</div>`}
         </div>
