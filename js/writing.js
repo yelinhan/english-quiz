@@ -84,11 +84,39 @@ const GRAMMAR_PROMPTS = [
 
 // ---------- 문법 태그 칩 + 설명 카드 ----------
 let grammarCards = null; // data/grammar.json 캐시
+let lessonsCache = null; // data/lessons.json 캐시 (내 실수 모으기용)
 
-function tagChips(tags) {
+export function tagChips(tags) {
   if (!tags || !tags.length) return '';
   return `<div class="tag-chips">${tags.map((t) =>
     `<button class="tag-chip" data-tag="${esc(t)}">🏷 ${esc(t)}</button>`).join('')}</div>`;
+}
+
+// 이 태그로 지적된 내 실제 문장: 수업 표현 업그레이드 + 영작 첨삭 기록 (최신순)
+async function myMistakes(tag) {
+  if (!lessonsCache) {
+    try {
+      lessonsCache = await (await fetch('data/lessons.json', { cache: 'no-cache' })).json();
+    } catch {
+      lessonsCache = [];
+    }
+  }
+  const out = [];
+  lessonsCache.forEach((l) => (l.upgrades || []).forEach((u) => {
+    if ((u.tags || []).includes(tag)) out.push({ date: l.date, src: '📞 수업', bad: u.said, good: u.better });
+  }));
+  store.corrections().forEach((c) => {
+    if (c.mode === 'tr') {
+      if ((c.result?.tags || []).includes(tag)) {
+        out.push({ date: c.date, src: '✍️ 영작', bad: c.input, good: c.result.corrected });
+      }
+      return;
+    }
+    (c.result?.corrections || []).forEach((x) => {
+      if ((x.tags || []).includes(tag)) out.push({ date: c.date, src: '✍️ 영작', bad: x.original, good: x.corrected });
+    });
+  });
+  return out.sort((a, b) => (a.date < b.date ? 1 : -1));
 }
 
 export async function showGrammarCard(tag) {
@@ -100,6 +128,7 @@ export async function showGrammarCard(tag) {
     }
   }
   const card = grammarCards[tag];
+  const mine = await myMistakes(tag);
   let dlg = document.getElementById('grammarDlg');
   if (!dlg) {
     dlg = document.createElement('dialog');
@@ -109,6 +138,15 @@ export async function showGrammarCard(tag) {
   dlg.innerHTML = card ? `
     <h2>${esc(card.title)}</h2>
     <p class="g-rule">${esc(card.rule_ko)}</p>
+    ${mine.length ? `
+      <h3 class="g-head">🗣 내가 실제로 한 말 (${mine.length})</h3>
+      ${mine.slice(0, 6).map((m) => `
+        <div class="g-ex g-mine">
+          <div class="g-bad">✕ ${esc(m.bad)}</div>
+          <div class="g-good">⭕ ${esc(m.good)}</div>
+          <div class="g-note">${m.src} ${esc(m.date.slice(5).replace('-', '/'))}</div>
+        </div>`).join('')}
+      <h3 class="g-head">📘 예시</h3>` : ''}
     ${(card.examples || []).map((ex) => `
       <div class="g-ex">
         ${ex.bad ? `<div class="g-bad">✕ ${esc(ex.bad)}</div>` : ''}
@@ -123,7 +161,7 @@ export async function showGrammarCard(tag) {
   dlg.showModal();
 }
 
-function bindTagChips(rootEl) {
+export function bindTagChips(rootEl) {
   rootEl.querySelectorAll('.tag-chip').forEach((b) => {
     b.onclick = () => showGrammarCard(b.dataset.tag);
   });

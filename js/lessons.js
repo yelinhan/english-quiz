@@ -1,5 +1,6 @@
 // 수업 탭: 전화영어 분석 리포트 열람
 import { esc } from './store.js';
+import { tagChips, bindTagChips } from './writing.js';
 
 export function render(el, ctx) {
   const lessons = [...(ctx.lessons || [])].sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -51,6 +52,7 @@ export function render(el, ctx) {
             <div class="said">${esc(u.said)}</div>
             <div class="better">${esc(u.better)}</div>
             ${u.note_ko ? `<div class="note">${esc(u.note_ko)}</div>` : ''}
+            ${tagChips(u.tags)}
           </div>`).join('') || '<p class="notice">없음</p>'}
       </div>
       ${l.feedback_ko ? `
@@ -66,6 +68,7 @@ export function render(el, ctx) {
         </div>` : ''}
       </div>`;
     el.querySelector('#backBtn').onclick = drawList;
+    bindTagChips(el);
     el.scrollIntoView();
   }
 

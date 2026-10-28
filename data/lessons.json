@@ -7,47 +7,56 @@
       {
         "said": "I watched a movie which title is Hope",
         "better": "I watched a movie called Hope",
-        "note_ko": "'titled/which title is'는 딱딱하고 어색해요. 원어민은 그냥 called를 써요."
+        "note_ko": "'titled/which title is'는 딱딱하고 어색해요. 원어민은 그냥 called를 써요.",
+        "tags": ["단어선택"]
       },
       {
         "said": "I enjoy watching movie",
         "better": "I enjoy watching movies",
-        "note_ko": "영화 전반을 말할 땐 복수형. 바로 다음 문장에선 스스로 맞게 말했어요."
+        "note_ko": "영화 전반을 말할 땐 복수형. 바로 다음 문장에선 스스로 맞게 말했어요.",
+        "tags": []
       },
       {
         "said": "I usually go to movie theater to watch movies",
         "better": "I usually go to the movies",
-        "note_ko": "관사 누락 + 원어민은 'go to the movies'가 제일 자연스러워요."
+        "note_ko": "관사 누락 + 원어민은 'go to the movies'가 제일 자연스러워요.",
+        "tags": ["관사", "콜로케이션"]
       },
       {
         "said": "it is like somewhat ambiguous thing",
         "better": "it was pretty ambiguous",
-        "note_ko": "somewhat은 격식체·문어체 → kinda/pretty. '~한 것(thing)' 직역도 빼요."
+        "note_ko": "somewhat은 격식체·문어체 → kinda/pretty. '~한 것(thing)' 직역도 빼요.",
+        "tags": ["단어선택"]
       },
       {
         "said": "I couldn't understand what the movie's content is",
         "better": "I didn't really get what it was about",
-        "note_ko": "'내용' 직역 함정. 영화 내용은 what it's about, 이해하다는 get이 자연스러워요."
+        "note_ko": "'내용' 직역 함정. 영화 내용은 what it's about, 이해하다는 get이 자연스러워요.",
+        "tags": ["단어선택"]
       },
       {
         "said": "I found some reviews",
         "better": "I looked up some reviews",
-        "note_ko": "found는 우연히 발견한 느낌. 일부러 찾아본 건 look up."
+        "note_ko": "found는 우연히 발견한 느낌. 일부러 찾아본 건 look up.",
+        "tags": ["단어선택"]
       },
       {
         "said": "after I found that, I can understand what the movie is",
         "better": "and then it finally clicked",
-        "note_ko": "'그제야 이해됐다'는 it clicked가 딱이에요. 과거 얘기는 시제도 과거로."
+        "note_ko": "'그제야 이해됐다'는 it clicked가 딱이에요. 과거 얘기는 시제도 과거로.",
+        "tags": ["시제-과거"]
       },
       {
         "said": "It is very wonderful experience to me",
         "better": "It was a really cool experience",
-        "note_ko": "과거 시제 + 관사 a 필요. wonderful보다 cool/great이 캐주얼해요."
+        "note_ko": "과거 시제 + 관사 a 필요. wonderful보다 cool/great이 캐주얼해요.",
+        "tags": ["시제-과거", "관사"]
       },
       {
         "said": "What source is good to me to learn English",
         "better": "Do you know any good YouTube channels for learning English?",
-        "note_ko": "good/helpful은 'for me'예요 (to me 아님). 추천 요청 문장은 통으로 외워두면 좋아요."
+        "note_ko": "good/helpful은 'for me'예요 (to me 아님). 추천 요청 문장은 통으로 외워두면 좋아요.",
+        "tags": ["전치사"]
       }
     ],
     "feedback_ko": "발음·이해력은 좋다는 평가. 교정 포인트: ① -ed 발음을 한 음절로 (watched를 watch-it처럼 두 음절로 말하지 않기) ② 관사 a/the 습관적 누락 ③ good/helpful + for me ④ 격식체 어휘(somewhat, titled)를 캐주얼하게 (kinda, called). 튜터가 폰·자막을 영어로 바꾸는 환경 세팅을 추천했고, 다음 시간에 유튜브 채널을 추천해주기로 함.",
@@ -75,97 +84,128 @@
       {
         "said": "big change on my company",
         "better": "a big change at my company",
-        "note_ko": "회사·장소는 at (튜터 교정)."
+        "note_ko": "회사·장소는 at (튜터 교정).",
+        "tags": ["전치사"]
       },
       {
         "said": "It's a little bit confused and frustrated",
         "better": "It was kinda confusing and frustrating",
-        "note_ko": "상황이 주는 감정은 -ing, 내가 느끼는 감정은 -ed (I was confused). 튜터가 가장 길게 설명한 포인트."
+        "note_ko": "상황이 주는 감정은 -ing, 내가 느끼는 감정은 -ed (I was confused). 튜터가 가장 길게 설명한 포인트.",
+        "tags": ["감정형용사"]
       },
       {
         "said": "I just got report about the position change",
         "better": "I just found out about it",
-        "note_ko": "'통보받다' 직역. 소식을 알게 된 건 found out."
+        "note_ko": "'통보받다' 직역. 소식을 알게 된 건 found out.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "my position has been changed",
+        "better": "I got moved to a different position",
+        "note_ko": "현재완료 수동태는 보고서 톤. 나한테 일어난 일은 got + p.p.가 캐주얼해요.",
+        "tags": ["수동태-get"]
       },
       {
         "said": "it is somewhat not bad now",
         "better": "it's actually not that bad now",
-        "note_ko": "somewhat은 문어체 (8/5 리포트 포커스). 'not that bad'를 통째로."
+        "note_ko": "somewhat은 문어체 (8/5 리포트 포커스). 'not that bad'를 통째로.",
+        "tags": ["단어선택"]
       },
       {
         "said": "I want to handle something more trendy",
         "better": "I wanted to work on newer tech",
-        "note_ko": "'다루다' 직역 → 업무는 work on. trendy의 비교급은 trendier."
+        "note_ko": "'다루다' 직역 → 업무는 work on. trendy의 비교급은 trendier.",
+        "tags": ["단어선택", "시제-과거"]
       },
       {
         "said": "because of my partner didn't finish the job",
         "better": "because my partner couldn't finish the job",
-        "note_ko": "because of + 명사 / because + 문장."
+        "note_ko": "because of + 명사 / because + 문장.",
+        "tags": ["접속사"]
       },
       {
         "said": "I have to move to this position for helping him",
         "better": "I had to go back to help him",
-        "note_ko": "'~하기 위해'는 to + 동사 (for -ing ✗). 지난 일이니 had to."
+        "note_ko": "'~하기 위해'는 to + 동사 (for -ing ✗). 지난 일이니 had to.",
+        "tags": ["to부정사", "시제-과거"]
       },
       {
         "said": "he can't finish that project on himself",
         "better": "he couldn't finish the project by himself",
-        "note_ko": "'혼자서' = by himself / on his own (튜터 교정)."
+        "note_ko": "'혼자서' = by himself / on his own (튜터 교정).",
+        "tags": ["전치사"]
       },
       {
         "said": "in my own thoughts, he didn't try harder as much",
         "better": "Honestly, I don't think he tried that hard",
-        "note_ko": "'내 생각엔' 직역 → Honestly, I think / If you ask me."
+        "note_ko": "'내 생각엔' 직역 → Honestly, I think / If you ask me.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "if he tried to finish that project harder, I can admit it",
+        "better": "if he'd really tried, I'd get it",
+        "note_ko": "사실과 반대인 가정이면 can이 아니라 would. he'd tried = he had tried.",
+        "tags": ["가정법"]
       },
       {
         "said": "I have to do that job, the replace of him",
         "better": "I end up doing it for him",
-        "note_ko": "'그 사람 대신' = for him / instead of him. end up -ing = 결국 ~하게 되다."
+        "note_ko": "'그 사람 대신' = for him / instead of him. end up -ing = 결국 ~하게 되다.",
+        "tags": ["단어선택"]
       },
       {
         "said": "the wedding ceremony of my coworker",
         "better": "my coworker's wedding",
-        "note_ko": "A of B보다 B's A가 구어적. ceremony는 보통 생략."
+        "note_ko": "A of B보다 B's A가 구어적. ceremony는 보통 생략.",
+        "tags": ["단어선택"]
       },
       {
         "said": "she's my very familiar companion",
         "better": "We're really close.",
-        "note_ko": "familiar = 낯익은, companion = 문어. 친하다 = close, 동료 = coworker."
+        "note_ko": "familiar = 낯익은, companion = 문어. 친하다 = close, 동료 = coworker.",
+        "tags": ["단어선택"]
       },
       {
         "said": "the basic price is about $80",
         "better": "people usually give around 80 bucks",
-        "note_ko": "price는 물건값. 축의금 액수는 the usual amount / people usually give ~."
+        "note_ko": "price는 물건값. 축의금 액수는 the usual amount / people usually give ~.",
+        "tags": ["단어선택"]
       },
       {
         "said": "she married with the American guy",
         "better": "she married an American guy",
-        "note_ko": "marry는 with 없이 바로 사람. 처음 언급이니 an."
+        "note_ko": "marry는 with 없이 바로 사람. 처음 언급이니 an.",
+        "tags": ["전치사", "관사"]
       },
       {
         "said": "they reserve some place and just take a party",
         "better": "they rented a venue and just threw a party",
-        "note_ko": "take a party ✗ → have / throw a party."
+        "note_ko": "take a party ✗ → have / throw a party.",
+        "tags": ["콜로케이션"]
       },
       {
         "said": "it's very very great",
         "better": "it's really nice out",
-        "note_ko": "great엔 very를 잘 안 붙여요. 날씨는 nice out."
+        "note_ko": "great엔 very를 잘 안 붙여요. 날씨는 nice out.",
+        "tags": ["단어선택"]
       },
       {
         "said": "it is a little bit little bit cold",
         "better": "it's getting kinda chilly",
-        "note_ko": "chilly = 쌀쌀한. a little bit 반복 → kinda / a bit."
+        "note_ko": "chilly = 쌀쌀한. a little bit 반복 → kinda / a bit.",
+        "tags": ["단어선택"]
       },
       {
         "said": "some clothes for preparing autumn and winter",
         "better": "some fall and winter clothes",
-        "note_ko": "'준비하기 위해' 직역. 미국은 autumn보다 fall."
+        "note_ko": "'준비하기 위해' 직역. 미국은 autumn보다 fall.",
+        "tags": ["단어선택"]
       },
       {
         "said": "she a bit nervous",
         "better": "she's a little nervous",
-        "note_ko": "be동사 누락 (튜터 교정)."
+        "note_ko": "be동사 누락 (튜터 교정).",
+        "tags": ["어순"]
       }
     ],
     "feedback_ko": "프리토킹 15분 동안 대화가 끊기지 않았고, 모르는 단어(snore)는 돌려 말해서 튜터한테 받아냄. 'Not at all', 'It's not bad' 같은 짧은 리액션 좋음. 교정 포인트: ① 전치사 — at my company, at the workshop, by himself, marry(전치사 X) ② -ed/-ing 감정 형용사 — confused vs confusing, bored vs boring ③ 한국어 명사 직역 — companion(동료→coworker), familiar(친한→close), report(통보→found out), basic price ④ somewhat·a little bit 반복 → kinda/pretty ⑤ 지난 일 현재형으로 말하기(I want → I wanted).",

@@ -31,8 +31,10 @@ export function render(el, ctx) {
   log.forEach((e) => { byDay[e.d] = (byDay[e.d] || 0) + 1; });
   let [calY, calM] = todayStr().split('-').map(Number);
 
-  // 영작 첨삭 태그 집계 → 자주 틀리는 포인트 TOP 5 (기록 한도가 50건이라 전체 집계)
+  // 영작 첨삭 + 수업 표현 업그레이드 태그 집계 → 자주 틀리는 포인트 TOP 5 (영작 기록 한도가 50건이라 전체 집계)
   const tagCounts = {};
+  (ctx.lessons || []).forEach((l) => (l.upgrades || []).forEach((u) =>
+    (u.tags || []).forEach((t) => { tagCounts[t] = (tagCounts[t] || 0) + 1; })));
   store.corrections().forEach((c) => {
     const lists = c.mode === 'tr'
       ? [c.result?.tags]
@@ -97,7 +99,7 @@ export function render(el, ctx) {
     ${topTags.length ? `
     <div class="card-box">
       <h3 style="margin:0 0 4px; font-size:.9rem">🏷 자주 틀리는 포인트</h3>
-      <p class="notice" style="margin:0 0 10px">영작 첨삭에서 지적된 횟수예요 · 누르면 설명 카드가 떠요</p>
+      <p class="notice" style="margin:0 0 10px">전화영어 수업·영작 첨삭에서 지적된 횟수예요 · 누르면 내 실수 모음이랑 설명 카드가 떠요</p>
       ${topTags.map(([t, n]) => `
         <button class="weak-row" data-tag="${esc(t)}">
           <span class="weak-name">${esc(t)}</span>

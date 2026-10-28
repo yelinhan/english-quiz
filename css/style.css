@@ -495,6 +495,8 @@ dialog::backdrop { background: rgba(10, 30, 27, .45); }
   margin: 14px 0;
 }
 #grammarDlg .primary { width: 100%; }
+#grammarDlg .g-head { font-size: .85rem; margin: 16px 0 6px; color: var(--sub); }
+#grammarDlg .g-mine { border-left-color: var(--warm); }
 dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
 .field { display: block; margin-bottom: 14px; }
 .field span { display: block; font-size: .82rem; margin-bottom: 6px; color: var(--sub); }

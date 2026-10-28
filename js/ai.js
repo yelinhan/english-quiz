@@ -6,6 +6,7 @@ export const GRAMMAR_TAGS = [
   '관사', '시제-과거', '시제-현재완료', '시제-과거완료', '시제-진행', '시제-미래',
   '전치사', '장소부사', 'to부정사', '동명사', '수동태', '관계대명사',
   '비교급', '어순', '수일치', '단어선택', '콜로케이션',
+  '감정형용사', '가정법', '접속사', '수동태-get', 'a형용사',
 ];
 const TAGS_FIELD = { type: 'array', items: { type: 'string', enum: GRAMMAR_TAGS } };
 const TAGS_RULE = `For "tags": pick 0-3 items from this FIXED list (exact strings) naming the key points you corrected:
