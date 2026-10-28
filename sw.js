@@ -1,5 +1,5 @@
 // 앱 셸 cache-first, data/*.json network-first, /pb/(동기화 API)는 캐시 안 함
-const CACHE = 'chunky-v34';
+const CACHE = 'chunky-v35';
 const SHELL = [
   './',
   'index.html',
@@ -25,8 +25,12 @@ const SHELL = [
   'icons/icon-512.png',
 ];
 
+// HTTP 캐시를 건너뛰고 받기: GitHub Pages가 max-age=600을 주므로, 배포 직후 10분 안에 설치되면
+// 새 캐시 이름 아래에 옛 파일이 담겨 다음 버전까지 업데이트가 안 보이는 문제 방지
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE)
+    .then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (e) => {
