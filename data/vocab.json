@@ -462,6 +462,17 @@
   "example_ko": "다시 옮겨져서 썩 좋진 않아. 이번 주말에 일한다고? 별로 안 반가워. 솔직히 새 일정 썩 마음에 안 들어."
  },
  {
+  "id": "chunk-e7444743",
+  "type": "chunk",
+  "ko": "내가 보기엔",
+  "en": "I feel like ~ / If you ask me, ~",
+  "example": "I feel like he didn't really try. If you ask me, it's not worth it. I feel like we should wait a bit.",
+  "category": "의견·반응",
+  "added": "2026-10-29",
+  "source": "전화영어",
+  "example_ko": "내가 보기엔 그 사람 별로 열심히 안 한 것 같아. 내가 보기엔 그럴 가치 없어. 내가 보기엔 좀 기다리는 게 좋을 것 같아."
+ },
+ {
   "id": "chunk-a60bffdd",
   "type": "chunk",
   "ko": "오랜만이야",
@@ -1290,12 +1301,23 @@
   "id": "chunk-0c2b4e73",
   "type": "chunk",
   "ko": "좀 곤란해 / 난처해",
-  "en": "It puts me in an awkward spot. / I'm stuck in the middle.",
+  "en": "It puts me in an awkward spot. / I'm stuck in the middle. / I feel awkward.",
   "example": "Everyone wants me to wake him up — it puts me in an awkward spot. I'm kinda stuck in the middle. I feel awkward saying no to my boss.",
   "category": "직장·업무",
   "added": "2026-10-28",
   "source": "전화영어",
   "example_ko": "다들 나보고 그 사람 깨우라고 해서 좀 곤란해. 나 좀 중간에 껴 있어. 상사한테 거절하기 좀 난처해."
+ },
+ {
+  "id": "chunk-a04ad9b3",
+  "type": "chunk",
+  "ko": "동료 (말할 때 / 격식 / 같은 팀)",
+  "en": "coworker / colleague / teammate",
+  "example": "She's a coworker of mine. I'll check with my colleagues and get back to you. We're teammates, so we sit together.",
+  "category": "직장·업무",
+  "added": "2026-10-29",
+  "source": "전화영어",
+  "example_ko": "그 사람 내 회사 동료야. 동료들한테 확인해보고 다시 연락드릴게요. 우리 같은 팀이라 같이 앉아."
  },
  {
   "id": "chunk-a40a11c6",
@@ -1510,12 +1532,12 @@
   "id": "chunk-2c2e0c64",
   "type": "chunk",
   "ko": "(예상 못 해서) 당황했어",
-  "en": "It caught me off guard. / I didn't see that coming.",
-  "example": "The news kinda caught me off guard. Honestly, I didn't see that coming. Her question totally caught me off guard.",
+  "en": "It caught me off guard.",
+  "example": "The news kinda caught me off guard. Her question totally caught me off guard. It caught me off guard, so I didn't know what to say.",
   "category": "한국식 영어 탈출",
   "added": "2026-10-28",
   "source": "전화영어",
-  "example_ko": "그 소식에 좀 당황했어. 솔직히 그건 예상 못 했어. 걔 질문에 완전 당황했어."
+  "example_ko": "그 소식에 좀 당황했어. 걔 질문에 완전 당황했어. 너무 당황해서 뭐라고 해야 할지 몰랐어."
  },
  {
   "id": "chunk-0f44b92e",
