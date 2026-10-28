@@ -814,6 +814,17 @@
   "example_ko": "이맘때치고 좀 쌀쌀하다, 그치? 10월치고 꽤 쌀쌀하네. 걔는 나이에 비해 키가 진짜 커."
  },
  {
+  "id": "chunk-d823b908",
+  "type": "chunk",
+  "ko": "잠들다 / 자러 가다",
+  "en": "fall asleep / go to bed",
+  "example": "I fell asleep around 12 last night. I usually go to bed at 11. I fell asleep on the bus again.",
+  "category": "일상 회화",
+  "added": "2026-10-29",
+  "source": "전화영어",
+  "example_ko": "어젯밤 12시쯤 잠들었어. 나 보통 11시에 자러 가. 또 버스에서 잠들었어."
+ },
+ {
   "id": "chunk-3c129e63",
   "type": "chunk",
   "ko": "확인하고 알려드릴게요",
