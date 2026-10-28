@@ -440,6 +440,17 @@
   "example_ko": "진짜야? 그거 대박이다! 지금 진심으로 하는 말이야? 진짜? 언제 그렇게 된 거야?"
  },
  {
+  "id": "chunk-185b4074",
+  "type": "chunk",
+  "ko": "막상 해보니 나쁘지 않아",
+  "en": "It's actually not that bad.",
+  "example": "I was worried at first, but it's actually not that bad. The food here is actually not that bad. Try it — it's actually not that bad.",
+  "category": "의견·반응",
+  "added": "2026-10-28",
+  "source": "전화영어",
+  "example_ko": "처음엔 걱정했는데 막상 해보니 나쁘지 않아. 여기 음식 생각보다 괜찮아. 먹어봐, 막상 먹어보면 나쁘지 않아."
+ },
+ {
   "id": "chunk-a60bffdd",
   "type": "chunk",
   "ko": "오랜만이야",
@@ -691,6 +702,50 @@
   "added": "2026-08-05",
   "source": "전화영어",
   "example_ko": "결말이 좀 애매했어. 설명이 좀 모호했어. 걔 대답이 좀 애매했어."
+ },
+ {
+  "id": "chunk-47484738",
+  "type": "chunk",
+  "ko": "우리 엄청 친해",
+  "en": "We're really close.",
+  "example": "We're really close, so I'm excited for her wedding. My sister and I are super close. We used to be close, but not anymore.",
+  "category": "일상 회화",
+  "added": "2026-10-28",
+  "source": "전화영어",
+  "example_ko": "우리 엄청 친해서 걔 결혼식이 기대돼. 언니랑 나는 엄청 친해. 예전엔 친했는데 지금은 아니야."
+ },
+ {
+  "id": "chunk-1a3d11e3",
+  "type": "chunk",
+  "ko": "날이 쌀쌀해지고 있어",
+  "en": "It's getting chilly.",
+  "example": "It's getting chilly — grab a jacket. It gets chilly at night now. It's kinda chilly out today.",
+  "category": "일상 회화",
+  "added": "2026-10-28",
+  "source": "전화영어",
+  "example_ko": "날이 쌀쌀해지네, 겉옷 챙겨. 요즘 밤엔 쌀쌀해. 오늘 밖에 좀 쌀쌀하다."
+ },
+ {
+  "id": "chunk-f2a67ccf",
+  "type": "chunk",
+  "ko": "파티를 열다",
+  "en": "throw a party",
+  "example": "They rented a venue and threw a party. We're throwing a party for her birthday. Who's throwing the party?",
+  "category": "일상 회화",
+  "added": "2026-10-28",
+  "source": "전화영어",
+  "example_ko": "장소를 빌려서 파티를 열었어. 우리 걔 생일 파티 열 거야. 파티 누가 여는 거야?"
+ },
+ {
+  "id": "chunk-6e8f1166",
+  "type": "chunk",
+  "ko": "이번 주말엔 별일 없어",
+  "en": "Not much going on this weekend. / Nothing special.",
+  "example": "Not much going on this weekend — just a wedding. Plans? Nothing special, just relaxing. Not much going on, how about you?",
+  "category": "일상 회화",
+  "added": "2026-10-28",
+  "source": "전화영어",
+  "example_ko": "이번 주말엔 별일 없어, 결혼식 하나 있는 거 빼고. 계획? 별거 없어, 그냥 쉬려고. 별일 없어, 너는?"
  },
  {
   "id": "chunk-3c129e63",
@@ -1144,6 +1199,17 @@
   "example_ko": "아무도 안 하면 그건 제가 맡을게요. 제가 할게요, 금방 끝날 거예요. 바쁘시면 그건 제가 맡을게요."
  },
  {
+  "id": "chunk-a8e93d75",
+  "type": "chunk",
+  "ko": "결국 내가 대신 하게 돼",
+  "en": "I end up doing it for him.",
+  "example": "He never finishes on time, so I end up doing it for him. I always end up doing the dishes. We ended up staying late again.",
+  "category": "직장·업무",
+  "added": "2026-10-28",
+  "source": "전화영어",
+  "example_ko": "그 사람은 맨날 제때 못 끝내서 결국 내가 대신 하게 돼. 설거지는 결국 늘 내가 하게 돼. 우리 결국 또 야근했어."
+ },
+ {
   "id": "chunk-a40a11c6",
   "type": "chunk",
   "ko": "(약속) 못 갈 것 같아",
@@ -1340,6 +1406,17 @@
   "added": "2026-08-05",
   "source": "전화영어",
   "example_ko": "영화 보고 나서 리뷰를 좀 찾아봤어. 주소 좀 찾아볼게. 그 단어가 무슨 뜻인지 찾아봐야 했어."
+ },
+ {
+  "id": "chunk-6f7855e0",
+  "type": "chunk",
+  "ko": "(친구가) 미국 남자랑 결혼했어",
+  "en": "She married an American guy.",
+  "example": "My friend married an American guy. He married his college girlfriend. When did they get married?",
+  "category": "한국식 영어 탈출",
+  "added": "2026-10-28",
+  "source": "전화영어",
+  "example_ko": "내 친구가 미국 남자랑 결혼했어. 걔는 대학 때 여자친구랑 결혼했어. 그 둘 언제 결혼했어?"
  },
  {
   "id": "word-5514ee08",
