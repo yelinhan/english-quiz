@@ -634,6 +634,31 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
 .wd-meta { font-size: .74rem; color: var(--sub); }
 .ghost.danger { color: var(--bad); border-color: var(--bad-soft); }
 
+/* ---------- 통문장 외우기 ---------- */
+.sent-card { cursor: default; }
+.sent-card .ko { font-size: 1.15rem; }
+.sent-card .sent-en {
+  width: 100%;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  font-size: 1.15rem;
+}
+.sent-note { font-size: .8rem; color: var(--sub); margin-top: 10px; line-height: 1.5; }
+.sent-hint {
+  margin-top: 14px;
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: .95rem;
+  letter-spacing: .04em;
+  color: var(--warm);
+  line-height: 1.6;
+}
+.tts-btns { display: flex; gap: 8px; margin-top: 14px; }
+.tts-btns button { padding: 6px 12px; font-size: .82rem; }
+.sent-row { cursor: pointer; }
+.sent-row-head { font-size: .78rem; margin-bottom: 4px; }
+.grade-btns button:disabled { opacity: .45; }
+
 @media (prefers-reduced-motion: reduce) {
   .flashcard, .prog i { transition: none; }
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""vocab/*.md 마크다운 표 → app/data/vocab.json
+"""vocab/*.md 마크다운 표 → app/data/vocab.json (+ sentences.md → app/data/sentences.json)
 
 사용법: python3 app/tools/build_vocab.py  (english_study 루트에서 실행)
 id는 (type + ko) 해시 기반이라 표 순서가 바뀌어도 학습 기록이 유지된다.
@@ -16,6 +16,8 @@ SOURCES = [
 ]
 EXAMPLE_KO = ROOT / "vocab" / "example_ko.json"  # card id → 예문 전체 해석
 OUT = ROOT / "app" / "data" / "vocab.json"
+SENTENCES = ROOT / "vocab" / "sentences.md"
+SENTENCES_OUT = ROOT / "app" / "data" / "sentences.json"
 
 
 def make_id(item_type: str, ko: str) -> str:
@@ -80,6 +82,33 @@ def main():
         by_cat[it["category"]] = by_cat.get(it["category"], 0) + 1
     for cat, n in by_cat.items():
         print(f"  - {cat}: {n}")
+    build_sentences()
+
+
+def build_sentences():
+    """vocab/sentences.md (통문장) → app/data/sentences.json. 표 순서 = 출제 순서."""
+    if not SENTENCES.exists():
+        return
+    items = []
+    for line in SENTENCES.read_text(encoding="utf-8").splitlines():
+        if not line.strip().startswith("|"):
+            continue
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        if len(cells) < 2 or cells[0] == "한국어" or set(cells[0]) <= {"-", ":", " "}:
+            continue
+        ko, en = cells[0], cells[1]
+        if not ko or not en:
+            continue
+        items.append({
+            "id": make_id("sent", ko),
+            "ko": ko,
+            "en": en,
+            "note": cells[2] if len(cells) > 2 else "",
+            "added": cells[3] if len(cells) > 3 else "",
+            "source": cells[4] if len(cells) > 4 else "",
+        })
+    SENTENCES_OUT.write_text(json.dumps(items, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"✓ {SENTENCES_OUT.relative_to(ROOT)} 생성 — {len(items)}개 문장")
 
 
 if __name__ == "__main__":

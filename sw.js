@@ -1,5 +1,5 @@
 // 앱 셸 cache-first, data/*.json network-first, /pb/(동기화 API)는 캐시 안 함
-const CACHE = 'chunky-v32';
+const CACHE = 'chunky-v33';
 const SHELL = [
   './',
   'index.html',
@@ -19,6 +19,7 @@ const SHELL = [
   'js/tutor.js',
   'js/browse.js',
   'js/stats.js',
+  'js/sentences.js',
   'manifest.webmanifest',
   'icons/icon-192.png',
   'icons/icon-512.png',

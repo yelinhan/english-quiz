@@ -5,7 +5,7 @@ import { auth, api } from './auth.js';
 
 const SYNC_KEYS = [
   'eq.srsVersion', 'eq.srs', 'eq.log', 'eq.custom', 'eq.overrides',
-  'eq.deleted', 'eq.corrections', 'eq.writingDays', 'eq.goal',
+  'eq.deleted', 'eq.corrections', 'eq.writingDays', 'eq.goal', 'eq.sentences',
 ];
 const PUSH_DELAY = 1500;
 
@@ -86,6 +86,20 @@ function mergeKey(key, local, server) {
       return mergeById(local, server);
     case 'eq.overrides':
       return { ...local, ...server };
+    case 'eq.sentences': {
+      // 문장별로 도입일은 이른 쪽, 성공 횟수·마지막 성공일은 큰 쪽
+      const out = { ...local };
+      for (const [id, rec] of Object.entries(server)) {
+        const l = out[id];
+        if (!l) { out[id] = rec; continue; }
+        out[id] = {
+          intro: l.intro < rec.intro ? l.intro : rec.intro,
+          reps: Math.max(l.reps || 0, rec.reps || 0),
+          last: (l.last || '') > (rec.last || '') ? l.last : rec.last,
+        };
+      }
+      return out;
+    }
     case 'eq.corrections':
       return unionMultiset(local, server)
         .sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))

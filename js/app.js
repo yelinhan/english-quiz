@@ -11,10 +11,11 @@ import * as writing from './writing.js';
 import * as lessons from './lessons.js';
 import * as tutor from './tutor.js';
 import * as browse from './browse.js';
+import * as sentences from './sentences.js';
 import { initPicker } from './picker.js';
 
-const views = { home, quiz, cloze, writing, lessons, tutor, browse };
-const ctx = { cards: [], lessons: [], feedback: [], refreshHeader, reloadCards };
+const views = { home, quiz, cloze, writing, lessons, tutor, browse, sentences };
+const ctx = { cards: [], lessons: [], feedback: [], sentences: [], refreshHeader, reloadCards };
 let vocabBase = [];
 let currentView = 'home';
 
@@ -226,6 +227,7 @@ function initSettings() {
       corrections: store.corrections(),
       overrides: store.overrides(),
       deleted: store.deleted(),
+      sentences: store.sentences(),
     };
     const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
@@ -241,6 +243,7 @@ async function main() {
   vocabBase = await loadBaseVocab();
   ctx.lessons = await loadJson('data/lessons.json', []);
   ctx.feedback = await loadJson('data/feedback.json', []);
+  ctx.sentences = await loadJson('data/sentences.json', []);
   reloadCards();
 
   document.querySelectorAll('.tabbar button').forEach((b) => {

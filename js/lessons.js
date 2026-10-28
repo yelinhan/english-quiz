@@ -18,6 +18,8 @@ export function render(el, ctx) {
   function drawList() {
     el.innerHTML = `
       <h2 class="section-title">📞 전화영어 수업 (${lessons.length}회)</h2>
+      ${(ctx.sentences || []).length ? `
+        <button class="todo" id="sentGo" style="margin-bottom:12px"><span>🗣 수업 문장 통으로 외우기 — 하루 3개</span><span>→</span></button>` : ''}
       ${lessons.map((l, i) => `
         <div class="card-box lesson-item" data-i="${i}">
           <div class="date">${esc(l.date)}</div>
@@ -28,6 +30,8 @@ export function render(el, ctx) {
     el.querySelectorAll('.lesson-item').forEach((item) => {
       item.onclick = () => drawDetail(lessons[Number(item.dataset.i)]);
     });
+    const go = el.querySelector('#sentGo');
+    if (go) go.onclick = () => ctx.show('sentences');
   }
 
   function drawDetail(l) {
