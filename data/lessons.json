@@ -66,5 +66,144 @@
       { "who": "me", "text": "I've always heard you should find videos you're actually interested in, but I don't know which channels would work for me." },
       { "who": "tutor", "text": "I'll find you some channels. Talk to you next class!" }
     ]
+  },
+  {
+    "date": "2026-10-28",
+    "topic": "프리토킹 (업무 변화 / 동료 결혼식 / 날씨·쇼핑)",
+    "summary": "프리토킹 15분. 회사에서 포지션이 바뀐 이야기, 이번 주말 동료 결혼식과 축의금, 한국 vs 미국 결혼식(미국은 예식 후 DJ·춤 파티), 쌀쌀해진 날씨와 옷 쇼핑. 튜터 피드백: at my company, confused vs confusing(-ed/-ing), by himself, be동사 누락.",
+    "upgrades": [
+      {
+        "said": "big change on my company",
+        "better": "a big change at my company",
+        "note_ko": "회사·장소는 at (튜터 교정)."
+      },
+      {
+        "said": "It's a little bit confused and frustrated",
+        "better": "It was kinda confusing and frustrating",
+        "note_ko": "상황이 주는 감정은 -ing, 내가 느끼는 감정은 -ed (I was confused). 튜터가 가장 길게 설명한 포인트."
+      },
+      {
+        "said": "I just got report about the position change",
+        "better": "I just found out about it",
+        "note_ko": "'통보받다' 직역. 소식을 알게 된 건 found out."
+      },
+      {
+        "said": "it is somewhat not bad now",
+        "better": "it's actually not that bad now",
+        "note_ko": "somewhat은 문어체 (8/5 리포트 포커스). 'not that bad'를 통째로."
+      },
+      {
+        "said": "I want to handle something more trendy",
+        "better": "I wanted to work on newer tech",
+        "note_ko": "'다루다' 직역 → 업무는 work on. trendy의 비교급은 trendier."
+      },
+      {
+        "said": "because of my partner didn't finish the job",
+        "better": "because my partner couldn't finish the job",
+        "note_ko": "because of + 명사 / because + 문장."
+      },
+      {
+        "said": "I have to move to this position for helping him",
+        "better": "I had to go back to help him",
+        "note_ko": "'~하기 위해'는 to + 동사 (for -ing ✗). 지난 일이니 had to."
+      },
+      {
+        "said": "he can't finish that project on himself",
+        "better": "he couldn't finish the project by himself",
+        "note_ko": "'혼자서' = by himself / on his own (튜터 교정)."
+      },
+      {
+        "said": "in my own thoughts, he didn't try harder as much",
+        "better": "Honestly, I don't think he tried that hard",
+        "note_ko": "'내 생각엔' 직역 → Honestly, I think / If you ask me."
+      },
+      {
+        "said": "I have to do that job, the replace of him",
+        "better": "I end up doing it for him",
+        "note_ko": "'그 사람 대신' = for him / instead of him. end up -ing = 결국 ~하게 되다."
+      },
+      {
+        "said": "the wedding ceremony of my coworker",
+        "better": "my coworker's wedding",
+        "note_ko": "A of B보다 B's A가 구어적. ceremony는 보통 생략."
+      },
+      {
+        "said": "she's my very familiar companion",
+        "better": "We're really close.",
+        "note_ko": "familiar = 낯익은, companion = 문어. 친하다 = close, 동료 = coworker."
+      },
+      {
+        "said": "the basic price is about $80",
+        "better": "people usually give around 80 bucks",
+        "note_ko": "price는 물건값. 축의금 액수는 the usual amount / people usually give ~."
+      },
+      {
+        "said": "she married with the American guy",
+        "better": "she married an American guy",
+        "note_ko": "marry는 with 없이 바로 사람. 처음 언급이니 an."
+      },
+      {
+        "said": "they reserve some place and just take a party",
+        "better": "they rented a venue and just threw a party",
+        "note_ko": "take a party ✗ → have / throw a party."
+      },
+      {
+        "said": "it's very very great",
+        "better": "it's really nice out",
+        "note_ko": "great엔 very를 잘 안 붙여요. 날씨는 nice out."
+      },
+      {
+        "said": "it is a little bit little bit cold",
+        "better": "it's getting kinda chilly",
+        "note_ko": "chilly = 쌀쌀한. a little bit 반복 → kinda / a bit."
+      },
+      {
+        "said": "some clothes for preparing autumn and winter",
+        "better": "some fall and winter clothes",
+        "note_ko": "'준비하기 위해' 직역. 미국은 autumn보다 fall."
+      },
+      {
+        "said": "she a bit nervous",
+        "better": "she's a little nervous",
+        "note_ko": "be동사 누락 (튜터 교정)."
+      }
+    ],
+    "feedback_ko": "프리토킹 15분 동안 대화가 끊기지 않았고, 모르는 단어(snore)는 돌려 말해서 튜터한테 받아냄. 'Not at all', 'It's not bad' 같은 짧은 리액션 좋음. 교정 포인트: ① 전치사 — at my company, at the workshop, by himself, marry(전치사 X) ② -ed/-ing 감정 형용사 — confused vs confusing, bored vs boring ③ 한국어 명사 직역 — companion(동료→coworker), familiar(친한→close), report(통보→found out), basic price ④ somewhat·a little bit 반복 → kinda/pretty ⑤ 지난 일 현재형으로 말하기(I want → I wanted).",
+    "script_en": [
+      { "who": "tutor", "text": "Hi! How are you doing? Are you ready for class? Would you like a free talk class or a textbook class?" },
+      { "who": "me", "text": "Free talk, please." },
+      { "who": "tutor", "text": "Wonderful. How's your week going?" },
+      { "who": "me", "text": "Actually, there's been a big change at my company. While I was at a workshop, I found out I'd been moved back to my old position. So it was kinda confusing and frustrating at first. But now that I'm back, it's actually not that bad." },
+      { "who": "tutor", "text": "Oh, okay. Good thing, bad thing? What are you doing that's different?" },
+      { "who": "me", "text": "So, I used to work on one AI model, and then I switched to an image-editing model — that's newer tech, and it's kinda hot right now. But now I'm back on my old project, which uses older tech." },
+      { "who": "tutor", "text": "Got you — so the technology you're working with is a little older. How do you feel about it? Are you glad, do you not care, or are you excited about the new chance?" },
+      { "who": "me", "text": "Honestly, I'm not too happy about it. I switched because I wanted to work on newer tech. But my old partner couldn't finish his project by himself, so I had to go back and help him out." },
+      { "who": "tutor", "text": "Oh, that's too bad. Did they tell you why they moved you?" },
+      { "who": "me", "text": "Yeah — the guy I worked with on the older project couldn't finish it on his own, so I have to help him wrap it up. I mean, if he'd really been trying, I'd get it. But honestly, I don't think he tried that hard. So I kinda end up doing his part for him." },
+      { "who": "tutor", "text": "That's not cool. All right — do you have any plans for this weekend?" },
+      { "who": "me", "text": "Not much going on. I've just got a coworker's wedding to go to, this Sunday." },
+      { "who": "tutor", "text": "Oh nice! Are you excited about the wedding?" },
+      { "who": "me", "text": "Yeah, we're really close. I actually saw her today, right before her big day." },
+      { "who": "tutor", "text": "Is she excited?" },
+      { "who": "me", "text": "She's a little nervous — she's worried she'll forget something or mess something up." },
+      { "who": "tutor", "text": "Are you going to give her money for the wedding? How much do you have to give?" },
+      { "who": "me", "text": "Yeah, in Korea you usually give cash. People usually give around 80 bucks." },
+      { "who": "tutor", "text": "Interesting! Weddings in Korea are pretty short, though. You don't dance or anything after?" },
+      { "who": "me", "text": "No, not at all. No dancing and no after-party." },
+      { "who": "tutor", "text": "That doesn't sound fun! What's a wedding without dancing? You guys just eat dinner and go home. Have you ever been to a wedding from another culture?" },
+      { "who": "me", "text": "Not yet. But a friend of mine lives in the US now — she married an American guy. She had an American-style wedding and sent me some photos. It looked so different from weddings here — they just rented a venue and threw a party." },
+      { "who": "tutor", "text": "Yeah, that's exactly what it is. The wedding itself is very formal, but then you go to another place, and there's a DJ or a band, a lot of alcohol, and everyone just dances. It's a lot of fun. How's the weather? I hear it's lovely in Korea right now." },
+      { "who": "me", "text": "Yeah, it's really nice out. But it's getting kinda chilly." },
+      { "who": "tutor", "text": "Do you have any other plans this weekend besides the wedding?" },
+      { "who": "me", "text": "Oh yeah, I need to go shopping for some fall and winter clothes." },
+      { "who": "tutor", "text": "How often do you go shopping for food? Every few days, or once a week?" },
+      { "who": "me", "text": "Honestly, I barely ever go grocery shopping. I eat all my meals at work — breakfast, lunch, and dinner." },
+      { "who": "tutor", "text": "I heard the food there is good, right?" },
+      { "who": "me", "text": "It's not bad!" },
+      { "who": "tutor", "text": "What do you have at home if you get hungry in the middle of the night?" },
+      { "who": "me", "text": "Just some snacks or fruit." },
+      { "who": "tutor", "text": "Okay, let's go over some English. Instead of 'a big change on my company,' say 'at my company.' Also, 'confused' is how we feel — 'I'm confused,' 'I'm bored.' When something makes us feel that way, we use -ing. So the situation at your job isn't confused — it's confusing. If I say 'my girlfriend is bored,' that's how she feels. But 'my girlfriend is boring' means she makes me feel bored — you could get in trouble mixing those up!" },
+      { "who": "tutor", "text": "And instead of 'on himself,' say 'by himself' — he couldn't do the job by himself. Don't forget your 'is,' too: 'she is a little bit nervous,' not 'she a bit nervous.' Besides that, you did good. I put all of that in your notes. Talk to you next week!" }
+    ]
   }
 ]

@@ -36,5 +36,58 @@
         "note_ko": "wonderful은 격식·과장 느낌. really cool/great이 자연스러워요."
       }
     ]
+  },
+  {
+    "date": "2026-10-28",
+    "period": { "from": "2026-08-06", "to": "2026-10-28" },
+    "title": "Baseline 2 — 프리토킹 스냅샷",
+    "baseline": true,
+    "summary_ko": "기록된 수업이 2회라 아직 baseline. 프리토킹 15분 동안 대화가 안 끊기고 리스닝은 안정적(되묻기 0회). 짧은 리액션(Not at all, It's not bad)은 자연스러운데, 길게 설명할 때 한국어 명사를 그대로 옮기는 습관(companion, familiar, report, basic price)이 가장 큰 과제. 지난 일을 현재형으로 말하는 시제 문제는 2회 연속 등장.",
+    "scores": { "casual": 2, "listening": 4, "grammar": 3, "vocab": 3 },
+    "wins_ko": [
+      "프리토킹 15분 동안 대화가 끊기지 않음 — 복잡한 배경도 끝까지 설명",
+      "짧은 리액션이 자연스러움: Not at all / It's not bad / Not yet",
+      "모르는 단어를 돌려 말해서 튜터한테 받아냄 (nose snuggle → snore)",
+      "튜터의 다중 질문·긴 설명을 되묻지 않고 이해"
+    ],
+    "focus_ko": [
+      "쉬운 단어로 말하기: 동료=coworker, 친하다=close, 알게 됐다=found out, 일하다=work on",
+      "지난 일은 과거형으로 끝까지 (2회 연속 이슈)",
+      "a little bit·somewhat → kinda, pretty (수업에서 3번 이상)",
+      "-ed/-ing 감정 형용사: I'm confused ↔ it's confusing"
+    ],
+    "trends": [],
+    "casual_tips": [
+      {
+        "formal_said": "she's my very familiar companion",
+        "casual_better": "We're really close.",
+        "note_ko": "familiar = 낯익은. 친하다 = close, 동료 = coworker."
+      },
+      {
+        "formal_said": "I just got report about the position change",
+        "casual_better": "I just found out about it.",
+        "note_ko": "'통보받다' 직역. 소식을 알게 된 건 found out."
+      },
+      {
+        "formal_said": "it is somewhat not bad now",
+        "casual_better": "it's actually not that bad now",
+        "note_ko": "somewhat은 글말. not that bad를 통째로."
+      },
+      {
+        "formal_said": "my position has been changed",
+        "casual_better": "I got moved to a different position.",
+        "note_ko": "현재완료 수동태는 보고서 톤. 말로는 got + p.p."
+      },
+      {
+        "formal_said": "the basic price is about $80",
+        "casual_better": "people usually give like 80 bucks",
+        "note_ko": "price는 물건값. 액수는 the usual amount."
+      },
+      {
+        "formal_said": "it's very very great",
+        "casual_better": "it's really nice out",
+        "note_ko": "great엔 very를 잘 안 붙여요. 날씨는 nice out."
+      }
+    ]
   }
 ]
