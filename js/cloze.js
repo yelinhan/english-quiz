@@ -321,7 +321,7 @@ export function render(el, ctx, { moreNew = false } = {}) {
     }
     below.innerHTML = `
       <div class="cz-status ${result.ok ? 'ok' : 'no'}">${result.ok
-        ? `⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용)</small>' : slipped ? ' <small>(중간에 틀림)</small>' : ''}`
+        ? `⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용)</small>' : ''}`
         : '✕ 틀렸어요'}</div>
       ${actions}
       ${cz.extras.length ? `
