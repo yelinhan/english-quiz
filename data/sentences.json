@@ -142,5 +142,101 @@
   "note": "good for (to ✗)",
   "added": "2026-10-29",
   "source": "전화영어 8/3"
+ },
+ {
+  "id": "sent-0a77e3f0",
+  "ko": "동료 결혼식 갔는데 신랑이 노래할 줄은 몰랐어!",
+  "en": "I went to my coworker's wedding, and I totally didn't expect the groom to sing!",
+  "note": "the wedding ceremony of my coworker ✗ · expect + 사람 + to V",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-b31a7cbb",
+  "ko": "평소에 얘기 잘 안 하던 사람들이랑도 어울릴 수 있었어.",
+  "en": "I got to hang out with a bunch of people I don't usually talk to.",
+  "note": "~할 수 있었다 = got to · not familiar with me ✗",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-912dac8f",
+  "ko": "요즘 결혼식은 대부분 1부 2부로 나뉘어.",
+  "en": "These days, a lot of weddings have two parts.",
+  "note": "are consists of ✗ → have",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-18b3ea04",
+  "ko": "예식 끝나면 약간 뒤풀이 같은 게 있어.",
+  "en": "After the ceremony, there's kind of an after-party.",
+  "note": "명사 앞엔 a little bit ✗ → kind of",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-605eb49f",
+  "ko": "신부가 나를 부모님께 제일 친한 동료라고 소개해줬어.",
+  "en": "The bride introduced me to her parents as one of her closest coworkers.",
+  "note": "introduce A to B as C",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-8e4de5a0",
+  "ko": "고수는 별로야.",
+  "en": "I'm not a big fan of cilantro.",
+  "note": "not my taste ✗ · 미국은 cilantro",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-18f84911",
+  "ko": "아직 그 맛이 익숙하지 않아.",
+  "en": "I'm just not used to the taste yet.",
+  "note": "it's not familiar with me ✗",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-b87bdd3b",
+  "ko": "친구가 소개해줬어.",
+  "en": "A friend set us up.",
+  "note": "set ~ up = (소개팅) 이어주다",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-a3d1ce78",
+  "ko": "소개팅 같은 거였어.",
+  "en": "It was kind of a blind date.",
+  "note": "관사 a · 지난 일은 was",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-6bba4d77",
+  "ko": "요즘 한국은 취업 시장이 꽤 힘들어.",
+  "en": "The job market in Korea is pretty rough these days.",
+  "note": "situation ✗ → the job market이 주어",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-93cae29a",
+  "ko": "한국 사람들은 엄청 경쟁적이야.",
+  "en": "People in Korea are super competitive.",
+  "note": "very very ✗ → super",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-7e946f3f",
+  "ko": "나라는 작은데 다들 서울에 살아.",
+  "en": "It's a tiny country, and most people live in Seoul.",
+  "note": "are living ✗ (상태는 단순현재)",
+  "added": "2026-11-04",
+  "source": "전화영어 11/01"
  }
 ]
