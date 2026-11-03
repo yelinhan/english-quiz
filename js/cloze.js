@@ -317,7 +317,7 @@ export function render(el, ctx, { moreNew = false } = {}) {
             .map(([cls, label, ivl], r) => `<button class="${cls}${r === sug ? ' suggest' : ''}" data-r="${r}">${label}<span class="sub">${ivl}</span></button>`)
             .join('')}
         </div>
-        <p class="count-note" style="text-align:center; margin:0">기억한 정도를 골라주세요 · Enter = 테두리 버튼</p>`;
+        <p class="count-note" style="text-align:center; margin:0">Enter = 테두리 버튼</p>`;
     }
     below.innerHTML = `
       <div class="cz-status ${result.ok ? 'ok' : 'no'}">${result.ok
