@@ -245,5 +245,217 @@
       { "who": "tutor", "text": "Okay, let's go over some English. Instead of 'a big change on my company,' say 'at my company.' Also, 'confused' is how we feel — 'I'm confused,' 'I'm bored.' When something makes us feel that way, we use -ing. So the situation at your job isn't confused — it's confusing. If I say 'my girlfriend is bored,' that's how she feels. But 'my girlfriend is boring' means she makes me feel bored — you could get in trouble mixing those up!" },
       { "who": "tutor", "text": "And instead of 'on himself,' say 'by himself' — he couldn't do the job by himself. Don't forget your 'is,' too: 'she is a little bit nervous,' not 'she a bit nervous.' Besides that, you did good. I put all of that in your notes. Talk to you next week!" }
     ]
+  },
+  {
+    "date": "2026-11-01",
+    "topic": "프리토킹 (동료 결혼식 후기 / 치폴레·고수 / 남자친구 / 한국의 경쟁)",
+    "summary": "프리토킹 12분. 동료 결혼식 후기(신랑 노래, 1부 예식+2부 식사, 테이블 인사), 결혼식 후 처음 먹어본 치폴레와 고수(비누 맛 — 유전), 남자친구(소개팅, 박사 졸업 후 구직), 한국 취업 경쟁·서울 집중·부모님 기대 압박. 튜터: 미국은 대학 졸업자 38% 정도. 이번엔 마지막 문법 피드백 없이 단어 보충(guests, go around and talk to the guests, tastes like soap, cilantro)만.",
+    "upgrades": [
+      {
+        "said": "(How are you doing?) Yeah, it's great",
+        "better": "I'm doing great, thanks! How about you?",
+        "note_ko": "안부엔 I'm 주어. 10/28에도 똑같이 답했어요.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "I went to the wedding ceremony of my coworker",
+        "better": "I went to my coworker's wedding.",
+        "note_ko": "10/28에 교정받은 표현이 그대로 또 나옴! A of B → B's A.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "It was very funny because I didn't expect her singing",
+        "better": "It was so fun — I totally didn't expect the groom to sing!",
+        "note_ko": "funny = 웃긴, fun = 즐거운. expect + 사람 + to 동사.",
+        "tags": ["단어선택", "to부정사"]
+      },
+      {
+        "said": "I can gather with very many people who was not familiar with me",
+        "better": "I got to hang out with a bunch of people I don't usually talk to.",
+        "note_ko": "'~할 수 있어서 좋았다' = got to. familiar는 방향 주의(I'm familiar with ~ / it's familiar to me) — 10/28 'familiar companion'에 이어 반복.",
+        "tags": ["단어선택", "수일치"]
+      },
+      {
+        "said": "a lot of coworkers of my team were invited for that wedding",
+        "better": "pretty much my whole team was invited",
+        "note_ko": "people from my team. 초대는 invited to (for ✗).",
+        "tags": ["전치사"]
+      },
+      {
+        "said": "many wedding ceremonies are consists of two parts",
+        "better": "a lot of weddings have two parts",
+        "note_ko": "consist of는 be 없이. 말로는 have two parts가 제일 자연스러움.",
+        "tags": ["수동태"]
+      },
+      {
+        "said": "the second part was a little bit after party",
+        "better": "then there's kind of an after-party",
+        "note_ko": "a little bit은 형용사 앞에만. 명사 앞엔 kind of (like).",
+        "tags": ["단어선택", "관사"]
+      },
+      {
+        "said": "their parents are like looking the guests",
+        "better": "they went around to each table to greet the guests",
+        "note_ko": "지난 일은 과거형. 튜터 표현: go around and talk to the guests.",
+        "tags": ["시제-과거", "콜로케이션"]
+      },
+      {
+        "said": "the bride was introducing me and my friend as the best, like best family coworker",
+        "better": "the bride introduced me and my friend to her parents as her closest coworkers",
+        "note_ko": "단발 동작은 단순과거(진행형 ✗). introduce A to B as C.",
+        "tags": ["시제-진행", "어순"]
+      },
+      {
+        "said": "that wasn't nothing long either",
+        "better": "that wasn't long either",
+        "note_ko": "이중부정 ✗.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "I went to the Gangnam station with my boyfriend and I just ate the chipotle",
+        "better": "my boyfriend and I went to Gangnam and grabbed some Chipotle",
+        "note_ko": "역·가게 이름 앞엔 the ✗. 먹었다 = grabbed / had.",
+        "tags": ["관사"]
+      },
+      {
+        "said": "that was my first time to eat that one",
+        "better": "it was my first time trying it",
+        "note_ko": "first time + -ing.",
+        "tags": ["동명사"]
+      },
+      {
+        "said": "coriander is not my taste, it's a little bit not that familiar with me",
+        "better": "I'm not a big fan of cilantro. I'm just not used to it.",
+        "note_ko": "not my taste → not a fan / not my thing. 맛이 낯설면 not used to it (familiar 방향 반대).",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "I don't know well because my boyfriend had some experiences about that",
+        "better": "I'm not sure — my boyfriend's been there before, so he ordered for us",
+        "note_ko": "'잘 모르겠어' 직역 → I'm not sure. 가본 경험 = has been there before.",
+        "tags": ["단어선택", "시제-현재완료"]
+      },
+      {
+        "said": "How do I meet him?",
+        "better": "How did we meet?",
+        "note_ko": "질문을 되뇌일 때도 과거형.",
+        "tags": ["시제-과거"]
+      },
+      {
+        "said": "My friend introduced him to me. So it's kind of blind date",
+        "better": "A friend set us up — it was kind of a blind date.",
+        "note_ko": "set A up = 소개해주다. 관사 a. kind of 쓴 건 👍",
+        "tags": ["관사"]
+      },
+      {
+        "said": "he graduated the post-doctor, doctor's degree",
+        "better": "he just finished his PhD",
+        "note_ko": "post-doctor(포닥)는 의미가 달라요. graduate from + 학교 / 학위는 got · finished.",
+        "tags": ["단어선택", "전치사"]
+      },
+      {
+        "said": "he's now finding the job because it is not good situation in Korea to find a job",
+        "better": "he's job hunting right now — the job market in Korea is pretty rough these days",
+        "note_ko": "find = 찾아내다(결과), look for = 찾는 중. situation 직역 → the job market.",
+        "tags": ["단어선택", "관사"]
+      },
+      {
+        "said": "there are not that enough jobs in that area",
+        "better": "it's a pretty niche field, so there aren't that many jobs",
+        "note_ko": "not enough / not that many 섞임. 분야가 좁다 = niche.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "all the fascinating jobs are located in the Seoul",
+        "better": "all the good jobs are in Seoul",
+        "note_ko": "fascinating(매혹적인) 오용, located in은 딱딱, 도시 이름엔 the ✗.",
+        "tags": ["단어선택", "관사"]
+      },
+      {
+        "said": "this country is a lot of very very small, but most of them are living in Seoul",
+        "better": "it's a tiny country, and most people live in Seoul",
+        "note_ko": "very very → tiny / super. 사는 곳 같은 상태는 단순현재.",
+        "tags": ["시제-진행", "단어선택"]
+      },
+      {
+        "said": "because of course they can be competitive because there are so many people",
+        "better": "so of course it gets competitive — there are just so many people",
+        "note_ko": "because 두 번 ✗. so 하나로 이어 말하기.",
+        "tags": ["접속사"]
+      },
+      {
+        "said": "it feels very very pressure for them",
+        "better": "kids feel a ton of pressure",
+        "note_ko": "pressure는 명사 → feel a lot of pressure / be under pressure / feel pressured.",
+        "tags": ["단어선택"]
+      }
+    ],
+    "feedback_ko": "10/28에 이어 대화가 한 번도 안 끊김. 모르는 단어는 'How can I say?'로 시간 벌고 비슷한 말을 던져서 튜터한테 받아냄(guests, coriander) 👍. 'About two years', 'Oh, really?', 'I've heard of that' 같은 짧은 답 자연스러움. kind of를 처음 써봄(10/28 포커스). 교정 포인트: ① 10/28 교정 표현 재발 — the wedding ceremony of my coworker, familiar(2회, 방향도 반대) ② '잘 모르겠어' 직역 I don't know well → I'm not sure ③ very very·many many 10회+ → super / so / a ton of ④ 고유명사 앞 the(the Gangnam station, the chipotle, the Seoul) ⑤ 지난 일 현재형·진행형(was singing, are looking, was introducing) ⑥ 튜터가 Chipotle를 Chick-fil-A로 잘못 알아들었을 때 바로 정정하기.",
+    "script_en": [
+      { "who": "tutor", "text": "Hi! How are you doing?" },
+      { "who": "me", "text": "I'm doing great, thanks!" },
+      { "who": "tutor", "text": "Wonderful. Are you ready for class? Would you like a free talk class or a textbook class?" },
+      { "who": "me", "text": "Free talk, please." },
+      { "who": "tutor", "text": "Yes, ma'am. How was your weekend? What did you do?" },
+      { "who": "me", "text": "I went to my coworker's wedding." },
+      { "who": "tutor", "text": "Nice. And how was the wedding?" },
+      { "who": "me", "text": "It was so fun — I totally didn't expect the groom to sing! He sang in front of all the... how do you say it... the people who were invited?" },
+      { "who": "tutor", "text": "The guests." },
+      { "who": "me", "text": "Yeah, all the guests." },
+      { "who": "tutor", "text": "Interesting! Is he a good singer?" },
+      { "who": "me", "text": "Not really, but the vibe was amazing." },
+      { "who": "tutor", "text": "That's all that matters — the vibe. Wonderful. So you had a good time?" },
+      { "who": "me", "text": "Yeah, I had a great time. I got to hang out with a bunch of people I don't usually talk to." },
+      { "who": "tutor", "text": "Did you know a lot of people there?" },
+      { "who": "me", "text": "Yeah, she's on my team, so pretty much my whole team was invited. So I knew most people there." },
+      { "who": "tutor", "text": "Oh, that's nice. But it's a short wedding though, right? It wasn't too long or anything?" },
+      { "who": "me", "text": "Yeah, it wasn't long at all. The ceremony itself was only about 30 minutes." },
+      { "who": "tutor", "text": "Wow, really? That's it? And then you had dinner right after?" },
+      { "who": "me", "text": "Yeah. These days, a lot of weddings have two parts. First there's the actual ceremony, and then there's kind of an after-party. We had dinner, and the bride and groom and their parents went around to each table..." },
+      { "who": "tutor", "text": "Oh, they go around and talk to the guests." },
+      { "who": "me", "text": "Yeah, exactly. They go around and talk to the guests." },
+      { "who": "tutor", "text": "Nice. Did they talk to you — the parents?" },
+      { "who": "me", "text": "Yeah! The bride introduced me and my friend to her parents as her closest coworkers. That was really sweet." },
+      { "who": "tutor", "text": "Very nice. And how long were you at the dinner for?" },
+      { "who": "me", "text": "That wasn't long either. Everything's super fast-paced in Korea." },
+      { "who": "tutor", "text": "Wow. Like, \"Let's get out of here!\" All right, and what did you do for the rest of the weekend?" },
+      { "who": "me", "text": "After the wedding, my boyfriend and I went to Gangnam and grabbed some Chipotle. It was my first time trying it." },
+      { "who": "tutor", "text": "Oh, did you like it?" },
+      { "who": "me", "text": "It was good, but... how do you say it... coriander?" },
+      { "who": "tutor", "text": "Coriander. Got you." },
+      { "who": "me", "text": "Yeah. I'm not a big fan of cilantro. I'm just not used to it." },
+      { "who": "tutor", "text": "Does it taste funny to you, the coriander?" },
+      { "who": "me", "text": "Yeah, it kinda tastes like soap to me." },
+      { "who": "tutor", "text": "So it tastes like soap to you? You know, that's a genetic thing." },
+      { "who": "me", "text": "Yeah, I've heard of that." },
+      { "who": "tutor", "text": "It is. We don't use coriander a lot, but there's a plant called cilantro that I love — it's basically the same plant. For other people it tastes like soap. I did a DNA test once, and it said I'm one of the people who don't think cilantro tastes like soap. Restaurants should really tell people if something has cilantro in it, because a lot of people have that genetic thing." },
+      { "who": "me", "text": "Yeah, that's right." },
+      { "who": "tutor", "text": "Interesting. So what did you order when you were there?" },
+      { "who": "me", "text": "I'm not sure — my boyfriend's been there before, so he ordered for us." },
+      { "who": "tutor", "text": "Cool, cool. So how about your boyfriend? How long have you been going out?" },
+      { "who": "me", "text": "About two years." },
+      { "who": "tutor", "text": "Oh, nice. How did you meet him?" },
+      { "who": "me", "text": "How did we meet? A friend set us up — it was kind of a blind date." },
+      { "who": "tutor", "text": "And what does he do for a living?" },
+      { "who": "me", "text": "He just finished his PhD. But he's job hunting right now — the job market in Korea is pretty rough these days." },
+      { "who": "tutor", "text": "What did he study?" },
+      { "who": "me", "text": "I'm not totally sure, but I think it's a kind of engineering." },
+      { "who": "tutor", "text": "Fascinating. I'd imagine it's really competitive to get a job in Korea." },
+      { "who": "me", "text": "Yeah, it's a pretty niche field, so there aren't that many jobs." },
+      { "who": "tutor", "text": "And everyone in Korea has a degree. You guys are one of the most educated countries in the world. I have another student who's an engineer, and all he does is try to find jobs — he has to study and study, like he's still in school. It seems so difficult. That's rough. And finding a job and finding an apartment..." },
+      { "who": "me", "text": "Yeah, totally. All the good jobs are in Seoul." },
+      { "who": "tutor", "text": "Exactly. Everyone has to go to Seoul. And it's a small country, so everybody goes there." },
+      { "who": "me", "text": "People in Korea are super competitive. It's a tiny country, and most people live in Seoul. So of course it gets competitive — there are just so many people." },
+      { "who": "tutor", "text": "I feel like that's the case. I was watching one of those Korean cooking shows, and I was so impressed with how hard-working and competitive the chefs were. You guys are very intelligent and very competitive. It must be very stressful. I always say I would not have made a good Korean, because I don't think I could deal with the pressure." },
+      { "who": "me", "text": "Yeah, it's really tough." },
+      { "who": "tutor", "text": "School, the tests, the exams, the studying — I would have disappointed my parents." },
+      { "who": "me", "text": "I think making our parents proud is kind of every kid's number one mission. So kids feel a ton of pressure." },
+      { "who": "tutor", "text": "I can imagine. Every time I talk to my students, they're all so well-educated. Not like America — I think maybe 38% of Americans have a degree." },
+      { "who": "me", "text": "Oh, really?" },
+      { "who": "tutor", "text": "Yeah, not a lot. More and more people are telling Americans they don't have to go to college. My parents have a degree and I have one, but I have so many friends who are the first ones in their family to go to college — and their families have been in the US for like 200 years." },
+      { "who": "me", "text": "Wow, that's crazy." },
+      { "who": "tutor", "text": "All right, we're out of time. Always a pleasure. Have a good day!" },
+      { "who": "me", "text": "Thank you! Bye!" }
+    ]
   }
 ]
