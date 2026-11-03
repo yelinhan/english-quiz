@@ -37,9 +37,14 @@ function hintOf(en) {
     (_, head, rest) => head + rest.replace(/[A-Za-z]/g, '_'))).join(' ');
 }
 
+// 다음 문장으로 넘어가거나 탭에 다시 들어올 때 이전 문장 음성이 계속 나오지 않게
+function stopSpeak() {
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
 function speak(text, rate = 0.95) {
   if (!('speechSynthesis' in window)) return;
-  speechSynthesis.cancel();
+  stopSpeak();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'en-US';
   u.rate = rate;
@@ -57,6 +62,7 @@ const ttsBtns = `
 export function render(el, ctx) {
   const all = ctx.sentences || [];
   const today = todayStr();
+  stopSpeak();
 
   if (!all.length) {
     el.innerHTML = `
@@ -119,6 +125,7 @@ export function render(el, ctx) {
     bindTts(c);
     speak(c.en);
     el.querySelector('#nextBtn').onclick = () => {
+      stopSpeak();
       li++;
       if (li < learn.length) drawLearn();
       else drawRecall();
@@ -176,6 +183,7 @@ export function render(el, ctx) {
 
   // 다시 → 이번 세션 맨 뒤로 / 말했어 → 오늘 완료 처리
   function grade(ok) {
+    stopSpeak();
     const c = queue.shift();
     if (!ok) {
       queue.push(c);
