@@ -1,9 +1,12 @@
 // 한→영 플래시카드 퀴즈
-import { esc, exampleListHtml } from './store.js';
+import { store, esc, exampleListHtml } from './store.js';
 import { buildSession, answerCard, previewIntervals } from './srs.js';
 
 export function render(el, ctx) {
   const session = buildSession(ctx.cards);
+  // 채점 전에 기록: 재출제된 새 카드도 끝까지 '신규'로 표시
+  const srs = store.srs();
+  const freshIds = new Set(session.filter((c) => !srs[c.id]).map((c) => c.id));
   let idx = 0;
   let flipped = false;
 
@@ -24,7 +27,7 @@ export function render(el, ctx) {
     const p = previewIntervals(c.id);
     el.innerHTML = `
       <div class="cardzone">
-        <div class="session-info"><span>남은 카드 ${session.length - idx}</span><span class="pill">${esc(c.category || '표현')}</span></div>
+        <div class="session-info"><span>남은 카드 ${session.length - idx}</span><span>${freshIds.has(c.id) ? '<span class="pill new">신규</span>' : '<span class="pill review">복습</span>'} <span class="pill">${esc(c.category || '표현')}</span></span></div>
         <div class="flashcard" id="card">
           ${flipped
             ? `<div class="tag">${esc(c.type === 'word' ? 'Word' : 'Chunk')} · ${esc(c.category || '')}</div>
