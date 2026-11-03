@@ -5,7 +5,6 @@ import { sync } from './sync.js';
 import { migrate } from './srs.js';
 import { todayCount, computeStreak } from './stats.js';
 import * as home from './home.js';
-import * as quiz from './quiz.js';
 import * as cloze from './cloze.js';
 import * as writing from './writing.js';
 import * as lessons from './lessons.js';
@@ -14,7 +13,7 @@ import * as browse from './browse.js';
 import * as sentences from './sentences.js';
 import { initPicker } from './picker.js';
 
-const views = { home, quiz, cloze, writing, lessons, tutor, browse, sentences };
+const views = { home, quiz: cloze, writing, lessons, tutor, browse, sentences };
 const ctx = { cards: [], lessons: [], feedback: [], sentences: [], refreshHeader, reloadCards };
 let vocabBase = [];
 let currentView = 'home';

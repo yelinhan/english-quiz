@@ -1,11 +1,11 @@
-// 예문 빈칸 퀴즈: 예문 속 표현 구간 전체를 빈칸으로 뚫고 직접 타이핑해서 맞추기
+// 퀴즈 탭: 예문 속 표현 구간을 빈칸으로 뚫고 직접 타이핑해서 맞추기 (새 카드·복습 카드 모두)
 import { store, esc, splitSentences, pairExamples, todayStr, shuffle } from './store.js';
-import { buildSession, answerCard, GOOD, HARD, AGAIN } from './srs.js';
+import { buildSession, answerCard, NEW_PER_DAY, GOOD, HARD, AGAIN } from './srs.js';
 
-// srs = 간격 반복 복습(일정 반영), today = 오늘 푼 카드로 연습(일정·기록 안 건드림)
+// srs = 오늘 학습(복습 + 새 카드, 일정 반영), today = 오늘 푼 카드로 연습(일정·기록 안 건드림)
 let mode = 'srs';
 
-// 오늘 플래시카드·빈칸에서 채점한 카드 중 예문 있는 것
+// 오늘 채점한 카드 중 예문 있는 것
 function todaySession(cards) {
   const today = todayStr();
   const ids = new Set(store.log().filter((e) => e.d === today).map((e) => e.id));
@@ -154,127 +154,163 @@ function hintStr(answer, n) {
     .join(' ');
 }
 
-export function render(el, ctx) {
+export function render(el, ctx, { moreNew = false } = {}) {
   const practice = mode === 'today';
+  const srs = store.srs();
   const session = practice
     ? todaySession(ctx.cards)
-    : buildSession(ctx.cards, { filter: (c) => !!c.example });
+    : buildSession(ctx.cards, { filter: (c) => !!c.example, ...(moreNew ? { newLimit: NEW_PER_DAY } : {}) });
+  // 채점 전에 기록: 재출제된 새 카드도 끝까지 '신규'로 표시
+  const freshIds = new Set(session.filter((c) => !srs[c.id]).map((c) => c.id));
   let idx = 0;
+  let cz = null;
   let result = null; // null = 입력 대기, { ok, typed } = 채점 완료
   let hintCount = 0;
-  let typedDraft = '';
 
-  const modeChips = `
+  el.innerHTML = `
     <div class="chip-row">
-      <button data-mode="srs" class="${practice ? '' : 'on'}">📅 오늘 복습</button>
+      <button data-mode="srs" class="${practice ? '' : 'on'}">📅 오늘 학습</button>
       <button data-mode="today" class="${practice ? 'on' : ''}">🔁 오늘 배운 카드 연습</button>
     </div>
-    ${practice ? '<p class="count-note" style="margin:0 0 10px">오늘 퀴즈에서 푼 카드로 연습해요. 복습 일정엔 영향 없어요.</p>' : ''}`;
+    ${practice ? '<p class="count-note" style="margin:0 0 10px">오늘 푼 카드로 연습해요. 복습 일정엔 영향 없어요.</p>' : ''}
+    <div id="czBody"></div>`;
+  el.querySelectorAll('[data-mode]').forEach((b) => {
+    b.onclick = () => {
+      if (b.dataset.mode === mode) return;
+      mode = b.dataset.mode;
+      render(el, ctx);
+    };
+  });
+  const body = el.querySelector('#czBody');
 
-  function show(html) {
-    el.innerHTML = modeChips + html;
-    el.querySelectorAll('[data-mode]').forEach((b) => {
-      b.onclick = () => {
-        if (b.dataset.mode === mode) return;
-        mode = b.dataset.mode;
-        render(el, ctx);
-      };
-    });
-  }
-
-  function draw() {
-    if (idx >= session.length) {
-      show(`
-        <div class="done-box">
-          <div class="big">✏️</div>
-          <h3>${practice ? '연습 완료!' : '빈칸 퀴즈 완료!'}</h3>
-          <p>${session.length}문제를 풀었어요.</p>
-          <button class="primary" id="againBtn">한 번 더 하기</button>
-        </div>`);
-      el.querySelector('#againBtn').onclick = () => render(el, ctx);
-      return;
-    }
-    const c = session[idx];
-    const cz = makeCloze(c);
-    const asking = result === null;
-    const letters = cz.answer.replace(/ /g, '').length;
-    show(`
-      <div class="cardzone">
-        <div class="session-info"><span>남은 카드 ${session.length - idx}</span><span class="pill">${esc(c.category || '표현')}</span></div>
-        <div class="flashcard">
-          <div class="ko" style="font-size:1.1rem">${asking ? cz.display : cz.reveal}</div>
-          <div class="ex">${esc(cz.ko)}</div>
-          ${asking
-            ? hintCount > 0 ? `<div class="cloze-hint">힌트: ${esc(hintStr(cz.answer, hintCount))}</div>` : ''
-            : result.ok
-              ? `<div class="cloze-result ok">⭕ 정답이에요!${hintCount > 0 && !practice ? ' <small>(힌트 사용 → 어려움으로 기록)</small>' : ''}</div>`
-              : wrongResultHtml(cz.answer, result.typed)}
-          ${!asking && cz.extras.length ? `
-            <div class="cloze-extra">
-              ${cz.extras.map((x) => `<div>${x.html}${x.ko ? `<div class="cloze-extra-ko">${esc(x.ko)}</div>` : ''}</div>`).join('')}
-            </div>` : ''}
-        </div>
-        ${asking ? `
-          <div class="cloze-form">
-            <input id="clozeInput" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="빈칸 표현 입력" />
-            <button class="primary" id="checkBtn">확인</button>
-          </div>
-          <div class="cloze-actions">
-            <button class="ghost" id="hintBtn" ${hintCount >= letters ? 'disabled' : ''}>💡 힌트</button>
-            <button class="ghost" id="giveupBtn">모르겠어요</button>
-          </div>`
-        : '<button class="primary" id="nextBtn">다음 →</button>'}
-      </div>`);
-
-    if (asking) {
-      const input = el.querySelector('#clozeInput');
-      input.value = typedDraft;
-      input.focus();
-      input.setSelectionRange(input.value.length, input.value.length);
-      const check = () => {
-        const typed = input.value.trim();
-        if (!typed) return;
-        finish(normPhrase(typed) === normPhrase(cz.answer), typed);
-      };
-      el.querySelector('#checkBtn').onclick = check;
-      input.onkeydown = (e) => { if (e.key === 'Enter') check(); };
-      el.querySelector('#hintBtn').onclick = () => {
-        typedDraft = input.value;
-        hintCount++;
-        draw();
-      };
-      el.querySelector('#giveupBtn').onclick = () => finish(false, '');
-    } else {
-      el.querySelector('#nextBtn').onclick = () => {
-        idx++;
-        result = null;
-        hintCount = 0;
-        typedDraft = '';
-        draw();
-      };
-    }
-
-    function finish(ok, typed) {
-      if (practice) {
-        // 연습은 채점 기록 없이, 틀린 카드만 몇 장 뒤에 다시 출제
-        if (!ok) session.splice(Math.min(idx + 4, session.length), 0, session[idx]);
-      } else {
-        // 힌트를 봤다면 완전히 기억한 게 아니므로 어려움으로 채점
-        answerCard(session, idx, !ok ? AGAIN : hintCount > 0 ? HARD : GOOD);
-        ctx.refreshHeader();
-      }
-      result = { ok, typed };
-      draw();
-    }
+  // 끝 화면: 연습은 다시 하기, 오늘 학습은 하루 상한과 별개로 새 카드를 더 받을 수 있게
+  function endScreen(icon, title, msg) {
+    const more = !practice && ctx.cards.some((c) => c.example && !store.srs()[c.id]);
+    body.innerHTML = `
+      <div class="done-box">
+        <div class="big">${icon}</div>
+        <h3>${title}</h3>
+        <p>${msg}</p>
+        ${practice ? '<button class="primary" id="againBtn">한 번 더 하기</button>' : ''}
+        ${more ? `<button class="primary" id="moreBtn">➕ 새 카드 ${NEW_PER_DAY}장 더</button>` : ''}
+      </div>`;
+    const again = body.querySelector('#againBtn');
+    if (again) again.onclick = () => render(el, ctx);
+    const moreBtn = body.querySelector('#moreBtn');
+    if (moreBtn) moreBtn.onclick = () => render(el, ctx, { moreNew: true });
   }
 
   if (session.length === 0) {
-    show(practice
-      ? '<p class="notice">오늘 퀴즈에서 푼 카드가 아직 없어요. 플래시카드부터 풀어보세요!</p>'
-      : ctx.cards.some((c) => c.example)
-        ? '<p class="notice">오늘 풀 빈칸 퀴즈가 없어요. 내일 다시 만나요!</p>'
-        : '<p class="notice">예문이 있는 카드가 없어요.</p>');
+    if (practice) {
+      body.innerHTML = '<p class="notice">오늘 푼 카드가 아직 없어요. 📅 오늘 학습부터 풀어보세요!</p>';
+    } else if (!ctx.cards.some((c) => c.example)) {
+      body.innerHTML = '<p class="notice">예문이 있는 카드가 없어요.</p>';
+    } else {
+      endScreen('✅', '오늘 할 카드를 다 했어요', '복습 카드는 내일 다시 나와요.');
+    }
     return;
   }
-  draw();
+
+  // 입력창은 세션 내내 같은 요소를 유지하고, 버튼·카드를 눌러도 포커스가 빠지지 않게 막는다
+  // → 카드가 바뀔 때 키보드가 내려갔다 올라오면서 화면이 출렁이지 않음
+  body.innerHTML = `
+    <div class="cardzone">
+      <div class="session-info" id="czInfo"></div>
+      <div class="flashcard cloze-card" id="czCard"></div>
+      <div class="cloze-form">
+        <input id="clozeInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" />
+        <button class="primary" id="czBtn"></button>
+      </div>
+      <div class="cloze-below" id="czBelow"></div>
+    </div>`;
+  const info = body.querySelector('#czInfo');
+  const card = body.querySelector('#czCard');
+  const below = body.querySelector('#czBelow');
+  const input = body.querySelector('#clozeInput');
+  const btn = body.querySelector('#czBtn');
+  body.querySelector('.cardzone').addEventListener('mousedown', (e) => {
+    if (e.target !== input) e.preventDefault();
+  });
+
+  function draw() {
+    const c = session[idx];
+    const tag = practice ? '' : freshIds.has(c.id)
+      ? '<span class="pill new">신규</span> '
+      : '<span class="pill review">복습</span> ';
+    info.innerHTML = `<span>남은 카드 ${session.length - idx}</span><span>${tag}<span class="pill">${esc(c.category || '표현')}</span></span>`;
+    card.innerHTML = `
+      <div class="ko" style="font-size:1.1rem">${result ? cz.reveal : cz.display}</div>
+      <div class="ex">${esc(cz.ko)}</div>`;
+    btn.textContent = result ? '다음 →' : '확인';
+    input.placeholder = result ? 'Enter ↵ 다음 문제' : '빈칸 표현 입력';
+    if (!result) {
+      const letters = cz.answer.replace(/ /g, '').length;
+      below.innerHTML = `
+        ${hintCount > 0 ? `<div class="cloze-hint">힌트: ${esc(hintStr(cz.answer, hintCount))}</div>` : ''}
+        <div class="cloze-actions">
+          <button class="ghost" id="hintBtn" ${hintCount >= letters ? 'disabled' : ''}>💡 힌트</button>
+          <button class="ghost" id="giveupBtn">모르겠어요</button>
+        </div>`;
+      below.querySelector('#hintBtn').onclick = () => {
+        hintCount++;
+        draw();
+      };
+      below.querySelector('#giveupBtn').onclick = () => finish(false, '');
+    } else {
+      below.innerHTML = `
+        ${result.ok
+          ? `<div class="cloze-result ok">⭕ 정답이에요!${hintCount > 0 && !practice ? ' <small>(힌트 사용 → 어려움으로 기록)</small>' : ''}</div>`
+          : wrongResultHtml(cz.answer, result.typed)}
+        ${cz.extras.length ? `
+          <div class="cloze-extra">
+            ${cz.extras.map((x) => `<div>${x.html}${x.ko ? `<div class="cloze-extra-ko">${esc(x.ko)}</div>` : ''}</div>`).join('')}
+          </div>` : ''}`;
+    }
+  }
+
+  function start() {
+    cz = makeCloze(session[idx]);
+    result = null;
+    hintCount = 0;
+    input.value = '';
+    draw();
+    input.focus();
+  }
+
+  function finish(ok, typed) {
+    if (practice) {
+      // 연습은 채점 기록 없이, 틀린 카드만 몇 장 뒤에 다시 출제
+      if (!ok) session.splice(Math.min(idx + 4, session.length), 0, session[idx]);
+    } else {
+      // 힌트를 봤다면 완전히 기억한 게 아니므로 어려움으로 채점
+      answerCard(session, idx, !ok ? AGAIN : hintCount > 0 ? HARD : GOOD);
+      ctx.refreshHeader();
+    }
+    result = { ok, typed };
+    input.value = '';
+    draw();
+  }
+
+  function next() {
+    idx++;
+    if (idx >= session.length) {
+      endScreen('🎉', practice ? '연습 완료!' : '오늘 학습 완료!', `${session.length}문제를 풀었어요.`);
+      return;
+    }
+    start();
+  }
+
+  function submit() {
+    if (result) return next();
+    const typed = input.value.trim();
+    if (typed) finish(normPhrase(typed) === normPhrase(cz.answer), typed);
+  }
+
+  btn.onclick = submit;
+  input.onkeydown = (e) => {
+    if (e.key !== 'Enter' || e.isComposing) return;
+    e.preventDefault();
+    submit();
+  };
+  start();
 }

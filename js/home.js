@@ -1,6 +1,6 @@
 // 홈: 오늘 할 일 + 학습 통계 (월간 캘린더·최근 7일 차트)
 import { store, todayStr, addDays, esc } from './store.js';
-import { counts } from './srs.js';
+import { counts, newLeftToday } from './srs.js';
 import { computeStreak, todayCount, calendarHtml } from './stats.js';
 import { showGrammarCard } from './writing.js';
 import { todayStatus } from './sentences.js';
@@ -53,9 +53,8 @@ export function render(el, ctx) {
     <div class="card-box">
       <h3 style="margin:0 0 10px; font-size:.9rem">오늘 할 일</h3>
       <button class="todo ${quizDone ? 'done' : ''}" data-go="quiz">
-        <span>${quizDone ? '✅ 퀴즈 목표 달성!' : `🃏 퀴즈 — 복습 ${due}장 + 새 카드`}</span><span>→</span>
+        <span>${quizDone ? '✅ 퀴즈 목표 달성!' : `✏️ 퀴즈 — 복습 ${due}장 + 새 카드 ${newLeftToday()}장`}</span><span>→</span>
       </button>
-      <button class="todo" data-go="cloze"><span>✏️ 빈칸 퀴즈</span><span>→</span></button>
       ${sent.total ? `
       <button class="todo ${sent.done ? 'done' : ''}" data-go="sentences">
         <span>${sent.done ? '✅ 오늘 통문장 완료!' : `🗣 통문장 — ${sent.left}문장${sent.fresh ? ` (새 문장 ${sent.fresh}개)` : ''}`}</span><span>→</span>

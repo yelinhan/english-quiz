@@ -97,8 +97,18 @@ export function previewIntervals(cardId) {
   return { again: label(AGAIN), hard: label(HARD), good: label(GOOD), easy: label(EASY) };
 }
 
+export const NEW_PER_DAY = 10;
+
+// 오늘 처음 채점한 카드 수 (기록상 첫 채점일이 오늘). 세션을 다시 만들어도 새 카드가 하루 상한을 넘지 않게
+export function newLeftToday() {
+  const first = {};
+  for (const e of store.log()) if (!first[e.id] || e.d < first[e.id]) first[e.id] = e.d;
+  const today = todayStr();
+  return Math.max(0, NEW_PER_DAY - Object.values(first).filter((d) => d === today).length);
+}
+
 // 오늘 세션 = 복습 기한 도래 카드 전부 + 새 카드 newLimit개 (단어장 순서 말고 무작위로)
-export function buildSession(cards, { filter, newLimit = 10 } = {}) {
+export function buildSession(cards, { filter, newLimit = newLeftToday() } = {}) {
   const pool = filter ? cards.filter(filter) : cards;
   const srs = store.srs();
   const today = todayStr();

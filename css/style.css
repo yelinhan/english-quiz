@@ -139,7 +139,14 @@ button { font-family: inherit; cursor: pointer; }
   margin-bottom: 12px;
   color: var(--sub);
 }
-.flashcard .cloze-hint { font-size: .8rem; color: var(--warm); margin-top: 10px; font-weight: 600; }
+.cloze-hint { font-size: .85rem; color: var(--warm); font-weight: 600; text-align: center; }
+/* 키보드가 떠 있어도 문장·입력창이 한 화면에 보이도록 카드를 낮게 */
+.flashcard.cloze-card { min-height: 0; padding: 22px 18px; cursor: default; }
+.flashcard.cloze-card:active { transform: none; }
+.cloze-below { width: 100%; display: grid; gap: 10px; }
+.cloze-below .cloze-result { margin-top: 0; }
+.cloze-below .cloze-result.ok { text-align: center; }
+.cloze-below .cloze-extra { margin-top: 0; }
 .cloze-extra {
   margin-top: 12px;
   padding-top: 12px;
