@@ -403,18 +403,21 @@ export function render(el, ctx, { moreNew = false } = {}) {
       if (r >= 0 && !practice) rate(r);
       return;
     }
-    // 띄어쓰기를 치면 다음 칸으로 (마지막 칸에선 그대로 둠)
-    const v = input.value;
+    // 띄어쓰기를 치면 다음 칸으로 (마지막 칸에선 그대로 둠). 칸 맨 앞 띄어쓰기는 버림
+    // — 정답이라 자동으로 넘어온 직후 습관처럼 친 스페이스에 다음 칸까지 건너뛰지 않게
+    const v = input.value.replace(/^\s+/, '');
     const sp = v.search(/\s/);
     if (sp >= 0 && active < vals.length - 1) {
       vals[active] = v.slice(0, sp);
       const rest = v.slice(sp).trim();
       active++;
       if (rest) vals[active] = rest;
-      input.value = vals[active];
     } else {
       vals[active] = v;
     }
+    // 지금 칸을 정답대로 다 쳤으면 스페이스 없이 바로 다음 칸으로 (마지막 칸은 Enter로 확인)
+    while (active < vals.length - 1 && norm(vals[active]) === norm(cz.cores[active])) active++;
+    input.value = vals[active];
     toEnd();
     drawSentence();
     if (sentence.querySelector('.cz-box.no')) slipped = true;
