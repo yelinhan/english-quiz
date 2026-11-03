@@ -147,12 +147,13 @@ button { font-family: inherit; cursor: pointer; }
 /* 키보드가 떠 있어도 문장이 한 화면에 보이도록 카드를 낮게 */
 .flashcard.cloze-card { min-height: 0; padding: 22px 18px; cursor: default; position: relative; }
 .flashcard.cloze-card:active { transform: none; }
-/* 별도 입력칸 없이 문장 빈칸에 바로 입력: 투명 입력창이 카드를 덮어 탭하면 키보드가 뜸 */
+/* 별도 입력칸 없이 문장 빈칸에 바로 입력: 키 입력만 받는 보이지 않는 입력창 */
 .cz-ghost {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: 1px;
   margin: 0;
   padding: 0;
   border: 0;
@@ -170,12 +171,15 @@ button { font-family: inherit; cursor: pointer; }
   border-radius: 6px;
   background: var(--line);
   line-height: 1.4;
-  text-align: left;
+  text-align: center;
+  cursor: text;
 }
 .cz-box.on { box-shadow: inset 0 -2px 0 var(--accent); }
 .cz-box.ok { background: var(--good-soft); color: var(--good); }
 .cz-box.no { background: var(--bad-soft); color: var(--bad); }
 .cz-box s { color: var(--sub); font-weight: 500; margin-right: 5px; }
+.cz-ok { color: var(--good); }
+.cz-no { color: var(--bad); }
 .cz-caret {
   display: inline-block;
   width: 2px;
@@ -226,6 +230,7 @@ button { font-family: inherit; cursor: pointer; }
 .btn-hard { background: var(--warm-soft); color: var(--warm); }
 .btn-good { background: var(--accent); color: #fff; }
 .btn-easy { background: var(--accent-soft); color: var(--accent-ink); }
+.grade-btns button.suggest { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 .done-box { text-align: center; padding: 48px 12px; }
 .done-box .big { font-size: 2.4rem; }

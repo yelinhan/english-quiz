@@ -26,11 +26,9 @@ def make_id(item_type: str, ko: str) -> str:
 
 
 def split_keys(en: str) -> tuple[str, list]:
-    """영어 칸의 [ ]는 빈칸 퀴즈에서 비울 핵심 단어. 변형(/)마다 하나씩, 없으면 None(= 표현 전체를 비움)"""
-    keys = []
-    for v in en.split("/"):
-        m = re.search(r"\[([^\]]+)\]", v)
-        keys.append(m.group(1) if m else None)
+    """영어 칸의 [ ]는 빈칸 퀴즈에서 비울 핵심 단어. 변형(/)마다 [ ] 묶음 목록 — 구동사처럼 떨어진 짝은
+    [set] ~ [up]처럼 여러 개 — 이고, 없으면 None(= 표현 전체를 비움)"""
+    keys = [re.findall(r"\[([^\]]+)\]", v) or None for v in en.split("/")]
     return re.sub(r"[\[\]]", "", en), keys
 
 

@@ -1,6 +1,6 @@
 // 퀴즈 탭: 예문 속 표현(핵심 단어가 표시돼 있으면 그 단어만)을 빈칸으로 뚫고 직접 타이핑해서 맞추기 (새 카드·복습 카드 모두)
 import { store, esc, splitSentences, pairExamples, todayStr, shuffle } from './store.js';
-import { buildSession, answerCard, NEW_PER_DAY, GOOD, HARD, AGAIN } from './srs.js';
+import { buildSession, answerCard, previewIntervals, NEW_PER_DAY, GOOD, HARD, AGAIN } from './srs.js';
 
 // srs = 오늘 학습(복습 + 새 카드, 일정 반영), today = 오늘 푼 카드로 연습(일정·기록 안 건드림)
 let mode = 'srs';
@@ -27,6 +27,28 @@ function findRun(words, target, loose) {
   }
   return -1;
 }
+
+// 핵심 단어 묶음들(segs)이 words[from, to) 안에 순서대로 나오는 단어 번호들 또는 null.
+// 묶음 사이엔 몇 단어가 끼어도 됨 — 구동사 짝: set me up, put the redesign on hold
+const KEY_GAP = 4;
+function findKey(words, segs, from = 0, to = words.length) {
+  const kws = segs.map(toWords);
+  for (let s = from; s < to; s++) {
+    const idxs = [];
+    let pos = s;
+    for (let n = 0; n < kws.length; n++) {
+      const end = Math.min(to, pos + kws[n].length + (n === 0 ? 0 : KEY_GAP));
+      const at = findRun(words.slice(pos, end), kws[n], true);
+      if (at < 0) break;
+      for (let j = 0; j < kws[n].length; j++) idxs.push(pos + at + j);
+      pos += at + kws[n].length;
+    }
+    if (idxs.length === kws.flat().length) return idxs;
+  }
+  return null;
+}
+
+const range = (start, len) => Array.from({ length: len }, (_, j) => start + j);
 
 // en 변형(/ 구분) 중 문장에 그대로 든 것 → { start, len, v(변형 번호) } 또는 null
 function exactSpan(words, variants) {
@@ -71,51 +93,51 @@ function highlight(sentence, variants) {
 export function makeCloze(card) {
   if (!card.example) return null;
   const variants = card.en.split('/').map((v) => v.trim());
-  const keys = card.keys || [];
+  // 변형별 [ ] 묶음 목록. 예전 포맷(변형별 문자열 하나)도 받음
+  const keys = (card.keys || []).map((k) => (k == null || Array.isArray(k) ? k : [k]));
   const pairs = pairExamples(card);
   const sents = pairs ? pairs.map((p) => p.en) : splitSentences(card.example);
   const kos = pairs ? pairs.map((p) => p.ko) : [];
   const split = sents.map((s) => s.split(' '));
 
+  // pick = { i: 문장 번호, blanks: 빈칸 단어 번호들 }
   let pick = null;
   let whole = null;
   for (let i = 0; i < sents.length && !pick; i++) {
     const m = exactSpan(split[i], variants);
     if (!m) continue;
-    const kw = keys[m.v] ? toWords(keys[m.v]) : null;
-    const off = kw ? findRun(split[i].slice(m.start, m.start + m.len), kw, true) : -1;
-    if (off >= 0) pick = { i, start: m.start + off, len: kw.length };
-    else if (!whole) whole = { i, start: m.start, len: m.len };
+    const blanks = keys[m.v] ? findKey(split[i], keys[m.v], m.start, m.start + m.len) : null;
+    if (blanks) pick = { i, blanks };
+    else if (!whole) whole = { i, blanks: range(m.start, m.len) };
   }
   for (let i = 0; i < sents.length && !pick; i++) {
-    for (const k of keys) {
-      const kw = k ? toWords(k) : [];
-      const at = kw.length ? findRun(split[i], kw, true) : -1;
-      if (at >= 0) { pick = { i, start: at, len: kw.length }; break; }
+    for (const segs of keys) {
+      const blanks = segs ? findKey(split[i], segs) : null;
+      if (blanks) { pick = { i, blanks }; break; }
     }
   }
   pick = pick || whole;
   for (let i = 0; i < sents.length && !pick; i++) {
     const m = partialSpan(split[i], variants);
-    if (m) pick = { i, ...m };
+    if (m) pick = { i, blanks: range(m.start, m.len) };
   }
   if (!pick) {
     let bestLen = -1;
     split.forEach((ws, i) => ws.forEach((w, j) => {
-      if (norm(w).length > bestLen) { bestLen = norm(w).length; pick = { i, start: j, len: 1 }; }
+      if (norm(w).length > bestLen) { bestLen = norm(w).length; pick = { i, blanks: [j] }; }
     }));
   }
 
   const words = split[pick.i];
   // 빈칸 단어마다 [전체, 앞 구두점, 핵심, 뒤 구두점]. 정답은 핵심 부분만
-  const parts = words.slice(pick.start, pick.start + pick.len)
-    .map((w) => w.match(/^([^A-Za-z'’]*)([A-Za-z'’-]+)([^A-Za-z'’]*)$/) || [w, '', w, '']);
+  const parts = pick.blanks
+    .map((b) => words[b].match(/^([^A-Za-z'’]*)([A-Za-z'’-]+)([^A-Za-z'’]*)$/) || [words[b], '', words[b], '']);
   const extras = sents
     .map((s, i) => ({ html: highlight(s, variants), ko: kos[i] || '', idx: i }))
     .filter((x) => x.idx !== pick.i);
   return {
     words,
-    start: pick.start,
+    blanks: pick.blanks,
     parts,
     cores: parts.map((m) => m[2]),
     // 짝이 안 맞는 여러 문장 해석을 통째로 보여주면 다른 예문까지 섞이므로 표현 뜻으로 대체
@@ -128,20 +150,26 @@ export function makeCloze(card) {
 function sentenceHtml(cz, box) {
   return cz.words
     .map((w, i) => {
-      const j = i - cz.start;
-      if (j < 0 || j >= cz.parts.length) return esc(w);
+      const j = cz.blanks.indexOf(i);
+      if (j < 0) return esc(w);
       const [, pre, core, post] = cz.parts[j];
       return esc(pre) + box(j, core) + esc(post);
     })
     .join(' ');
 }
 
-// 입력을 빈칸 수에 맞게 나눔: 띄어쓰기마다 다음 칸, 칸보다 많이 친 단어는 마지막 칸에
-function fillBoxes(value, n) {
-  const ws = value.replace(/^\s+/, '').split(/\s+/);
-  const boxes = ws.slice(0, n - 1);
-  boxes.push(ws.slice(n - 1).join(' '));
-  return { boxes, active: Math.min(ws.length, n) - 1 };
+// 친 글자를 정답과 바로 비교: 맞는 데까지 초록, 처음 틀린 글자부터 빨강 (대소문자·아포스트로피 무시)
+function liveBox(typed, core) {
+  const want = norm(core);
+  let k = 0;
+  let bad = -1;
+  [...typed].forEach((ch, i) => {
+    if (bad >= 0 || !/[a-z]/i.test(ch)) return;
+    if (ch.toLowerCase() === want[k]) k++;
+    else bad = i;
+  });
+  if (bad < 0) return { cls: typed.trim() ? ' ok' : '', html: `<span class="cz-ok">${esc(typed)}</span>` };
+  return { cls: ' no', html: `<span class="cz-ok">${esc(typed.slice(0, bad))}</span><span class="cz-no">${esc(typed.slice(bad))}</span>` };
 }
 
 // 힌트: 정답의 앞 n글자를 순서대로 공개 (공백은 항상 표시)
@@ -164,6 +192,9 @@ export function render(el, ctx, { moreNew = false } = {}) {
   let cz = null;
   let result = null; // null = 입력 대기, { ok, boxes } = 채점 완료
   let hintCount = 0;
+  let slipped = false; // 치다가 한 번이라도 빨간 글자가 나왔는지
+  let vals = []; // 빈칸별로 친 글자
+  let active = 0; // 지금 입력 중인 빈칸
 
   el.innerHTML = `
     <div class="chip-row">
@@ -209,12 +240,13 @@ export function render(el, ctx, { moreNew = false } = {}) {
     return;
   }
 
-  // 별도 입력칸 없이 문장 빈칸에 바로 채워 넣는다. 투명 입력창이 카드를 덮고 있어서 카드를 탭하면 키보드가 뜨고,
-  // 세션 내내 같은 입력창을 쓰며 버튼을 눌러도 포커스가 안 빠짐 → 카드가 바뀔 때 키보드가 내려가지 않음
+  // 별도 입력칸 없이 문장 빈칸에 바로 채워 넣는다. 보이지 않는 입력창 하나가 지금 칸의 글자만 들고 있고
+  // (빈칸을 탭하면 그 칸으로), 세션 내내 같은 입력창을 쓰며 버튼을 눌러도 포커스가 안 빠짐
+  // → 카드가 바뀔 때 키보드가 내려가지 않음
   body.innerHTML = `
     <div class="cardzone">
       <div class="session-info" id="czInfo"></div>
-      <div class="flashcard cloze-card">
+      <div class="flashcard cloze-card" id="czCard">
         <div class="ko cz-sentence" id="czSentence"></div>
         <div class="ex" id="czKo"></div>
         <div class="cz-tap" id="czTap">⌨️ 탭해서 입력</div>
@@ -230,6 +262,13 @@ export function render(el, ctx, { moreNew = false } = {}) {
   body.querySelector('.cardzone').addEventListener('mousedown', (e) => {
     if (e.target !== input) e.preventDefault();
   });
+  // 빈칸을 탭하면 그 칸에 입력, 카드 다른 곳을 탭하면 키보드만 다시 띄움 (탭 핸들러 안에서 focus해야 iOS에서도 키보드가 뜸)
+  body.querySelector('#czCard').addEventListener('click', (e) => {
+    if (result) return;
+    const box = e.target.closest('.cz-box');
+    if (box) setActive(Number(box.dataset.j));
+    input.focus();
+  });
 
   function drawSentence() {
     const focused = document.activeElement === input;
@@ -242,8 +281,11 @@ export function render(el, ctx, { moreNew = false } = {}) {
       });
       return;
     }
-    const { boxes, active } = fillBoxes(input.value, cz.parts.length);
-    sentence.innerHTML = sentenceHtml(cz, (j, core) => `<span class="cz-box${j === active ? ' on' : ''}" style="min-width:${Math.min(core.length + 1, 14)}ch">${esc(boxes[j])}${j === active && focused ? '<i class="cz-caret"></i>' : ''}</span>`);
+    // 빈 칸에도 폭 없는 공백(&#8203;)을 넣어 글자 기준선을 만든다 — 없으면 빈 칸만 위로 떠서 칸마다 높이가 달라짐
+    sentence.innerHTML = sentenceHtml(cz, (j, core) => {
+      const live = liveBox(vals[j], core);
+      return `<span class="cz-box${live.cls}${j === active ? ' on' : ''}" data-j="${j}" style="min-width:${Math.min(core.length + 1, 14)}ch">&#8203;${live.html}${j === active && focused ? '<i class="cz-caret"></i>' : ''}</span>`;
+    });
   }
 
   function drawBelow() {
@@ -264,23 +306,43 @@ export function render(el, ctx, { moreNew = false } = {}) {
       below.querySelector('#checkBtn').onclick = submit;
       return;
     }
+    // 오늘 학습은 정답을 본 뒤 기억한 정도를 직접 골라 복습 주기에 반영. 추천 버튼(테두리)은 Enter로 바로 선택
+    let actions = '<button class="primary" id="nextBtn">다음 →</button>';
+    if (!practice) {
+      const p = previewIntervals(session[idx].id);
+      const sug = suggested();
+      actions = `
+        <div class="grade-btns four">
+          ${[['btn-again', '다시', p.again], ['btn-hard', '어려움', p.hard], ['btn-good', '알맞음', p.good], ['btn-easy', '쉬움', p.easy]]
+            .map(([cls, label, ivl], r) => `<button class="${cls}${r === sug ? ' suggest' : ''}" data-r="${r}">${label}<span class="sub">${ivl}</span></button>`)
+            .join('')}
+        </div>
+        <p class="count-note" style="text-align:center; margin:0">기억한 정도를 골라주세요 · Enter = 테두리 버튼</p>`;
+    }
     below.innerHTML = `
       <div class="cz-status ${result.ok ? 'ok' : 'no'}">${result.ok
-        ? `⭕ 정답이에요!${hintCount > 0 && !practice ? ' <small>(힌트 사용 → 어려움으로 기록)</small>' : ''}`
+        ? `⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용)</small>' : slipped ? ' <small>(중간에 틀림)</small>' : ''}`
         : '✕ 틀렸어요'}</div>
-      <button class="primary" id="nextBtn">다음 →</button>
+      ${actions}
       ${cz.extras.length ? `
         <div class="cloze-extra">
           ${cz.extras.map((x) => `<div>${x.html}${x.ko ? `<div class="cloze-extra-ko">${esc(x.ko)}</div>` : ''}</div>`).join('')}
         </div>` : ''}`;
-    below.querySelector('#nextBtn').onclick = next;
+    if (practice) below.querySelector('#nextBtn').onclick = next;
+    else below.querySelectorAll('[data-r]').forEach((b) => { b.onclick = () => rate(Number(b.dataset.r)); });
   }
+
+  // 추천 채점: 틀리면 다시, 힌트를 봤거나 틀렸다가 고쳤다면 완전히 기억한 게 아니므로 어려움, 아니면 알맞음
+  const suggested = () => (!result.ok ? AGAIN : hintCount > 0 || slipped ? HARD : GOOD);
 
   function start() {
     const c = session[idx];
     cz = makeCloze(c);
     result = null;
     hintCount = 0;
+    slipped = false;
+    vals = cz.parts.map(() => '');
+    active = 0;
     input.value = '';
     const tag = practice ? '' : freshIds.has(c.id)
       ? '<span class="pill new">신규</span> '
@@ -292,20 +354,21 @@ export function render(el, ctx, { moreNew = false } = {}) {
     drawBelow();
   }
 
+  // 정답 공개. 오늘 학습의 채점(복습 일정 반영)은 4단계 버튼에서 rate()로
   function finish(ok, boxes) {
-    if (practice) {
-      // 연습은 채점 기록 없이, 틀린 카드만 몇 장 뒤에 다시 출제
-      if (!ok) session.splice(Math.min(idx + 4, session.length), 0, session[idx]);
-    } else {
-      // 힌트를 봤다면 완전히 기억한 게 아니므로 어려움으로 채점
-      answerCard(session, idx, !ok ? AGAIN : hintCount > 0 ? HARD : GOOD);
-      ctx.refreshHeader();
-    }
+    // 연습은 채점 기록 없이, 틀린 카드만 몇 장 뒤에 다시 출제
+    if (practice && !ok) session.splice(Math.min(idx + 4, session.length), 0, session[idx]);
     result = { ok, boxes: cz.parts.map((_, j) => boxes[j] || '') };
     input.value = '';
     drawSentence();
     drawBelow();
     info.querySelector('span').textContent = `남은 카드 ${session.length - idx}`;
+  }
+
+  function rate(r) {
+    answerCard(session, idx, r);
+    ctx.refreshHeader();
+    next();
   }
 
   function next() {
@@ -318,23 +381,54 @@ export function render(el, ctx, { moreNew = false } = {}) {
   }
 
   function submit() {
-    if (result) return next();
-    if (!input.value.trim()) return;
-    const { boxes } = fillBoxes(input.value.trim(), cz.parts.length);
-    finish(boxes.every((t, j) => norm(t) === norm(cz.cores[j])), boxes);
+    if (result) return practice ? next() : rate(suggested());
+    if (!vals.some((t) => t.trim())) return;
+    finish(vals.every((t, j) => norm(t) === norm(cz.cores[j])), vals.slice());
   }
 
-  // 커서는 항상 맨 끝 (투명 입력창 중간을 탭해도 빈칸 표시와 어긋나지 않게)
-  const toEnd = () => input.setSelectionRange(input.value.length, input.value.length);
-  input.addEventListener('input', () => {
-    if (result) input.value = ''; // 채점 후엔 Enter(다음)만 받음
+  function setActive(j) {
+    active = j;
+    input.value = vals[j];
     toEnd();
     drawSentence();
+  }
+
+  // 커서는 항상 맨 끝 (빈칸 표시와 어긋나지 않게)
+  const toEnd = () => input.setSelectionRange(input.value.length, input.value.length);
+  input.addEventListener('input', () => {
+    if (result) {
+      // 정답 공개 후엔 입력을 버림. 숫자 1~4는 4단계 버튼 단축키
+      const r = '1234'.indexOf(input.value.slice(-1));
+      input.value = '';
+      if (r >= 0 && !practice) rate(r);
+      return;
+    }
+    // 띄어쓰기를 치면 다음 칸으로 (마지막 칸에선 그대로 둠)
+    const v = input.value;
+    const sp = v.search(/\s/);
+    if (sp >= 0 && active < vals.length - 1) {
+      vals[active] = v.slice(0, sp);
+      const rest = v.slice(sp).trim();
+      active++;
+      if (rest) vals[active] = rest;
+      input.value = vals[active];
+    } else {
+      vals[active] = v;
+    }
+    toEnd();
+    drawSentence();
+    if (sentence.querySelector('.cz-box.no')) slipped = true;
   });
   input.addEventListener('click', toEnd);
   input.addEventListener('focus', () => { toEnd(); drawSentence(); });
   input.addEventListener('blur', drawSentence);
   input.onkeydown = (e) => {
+    // 빈 칸에서 지우기를 누르면 앞 칸으로
+    if (e.key === 'Backspace' && !result && !input.value && active > 0) {
+      e.preventDefault();
+      setActive(active - 1);
+      return;
+    }
     if (e.key !== 'Enter' || e.repeat) return;
     e.preventDefault();
     submit();
