@@ -25,6 +25,15 @@ def make_id(item_type: str, ko: str) -> str:
     return f"{item_type}-{h}"
 
 
+def split_keys(en: str) -> tuple[str, list]:
+    """영어 칸의 [ ]는 빈칸 퀴즈에서 비울 핵심 단어. 변형(/)마다 하나씩, 없으면 None(= 표현 전체를 비움)"""
+    keys = []
+    for v in en.split("/"):
+        m = re.search(r"\[([^\]]+)\]", v)
+        keys.append(m.group(1) if m else None)
+    return re.sub(r"[\[\]]", "", en), keys
+
+
 def parse_file(path: Path, item_type: str) -> list[dict]:
     if not path.exists():
         return []
@@ -46,7 +55,8 @@ def parse_file(path: Path, item_type: str) -> list[dict]:
         ko, en = cells[0], cells[1]
         if not ko or not en:
             continue
-        items.append({
+        en, keys = split_keys(en)
+        item = {
             "id": make_id(item_type, ko),
             "type": item_type,
             "ko": ko,
@@ -55,7 +65,10 @@ def parse_file(path: Path, item_type: str) -> list[dict]:
             "category": category,
             "added": cells[3] if len(cells) > 3 else "",
             "source": cells[4] if len(cells) > 4 else "",
-        })
+        }
+        if any(keys):
+            item["keys"] = keys
+        items.append(item)
     return items
 
 

@@ -12,6 +12,8 @@
   --warm-soft: #FDEEDF;
   --bad: #D64545;
   --bad-soft: #FFECEC;
+  --good: #2E9E5B;
+  --good-soft: #E3F5EA;
   --shadow: 0 8px 24px rgba(23, 50, 46, .10);
   --radius: 20px;
 }
@@ -29,6 +31,8 @@
     --warm-soft: #3D2C1C;
     --bad: #F27D7D;
     --bad-soft: #3B2323;
+    --good: #6FD39A;
+    --good-soft: #1C3A28;
     --shadow: 0 8px 24px rgba(0, 0, 0, .35);
   }
 }
@@ -140,15 +144,54 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--sub);
 }
 .cloze-hint { font-size: .85rem; color: var(--warm); font-weight: 600; text-align: center; }
-/* 키보드가 떠 있어도 문장·입력창이 한 화면에 보이도록 카드를 낮게 */
-.flashcard.cloze-card { min-height: 0; padding: 22px 18px; cursor: default; }
+/* 키보드가 떠 있어도 문장이 한 화면에 보이도록 카드를 낮게 */
+.flashcard.cloze-card { min-height: 0; padding: 22px 18px; cursor: default; position: relative; }
 .flashcard.cloze-card:active { transform: none; }
+/* 별도 입력칸 없이 문장 빈칸에 바로 입력: 투명 입력창이 카드를 덮어 탭하면 키보드가 뜸 */
+.cz-ghost {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  font-size: 16px; /* iOS 포커스 확대 방지 */
+  color: transparent;
+  background: transparent;
+  caret-color: transparent;
+}
+.flashcard .cz-sentence { font-size: 1.1rem; line-height: 1.9; }
+.cz-box {
+  display: inline-block;
+  min-height: 1.4em;
+  padding: 0 5px;
+  border-radius: 6px;
+  background: var(--line);
+  line-height: 1.4;
+  text-align: left;
+}
+.cz-box.on { box-shadow: inset 0 -2px 0 var(--accent); }
+.cz-box.ok { background: var(--good-soft); color: var(--good); }
+.cz-box.no { background: var(--bad-soft); color: var(--bad); }
+.cz-box s { color: var(--sub); font-weight: 500; margin-right: 5px; }
+.cz-caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 1px;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: cz-blink 1s steps(1) infinite;
+}
+@keyframes cz-blink { 50% { opacity: 0; } }
+.cz-tap { font-size: .74rem; color: var(--sub); margin-top: 12px; }
+.cz-status { font-size: .95rem; font-weight: 700; text-align: center; }
+.cz-status.ok { color: var(--good); }
+.cz-status.no { color: var(--bad); }
 .cloze-below { width: 100%; display: grid; gap: 10px; }
-.cloze-below .cloze-result { margin-top: 0; }
-.cloze-below .cloze-result.ok { text-align: center; }
-.cloze-below .cloze-extra { margin-top: 0; }
 .cloze-extra {
-  margin-top: 12px;
   padding-top: 12px;
   border-top: 1px dashed var(--line);
   display: grid;
@@ -159,59 +202,8 @@ button { font-family: inherit; cursor: pointer; }
 }
 .cloze-extra-ko { font-size: .78rem; color: var(--sub); margin-top: 1px; }
 .blank { color: var(--accent); font-weight: 800; letter-spacing: .05em; }
-.blank-box {
-  display: inline-block;
-  height: 1.15em;
-  background: var(--line);
-  border-radius: 6px;
-  vertical-align: text-bottom;
-}
-.cloze-result { font-size: .95rem; font-weight: 700; margin-top: 14px; }
-.cloze-result.ok { color: var(--accent-ink); }
-.cloze-result.no {
-  width: 100%;
-  text-align: left;
-  background: var(--bad-soft);
-  border-radius: 12px;
-  padding: 12px 14px;
-  display: grid;
-  gap: 8px;
-}
-.cr-title { color: var(--bad); font-size: .88rem; }
-.cr-row {
-  display: grid;
-  grid-template-columns: 3.2em 1fr;
-  gap: 10px;
-  align-items: baseline;
-}
-.cr-label { font-size: .74rem; font-weight: 600; color: var(--sub); }
-.cr-answer, .cr-mine { font-size: 1rem; line-height: 1.55; letter-spacing: .01em; word-spacing: .08em; }
-.cr-answer { color: var(--accent-ink); }
-.cr-mine { color: var(--ink); font-weight: 500; }
-.cr-missed { background: var(--accent-soft); border-radius: 4px; padding: 0 3px; }
-.cr-wrong {
-  color: var(--bad);
-  font-weight: 700;
-  text-decoration: underline wavy var(--bad);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
-}
-.cloze-form { display: flex; gap: 8px; width: 100%; }
-.cloze-form input {
-  flex: 1;
-  min-width: 0;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  background: var(--card);
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 1rem;
-  padding: 13px 14px;
-}
-.cloze-form input:focus { outline: none; border-color: var(--accent); }
-.cloze-form .primary { width: auto; padding: 0 22px; }
 .cloze-actions { display: flex; gap: 8px; width: 100%; }
-.cloze-actions .ghost { flex: 1; }
+.cloze-actions button { flex: 1; padding-left: 8px; padding-right: 8px; }
 .cloze-actions .ghost:disabled { opacity: .4; cursor: default; }
 
 .grade-btns { display: flex; gap: 12px; width: 100%; }
