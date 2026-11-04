@@ -382,7 +382,7 @@ export function render(el, ctx) {
           <div class="tr-actions">
             <div class="tr-actions-left">
               ${target && revealed
-                ? '<button class="ghost tr-fail" id="failBtn">✕ 틀림</button><button class="ghost tr-ok" id="okBtn">⭕ 맞음</button>'
+                ? '<button class="ghost tr-fail" id="failBtn">✕ Missed it</button><button class="ghost tr-ok" id="okBtn">⭕ Got it</button>'
                 : `<button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
                    ${target ? `<button class="ghost" id="hintBtn">${hintLabel()}</button>` : ''}`}
             </div>
@@ -429,7 +429,7 @@ export function render(el, ctx) {
       };
     }
 
-    // 📚 내 표현: AI 없이 정답 확인 → 내 답 아래에 원래 의도한 표현·예시 답안, 버튼은 직접 채점(✕ 틀림 / ⭕ 맞음)으로
+    // 📚 내 표현: AI 없이 정답 확인 → 내 답 아래에 원래 의도한 표현·예시 답안, 버튼은 직접 채점(✕ Missed it / ⭕ Got it)으로
     const ta = el.querySelector('#writingInput');
     if (revealBtn) {
       revealBtn.onclick = () => {
