@@ -223,6 +223,16 @@ function markHl(text, hl) {
   return `${esc(text.slice(0, i))}<mark class="tr-hl">${esc(hl)}</mark>${esc(text.slice(i + hl.length))}`;
 }
 
+// 문제 앞 괄호(상황·상대 말)는 위에 작은 줄로 따로 — "동료: …" 같은 대사면 💬, 나머지는 📍 상황.
+// 실제로 옮길 문장만 크게
+function promptHtml(text, hl) {
+  const m = text.match(/^\(([^()]*)\)\s*/);
+  if (!m) return `<div class="tr-say">${markHl(text, hl)}</div>`;
+  const sp = m[1].match(/^([^:：]{1,10})[:：]\s*(.+)$/);
+  const ctxHtml = sp ? `💬 <b>${esc(sp[1])}</b> ${esc(sp[2])}` : `📍 ${esc(m[1])}`;
+  return `<div class="tr-ctx">${ctxHtml}</div><div class="tr-say">${markHl(text.slice(m[0].length), hl)}</div>`;
+}
+
 // 앱 내장 자판 (빈칸 퀴즈와 같은 자판, 터치 기기만): 맨 위 기능 줄에 문장부호
 const PUNCT = [["'", "'"], [',', ','], ['.', '.'], ['?', '?'], ['!', '!']];
 const isTouchKbd = () => !matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -419,18 +429,17 @@ export function render(el, ctx) {
             ? '아래 문장을 영어로! <b>관사(a/the)와 시제</b>에 특히 신경 써보세요.'
             : '아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.'}</p>`}
           ${set === 'mine' && target ? `<div class="tr-progress">오늘 ${mine.pos + 1} / ${mine.total}</div>` : ''}
-          <div class="tr-prompt">${target?.review ? '<span class="tr-badge">🔁 복습</span>' : ''}${target
-            ? markHl(prompt, target.koHl)
-            : prompt ? esc(prompt)
+          <div class="tr-prompt">${target?.review ? '<span class="tr-badge">🔁 복습</span>' : ''}${prompt
+            ? promptHtml(prompt, target?.koHl)
             : !minePrompts ? '문제 불러오는 중...'
             : mine?.done ? '🎉 오늘 문장을 다 풀었어요!'
             : '퀴즈에서 표현을 배우면 여기서 영작 문제가 나와요'}</div>
           ${target ? `<div class="tr-hint" id="trHint">${revealed ? '' : hintHtml()}</div>` : ''}
-          ${prompt ? `<textarea id="writingInput" rows="3" placeholder="영어로 써보세요..." autocomplete="off" autocapitalize="off"
+          ${prompt && !(target && revealed) ? `<textarea id="writingInput" rows="3" placeholder="영어로 써보세요..." autocomplete="off" autocapitalize="off"
             spellcheck="false" ${touchKbd ? 'inputmode="none"' : ''}>${esc(draft)}</textarea>` : ''}
           ${!prompt ? (mine?.done ? `
           <div class="tr-actions"><span></span><button class="primary" id="restartBtn">🔄 새 순서로 다시</button></div>` : '')
-          : target && revealed ? `
+          : target && revealed ? `${revealHtml()}
           <div class="tr-grade">
             <button class="tr-fail" id="failBtn">❌ Missed it</button>
             <button class="tr-ok" id="okBtn">⭕ Got it</button>
@@ -442,7 +451,6 @@ export function render(el, ctx) {
             </div>
             ${target ? '<button class="primary" id="revealBtn">✅ 정답 확인</button>' : aiBtn()}
           </div>`}
-          ${target && revealed ? revealHtml() : ''}
           ${!prompt || target || key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
         </div>`}
       <div id="result"></div>

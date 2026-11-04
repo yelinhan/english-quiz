@@ -366,7 +366,10 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 .tr-hint:empty { display: none; }
 .tr-hint .notice { font-weight: 400; letter-spacing: 0; }
 .tr-target { font-size: .85rem; font-weight: 700; color: var(--accent-ink); margin: 0 0 8px; }
-.tr-reveal { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.tr-reveal { margin-top: 2px; }
+/* 문제: 위에 상황·상대 말(작게), 아래 옮길 문장(크게) */
+.tr-ctx { font-size: .85rem; font-weight: 500; line-height: 1.5; opacity: .75; margin-bottom: 6px; }
+.tr-ctx b { font-weight: 700; }
 .tr-row { display: grid; grid-template-columns: 4.5em 1fr; gap: 8px; align-items: baseline; margin-bottom: 8px; line-height: 1.5; }
 .tr-label { font-size: .78rem; font-weight: 600; color: var(--sub); }
 .tr-mine { color: var(--sub); }
@@ -382,7 +385,7 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 .tr-actions-left { display: flex; gap: 8px; }
 .tr-progress { font-size: .78rem; color: var(--sub); text-align: right; margin: -6px 2px 6px; }
 /* 직접 채점: 한 줄을 반씩 꽉 채우는 연한 빨강 / 연한 초록 버튼 */
-.tr-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.tr-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
 .tr-grade button {
   border: none; border-radius: 14px; padding: 14px 8px;
   font-family: inherit; font-size: 1rem; font-weight: 700; color: var(--ink);
