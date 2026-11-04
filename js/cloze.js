@@ -1,6 +1,7 @@
 // 퀴즈 탭: 예문 속 표현(핵심 단어가 표시돼 있으면 그 단어만)을 빈칸으로 뚫고 직접 타이핑해서 맞추기 (새 카드·복습 카드 모두)
 import { store, esc, splitSentences, pairExamples, todayStr, shuffle } from './store.js';
 import { buildSession, answerCard, previewIntervals, NEW_PER_DAY, GOOD, HARD, AGAIN } from './srs.js';
+import * as kbd from './keyboard.js';
 
 // srs = 오늘 학습(복습 + 새 카드, 일정 반영), today = 오늘 푼 카드로 연습(일정·기록 안 건드림)
 let mode = 'srs';
@@ -28,27 +29,39 @@ function findRun(words, target, loose) {
   return -1;
 }
 
-// 핵심 단어 묶음들(segs)이 words[from, to) 안에 순서대로 나오는 단어 번호들 또는 null.
-// 묶음 사이엔 몇 단어가 끼어도 됨 — 구동사 짝: set me up, put the redesign on hold
+const range = (start, len) => Array.from({ length: len }, (_, j) => start + j);
+
+// 표현 변형 구분: 띄어쓴 " / " = 서로 다른 표현(카드가 따로 생김),
+// 붙여 쓴 a/b (단어장의 [happy/thrilled]) = 같은 빈칸의 대안(한 카드, 어느 쪽이든 정답)
+export const splitEn = (en) => String(en || '').split(/\s+\/\s+/).map((v) => v.trim()).filter(Boolean);
+const altsOf = (seg) => seg.split('/').map((s) => s.trim()).filter(Boolean);
+
+// 핵심 단어 묶음들(segs)이 words[from, to) 안에 순서대로 나오는 위치 → 묶음별 { idxs, alts } 또는 null.
+// 묶음 사이엔 몇 단어가 끼어도 됨 — 구동사 짝: set me up, put the redesign on hold.
+// 대안이 있는 묶음([happy/thrilled])은 문장에 든 쪽을 찾음
 const KEY_GAP = 4;
-function findKey(words, segs, from = 0, to = words.length) {
-  const kws = segs.map(toWords);
+function findKeySegs(words, segs, from = 0, to = words.length) {
   for (let s = from; s < to; s++) {
-    const idxs = [];
+    const found = [];
     let pos = s;
-    for (let n = 0; n < kws.length; n++) {
-      const end = Math.min(to, pos + kws[n].length + (n === 0 ? 0 : KEY_GAP));
-      const at = findRun(words.slice(pos, end), kws[n], true);
-      if (at < 0) break;
-      for (let j = 0; j < kws[n].length; j++) idxs.push(pos + at + j);
-      pos += at + kws[n].length;
+    for (let n = 0; n < segs.length; n++) {
+      let best = null;
+      for (const alt of altsOf(segs[n])) {
+        const kw = toWords(alt);
+        if (!kw.length) continue;
+        const end = Math.min(to, pos + kw.length + (n === 0 ? 0 : KEY_GAP));
+        const at = findRun(words.slice(pos, end), kw, true);
+        if (at >= 0 && (!best || at < best.at)) best = { at, len: kw.length };
+      }
+      if (!best) break;
+      found.push({ idxs: range(pos + best.at, best.len), alts: altsOf(segs[n]) });
+      pos += best.at + best.len;
     }
-    if (idxs.length === kws.flat().length) return idxs;
+    if (found.length === segs.length) return found;
   }
   return null;
 }
-
-const range = (start, len) => Array.from({ length: len }, (_, j) => start + j);
+const findKey = (...args) => findKeySegs(...args)?.flatMap((g) => g.idxs) ?? null;
 
 // en 변형(/ 구분) 중 문장에 그대로 든 것 → { start, len, v(변형 번호) } 또는 null
 function exactSpan(words, variants) {
@@ -75,14 +88,85 @@ function partialSpan(words, variants) {
   return null;
 }
 
-// 추가 예문에서 표현 구간을 강조 표시
-function highlight(sentence, variants) {
+// 변형별 [ ] 묶음 목록. 예전 포맷(변형별 문자열 하나)도 받음
+const normKeys = (keys) => (keys || []).map((k) => (k == null || Array.isArray(k) ? k : [k]));
+
+// 같은 뜻의 다른 표현이 " / "로 묶인 카드를 표현마다 별도 카드로 나눈다 (swamped / behind on).
+// 첫 표현은 원래 id를 그대로 써서 지금까지의 학습 기록(퀴즈가 첫 표현만 출제했으므로 그 표현의 기록)을
+// 이어받고, 나머지는 id-v1, id-v2… 예문은 그 표현이 든 문장만 가져가고, 어느 표현도 안 든 문장은 첫 표현 카드로.
+// group = 원래 id (같은 뜻 카드끼리 묶음), v = 표현 번호
+export function splitVariants(card) {
+  const variants = splitEn(card.en);
+  if (variants.length < 2) return [card];
+  const keys = normKeys(card.keys);
+  const pairs = pairExamples(card);
+  const sents = pairs ? pairs.map((p) => p.en) : splitSentences(card.example);
+  const owner = sents.map((s) => {
+    const ws = s.split(' ');
+    const exact = variants.findIndex((v) => {
+      const vw = toWords(v);
+      return vw.length > 0 && findRun(ws, vw, false) >= 0;
+    });
+    if (exact >= 0) return exact;
+    // 어미 변화 허용 (colleague → colleagues)
+    const loose = variants.findIndex((v) => {
+      const vw = toWords(v);
+      return vw.length > 0 && findRun(ws, vw, true) >= 0;
+    });
+    if (loose >= 0) return loose;
+    const keyed = keys.findIndex((segs) => segs && findKey(ws, segs));
+    if (keyed >= 0) return keyed;
+    const part = variants.findIndex((v) => partialSpan(ws, [v]));
+    return part >= 0 ? part : 0;
+  });
+  return variants.map((en, v) => {
+    const mine = sents.map((_, i) => i).filter((i) => owner[i] === v);
+    const c = {
+      ...card,
+      id: v ? `${card.id}-v${v}` : card.id,
+      en,
+      group: card.id,
+      v,
+      example: mine.map((i) => sents[i]).join(' '),
+      // 문장별 해석 짝이 안 맞으면 나눌 수 없으니 비움 (퀴즈는 표현 뜻으로 대체)
+      example_ko: pairs ? mine.map((i) => pairs[i].ko).join(' ') : '',
+    };
+    if (keys[v]) c.keys = [keys[v]];
+    else delete c.keys;
+    return c;
+  });
+}
+
+// 단어장 탭의 수정·삭제 키. 나뉜 카드는 첫 표현도 원래 id(= 카드 통째)와 구분되게 group-v0
+export const editKey = (c) => (c.group ? `${c.group}-v${c.v}` : c.id);
+
+// 추가 예문에서 표현 구간을 강조 표시 (대안 표현처럼 그대로 안 든 경우엔 핵심 단어만)
+function highlight(sentence, variants, keys) {
   const words = sentence.split(' ');
   const m = exactSpan(words, variants) || partialSpan(words, variants);
-  if (!m) return esc(sentence);
-  return words
-    .map((w, i) => (i >= m.start && i < m.start + m.len ? `<span class="blank">${esc(w)}</span>` : esc(w)))
-    .join(' ');
+  let on = m ? range(m.start, m.len) : null;
+  for (const segs of keys) if (!on && segs) on = findKey(words, segs);
+  if (!on) return esc(sentence);
+  return words.map((w, i) => (on.includes(i) ? `<span class="blank">${esc(w)}</span>` : esc(w))).join(' ');
+}
+
+// 채점 단위. 보통은 빈칸 하나씩이고, 대안이 있는 묶음([happy/thrilled])은 그 칸들을 통째로 보고
+// 어느 대안이든 정답. 예문의 어미 변화는 다른 대안에도 붙여줌 (teammates → coworkers도 정답)
+function makeGroups(pick, cores) {
+  const one = (j) => ({ boxes: [j], alts: [], answers: [norm(cores[j])] });
+  if (!pick.segs) return cores.map((_, j) => one(j));
+  const groups = [];
+  let j = 0;
+  for (const s of pick.segs) {
+    const boxes = range(j, s.idxs.length);
+    j += s.idxs.length;
+    if (s.alts.length < 2) { boxes.forEach((b) => groups.push(one(b))); continue; }
+    const core = norm(boxes.map((b) => cores[b]).join(''));
+    const hit = s.alts.map(norm).find((a) => core.startsWith(a)) || '';
+    const suffix = hit ? core.slice(hit.length) : '';
+    groups.push({ boxes, alts: s.alts, answers: [...new Set([core, ...s.alts.map((a) => norm(a) + suffix)])] });
+  }
+  return groups;
 }
 
 // 표현이 든 문장 하나만 빈칸 문제로 출제. 나머지 문장은 정답 공개 후에만
@@ -92,28 +176,27 @@ function highlight(sentence, variants) {
 // ④ 표현 앞 두 단어 ⑤ 가장 긴 단어
 export function makeCloze(card) {
   if (!card.example) return null;
-  const variants = card.en.split('/').map((v) => v.trim());
-  // 변형별 [ ] 묶음 목록. 예전 포맷(변형별 문자열 하나)도 받음
-  const keys = (card.keys || []).map((k) => (k == null || Array.isArray(k) ? k : [k]));
+  const variants = splitEn(card.en);
+  const keys = normKeys(card.keys);
   const pairs = pairExamples(card);
   const sents = pairs ? pairs.map((p) => p.en) : splitSentences(card.example);
   const kos = pairs ? pairs.map((p) => p.ko) : [];
   const split = sents.map((s) => s.split(' '));
 
-  // pick = { i: 문장 번호, blanks: 빈칸 단어 번호들 }
+  // pick = { i: 문장 번호, blanks: 빈칸 단어 번호들, segs?: 핵심 단어 묶음별 위치·대안 }
   let pick = null;
   let whole = null;
+  const keyPick = (i, segs) => segs && { i, segs, blanks: segs.flatMap((g) => g.idxs) };
   for (let i = 0; i < sents.length && !pick; i++) {
     const m = exactSpan(split[i], variants);
     if (!m) continue;
-    const blanks = keys[m.v] ? findKey(split[i], keys[m.v], m.start, m.start + m.len) : null;
-    if (blanks) pick = { i, blanks };
-    else if (!whole) whole = { i, blanks: range(m.start, m.len) };
+    pick = keys[m.v] ? keyPick(i, findKeySegs(split[i], keys[m.v], m.start, m.start + m.len)) : null;
+    if (!pick && !whole) whole = { i, blanks: range(m.start, m.len) };
   }
   for (let i = 0; i < sents.length && !pick; i++) {
     for (const segs of keys) {
-      const blanks = segs ? findKey(split[i], segs) : null;
-      if (blanks) { pick = { i, blanks }; break; }
+      pick = segs ? keyPick(i, findKeySegs(split[i], segs)) : null;
+      if (pick) break;
     }
   }
   pick = pick || whole;
@@ -133,13 +216,15 @@ export function makeCloze(card) {
   const parts = pick.blanks
     .map((b) => words[b].match(/^([^A-Za-z'’]*)([A-Za-z'’-]+)([^A-Za-z'’]*)$/) || [words[b], '', words[b], '']);
   const extras = sents
-    .map((s, i) => ({ html: highlight(s, variants), ko: kos[i] || '', idx: i }))
+    .map((s, i) => ({ html: highlight(s, variants, keys), ko: kos[i] || '', idx: i }))
     .filter((x) => x.idx !== pick.i);
+  const cores = parts.map((m) => m[2]);
   return {
     words,
     blanks: pick.blanks,
     parts,
-    cores: parts.map((m) => m[2]),
+    cores,
+    groups: makeGroups(pick, cores),
     // 짝이 안 맞는 여러 문장 해석을 통째로 보여주면 다른 예문까지 섞이므로 표현 뜻으로 대체
     ko: kos[pick.i] || (sents.length === 1 && card.example_ko) || card.ko,
     extras,
@@ -158,9 +243,9 @@ function sentenceHtml(cz, box) {
     .join(' ');
 }
 
-// 친 글자를 정답과 바로 비교: 맞는 데까지 초록, 처음 틀린 글자부터 빨강 (대소문자·아포스트로피 무시)
-function liveBox(typed, core) {
-  const want = norm(core);
+// 친 글자를 정답(정규화된 want)과 바로 비교: 맞는 데까지 초록, 처음 틀린 글자부터 빨강 (대소문자·아포스트로피 무시).
+// k = 맞게 친 글자 수 (여러 칸짜리 묶음에서 다음 칸이 이어서 비교할 위치)
+function liveBox(typed, want) {
   let k = 0;
   let bad = -1;
   [...typed].forEach((ch, i) => {
@@ -168,8 +253,14 @@ function liveBox(typed, core) {
     if (ch.toLowerCase() === want[k]) k++;
     else bad = i;
   });
-  if (bad < 0) return { cls: typed.trim() ? ' ok' : '', html: `<span class="cz-ok">${esc(typed)}</span>` };
-  return { cls: ' no', html: `<span class="cz-ok">${esc(typed.slice(0, bad))}</span><span class="cz-no">${esc(typed.slice(bad))}</span>` };
+  if (bad < 0) return { k, cls: typed.trim() ? ' ok' : '', html: `<span class="cz-ok">${esc(typed)}</span>` };
+  return { k, cls: ' no', html: `<span class="cz-ok">${esc(typed.slice(0, bad))}</span><span class="cz-no">${esc(typed.slice(bad))}</span>` };
+}
+
+// 묶음에 친 글자(정규화) → 지금까지 가장 잘 맞는 정답 (대안 중 앞부분이 가장 길게 일치하는 것)
+function bestAnswer(g, typed) {
+  const common = (a) => { let n = 0; while (n < typed.length && typed[n] === a[n]) n++; return n; };
+  return g.answers.reduce((best, a) => (common(a) > common(best) ? a : best), g.answers[0]);
 }
 
 // 힌트: 정답의 앞 n글자를 순서대로 공개 (공백은 항상 표시)
@@ -195,6 +286,7 @@ export function render(el, ctx, { moreNew = false } = {}) {
   let slipped = false; // 치다가 한 번이라도 빨간 글자가 나왔는지
   let vals = []; // 빈칸별로 친 글자
   let active = 0; // 지금 입력 중인 빈칸
+  kbd.detach(); // 세션이 시작될 때만 자판을 붙임
 
   el.innerHTML = `
     <div class="chip-row">
@@ -214,6 +306,7 @@ export function render(el, ctx, { moreNew = false } = {}) {
 
   // 끝 화면: 연습은 다시 하기, 오늘 학습은 하루 상한과 별개로 새 카드를 더 받을 수 있게
   function endScreen(icon, title, msg) {
+    kbd.detach();
     const more = !practice && ctx.cards.some((c) => c.example && !store.srs()[c.id]);
     body.innerHTML = `
       <div class="done-box">
@@ -240,55 +333,56 @@ export function render(el, ctx, { moreNew = false } = {}) {
     return;
   }
 
-  // 별도 입력칸 없이 문장 빈칸에 바로 채워 넣는다. 보이지 않는 입력창 하나가 지금 칸의 글자만 들고 있고
-  // (빈칸을 탭하면 그 칸으로), 세션 내내 같은 입력창을 쓰며 버튼을 눌러도 포커스가 안 빠짐
-  // → 카드가 바뀔 때 키보드가 내려가지 않음
+  // 별도 입력칸 없이 문장 빈칸에 바로 채워 넣는다. 시스템 키보드 대신 화면 아래 앱 자판(keyboard.js)으로
+  // 입력하므로 키보드가 화면을 밀어 올리지 않음. 빈칸을 탭하면 그 칸으로
   body.innerHTML = `
     <div class="cardzone">
       <div class="session-info" id="czInfo"></div>
       <div class="flashcard cloze-card" id="czCard">
         <div class="ko cz-sentence" id="czSentence"></div>
         <div class="ex" id="czKo"></div>
-        <div class="cz-tap" id="czTap">⌨️ 탭해서 입력</div>
-        <input id="clozeInput" class="cz-ghost" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" aria-label="빈칸 입력" />
       </div>
       <div class="cloze-below" id="czBelow"></div>
     </div>`;
   const info = body.querySelector('#czInfo');
   const sentence = body.querySelector('#czSentence');
-  const tap = body.querySelector('#czTap');
   const below = body.querySelector('#czBelow');
-  const input = body.querySelector('#clozeInput');
-  body.querySelector('.cardzone').addEventListener('mousedown', (e) => {
-    if (e.target !== input) e.preventDefault();
-  });
-  // 빈칸을 탭하면 그 칸에 입력, 카드 다른 곳을 탭하면 키보드만 다시 띄움 (탭 핸들러 안에서 focus해야 iOS에서도 키보드가 뜸)
   body.querySelector('#czCard').addEventListener('click', (e) => {
     if (result) return;
     const box = e.target.closest('.cz-box');
     if (box) setActive(Number(box.dataset.j));
-    input.focus();
   });
 
+  const groupOf = (j) => cz.groups.find((g) => g.boxes.includes(j));
+  const typedIn = (g, boxes = vals) => norm(g.boxes.map((b) => boxes[b] || '').join(''));
+  const groupOk = (g, boxes = vals) => g.answers.includes(typedIn(g, boxes));
+
   function drawSentence() {
-    const focused = document.activeElement === input;
-    tap.hidden = focused || !!result;
     if (result) {
       sentence.innerHTML = sentenceHtml(cz, (j, core) => {
+        if (groupOk(groupOf(j), result.boxes)) return `<span class="cz-box ok">${esc(core)}</span>`;
         const t = result.boxes[j].trim();
-        if (norm(t) === norm(core)) return `<span class="cz-box ok">${esc(core)}</span>`;
         return `<span class="cz-box no">${t ? `<s>${esc(t)}</s>` : ''}${esc(core)}</span>`;
       });
       return;
     }
+    // 묶음마다 가장 잘 맞는 정답에 대고 칸을 이어서 비교
+    const live = [];
+    for (const g of cz.groups) {
+      const want = bestAnswer(g, typedIn(g));
+      let k = 0;
+      for (const b of g.boxes) {
+        live[b] = liveBox(vals[b], want.slice(k));
+        k += live[b].k;
+      }
+    }
     // 빈 칸에도 폭 없는 공백(&#8203;)을 넣어 글자 기준선을 만든다 — 없으면 빈 칸만 위로 떠서 칸마다 높이가 달라짐
-    sentence.innerHTML = sentenceHtml(cz, (j, core) => {
-      const live = liveBox(vals[j], core);
-      return `<span class="cz-box${live.cls}${j === active ? ' on' : ''}" data-j="${j}" style="min-width:${Math.min(core.length + 1, 14)}ch">&#8203;${live.html}${j === active && focused ? '<i class="cz-caret"></i>' : ''}</span>`;
-    });
+    sentence.innerHTML = sentenceHtml(cz, (j, core) =>
+      `<span class="cz-box${live[j].cls}${j === active ? ' on' : ''}" data-j="${j}" style="min-width:${Math.min(core.length + 1, 14)}ch">&#8203;${live[j].html}${j === active ? '<i class="cz-caret"></i>' : ''}</span>`);
   }
 
   function drawBelow() {
+    kbd.setState(result ? { idle: true, enter: '다음' } : { idle: false, enter: '확인' });
     if (!result) {
       const answer = cz.cores.join(' ');
       below.innerHTML = `
@@ -317,13 +411,21 @@ export function render(el, ctx, { moreNew = false } = {}) {
             .map(([cls, label, ivl], r) => `<button class="${cls}${r === sug ? ' suggest' : ''}" data-r="${r}">${label}<span class="sub">${ivl}</span></button>`)
             .join('')}
         </div>
-        <p class="count-note" style="text-align:center; margin:0">Enter = 테두리 버튼</p>`;
+        <p class="count-note" style="text-align:center; margin:0">다음(Enter) = 테두리 버튼</p>`;
     }
+    // 정답 공개 후에만 (미리 보이면 힌트가 됨): 같은 빈칸에 들어갈 수 있는 대안 + 같은 뜻의 다른 표현 카드
+    const c = session[idx];
+    const sibs = c.group ? ctx.cards.filter((x) => x.group === c.group && x.id !== c.id) : [];
+    const alts = cz.groups.filter((g) => g.alts.length > 1);
+    // 예문과 다른 대안으로 맞혔으면 예문 쪽 표현도 알려줌
+    const otherAlt = result.ok && alts.find((g) => typedIn(g, result.boxes) !== g.answers[0]);
     below.innerHTML = `
       <div class="cz-status ${result.ok ? 'ok' : 'no'}">${result.ok
-        ? `⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용)</small>' : ''}`
+        ? `⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용)</small>' : ''}${otherAlt ? ` <small>(예문엔 ${esc(otherAlt.boxes.map((b) => cz.cores[b]).join(' '))})</small>` : ''}`
         : '✕ 틀렸어요'}</div>
       ${actions}
+      ${alts.length ? `<div class="cz-sibs">✅ 이 빈칸엔 다 정답: ${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</div>` : ''}
+      ${sibs.length ? `<div class="cz-sibs">🔁 같은 뜻 다른 표현: ${sibs.map((x) => `<b>${esc(x.en)}</b>`).join(' · ')}</div>` : ''}
       ${cz.extras.length ? `
         <div class="cloze-extra">
           ${cz.extras.map((x) => `<div>${x.html}${x.ko ? `<div class="cloze-extra-ko">${esc(x.ko)}</div>` : ''}</div>`).join('')}
@@ -343,13 +445,11 @@ export function render(el, ctx, { moreNew = false } = {}) {
     slipped = false;
     vals = cz.parts.map(() => '');
     active = 0;
-    input.value = '';
     const tag = practice ? '' : freshIds.has(c.id)
       ? '<span class="pill new">신규</span> '
       : '<span class="pill review">복습</span> ';
     info.innerHTML = `<span>남은 카드 ${session.length - idx}</span><span>${tag}<span class="pill">${esc(c.category || '표현')}</span></span>`;
     body.querySelector('#czKo').textContent = cz.ko;
-    input.focus();
     drawSentence();
     drawBelow();
   }
@@ -359,7 +459,6 @@ export function render(el, ctx, { moreNew = false } = {}) {
     // 연습은 채점 기록 없이, 틀린 카드만 몇 장 뒤에 다시 출제
     if (practice && !ok) session.splice(Math.min(idx + 4, session.length), 0, session[idx]);
     result = { ok, boxes: cz.parts.map((_, j) => boxes[j] || '') };
-    input.value = '';
     drawSentence();
     drawBelow();
     info.querySelector('span').textContent = `남은 카드 ${session.length - idx}`;
@@ -383,58 +482,58 @@ export function render(el, ctx, { moreNew = false } = {}) {
   function submit() {
     if (result) return practice ? next() : rate(suggested());
     if (!vals.some((t) => t.trim())) return;
-    finish(vals.every((t, j) => norm(t) === norm(cz.cores[j])), vals.slice());
+    finish(cz.groups.every((g) => groupOk(g)), vals.slice());
   }
 
   function setActive(j) {
     active = j;
-    input.value = vals[j];
-    toEnd();
     drawSentence();
   }
 
-  // 커서는 항상 맨 끝 (빈칸 표시와 어긋나지 않게)
-  const toEnd = () => input.setSelectionRange(input.value.length, input.value.length);
-  input.addEventListener('input', () => {
+  // 지금 칸을 정답대로 다 쳤으면 스페이스 없이 바로 다음 칸으로 (마지막 칸은 Enter로 확인).
+  // 대안 묶음은 어느 대안이든 끝까지 맞으면 묶음 다음 칸으로 — 더 긴 대안의 앞부분이면 기다림
+  function advance() {
+    while (active < vals.length - 1) {
+      const g = groupOf(active);
+      const t = typedIn(g);
+      const last = g.boxes[g.boxes.length - 1];
+      if (g.answers.includes(t) && !g.answers.some((a) => a !== t && a.startsWith(t))) {
+        if (last >= vals.length - 1) return;
+        active = last + 1;
+      } else if (active < last && norm(vals[active]) && norm(vals[active]) === norm(cz.cores[active])) {
+        active++;
+      } else {
+        return;
+      }
+    }
+  }
+
+  // 앱 자판·물리 키보드 공통 입력
+  function onKey(type, v) {
     if (result) {
-      // 정답 공개 후엔 입력을 버림. 숫자 1~4는 4단계 버튼 단축키
-      const r = '1234'.indexOf(input.value.slice(-1));
-      input.value = '';
-      if (r >= 0 && !practice) rate(r);
+      // 정답 공개 후엔 Enter(다음)와 숫자 1~4(4단계 버튼 단축키)만
+      if (type === 'enter') submit();
+      else if (type === 'digit' && !practice) rate(v - 1);
       return;
     }
-    // 띄어쓰기를 치면 다음 칸으로 (마지막 칸에선 그대로 둠). 칸 맨 앞 띄어쓰기는 버림
-    // — 정답이라 자동으로 넘어온 직후 습관처럼 친 스페이스에 다음 칸까지 건너뛰지 않게
-    const v = input.value.replace(/^\s+/, '');
-    const sp = v.search(/\s/);
-    if (sp >= 0 && active < vals.length - 1) {
-      vals[active] = v.slice(0, sp);
-      const rest = v.slice(sp).trim();
-      active++;
-      if (rest) vals[active] = rest;
+    if (type === 'enter') return submit();
+    if (type === 'char') {
+      vals[active] += v;
+      advance();
+    } else if (type === 'space') {
+      // 띄어쓰기 = 다음 칸. 빈 칸에서 친 스페이스는 버림
+      // — 정답이라 자동으로 넘어온 직후 습관처럼 친 스페이스에 다음 칸까지 건너뛰지 않게
+      if (vals[active].trim() && active < vals.length - 1) active++;
+    } else if (type === 'back') {
+      // 빈 칸에서 지우기를 누르면 앞 칸으로
+      if (vals[active]) vals[active] = vals[active].slice(0, -1);
+      else if (active > 0) active--;
     } else {
-      vals[active] = v;
+      return;
     }
-    // 지금 칸을 정답대로 다 쳤으면 스페이스 없이 바로 다음 칸으로 (마지막 칸은 Enter로 확인)
-    while (active < vals.length - 1 && norm(vals[active]) === norm(cz.cores[active])) active++;
-    input.value = vals[active];
-    toEnd();
     drawSentence();
     if (sentence.querySelector('.cz-box.no')) slipped = true;
-  });
-  input.addEventListener('click', toEnd);
-  input.addEventListener('focus', () => { toEnd(); drawSentence(); });
-  input.addEventListener('blur', drawSentence);
-  input.onkeydown = (e) => {
-    // 빈 칸에서 지우기를 누르면 앞 칸으로
-    if (e.key === 'Backspace' && !result && !input.value && active > 0) {
-      e.preventDefault();
-      setActive(active - 1);
-      return;
-    }
-    if (e.key !== 'Enter' || e.repeat) return;
-    e.preventDefault();
-    submit();
-  };
+  }
+  kbd.attach(onKey);
   start();
 }

@@ -2,7 +2,7 @@
 import { esc } from './store.js';
 import { tagChips, bindTagChips } from './writing.js';
 
-export function render(el, ctx) {
+export function render(el, ctx, params = {}) {
   const lessons = [...(ctx.lessons || [])].sort((a, b) => (a.date < b.date ? 1 : -1));
 
   if (!lessons.length) {
@@ -29,7 +29,11 @@ export function render(el, ctx) {
           <p style="margin-top:8px"><span class="pill">표현 업그레이드 ${(l.upgrades || []).length}개</span></p>
         </div>`).join('')}`;
     el.querySelectorAll('.lesson-item').forEach((item) => {
-      item.onclick = () => drawDetail(lessons[Number(item.dataset.i)]);
+      // 상세는 화면 이동으로 열어서 상단 ← · 폰 뒤로가기로 목록에 돌아옴
+      item.onclick = () => {
+        const i = Number(item.dataset.i);
+        ctx.show('lessons', { i, label: lessons[i].date });
+      };
     });
     const go = el.querySelector('#sentGo');
     if (go) go.onclick = () => ctx.show('sentences');
@@ -37,7 +41,6 @@ export function render(el, ctx) {
 
   function drawDetail(l) {
     el.innerHTML = `
-      <button class="ghost" id="backBtn" style="margin-bottom:12px">← 목록으로</button>
       <p class="notice" style="margin-top:0">💡 마음에 드는 표현을 길게 눌러 하이라이트하면 단어장에 추가할 수 있어요.</p>
       <div data-pick="수업 리포트">
       <div class="card-box">
@@ -67,10 +70,10 @@ export function render(el, ctx) {
             </div>`).join('')}
         </div>` : ''}
       </div>`;
-    el.querySelector('#backBtn').onclick = drawList;
     bindTagChips(el);
-    el.scrollIntoView();
   }
 
-  drawList();
+  const picked = lessons[params.i];
+  if (params.label != null && picked) drawDetail(picked);
+  else drawList();
 }

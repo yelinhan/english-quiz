@@ -1,5 +1,5 @@
 // 초기화, 데이터 로드, 탭 라우팅, 헤더
-import { store, setStoreListener } from './store.js';
+import { store, setStoreListener, esc } from './store.js';
 import { auth, login, signup, logout, refreshAuth, PB_BASE } from './auth.js';
 import { sync } from './sync.js';
 import { migrate } from './srs.js';
@@ -12,6 +12,8 @@ import * as tutor from './tutor.js';
 import * as browse from './browse.js';
 import * as sentences from './sentences.js';
 import { initPicker } from './picker.js';
+import { splitVariants, editKey } from './cloze.js';
+import * as kbd from './keyboard.js';
 
 const views = { home, quiz: cloze, writing, lessons, tutor, browse, sentences };
 const ctx = { cards: [], lessons: [], feedback: [], sentences: [], refreshHeader, reloadCards };
@@ -57,12 +59,16 @@ async function loadBaseVocab() {
 }
 
 function reloadCards() {
-  // 기본 단어장에 로컬 수정(overrides)·삭제(deleted)를 덧입힌다 (단어장 탭에서 편집)
+  // 기본 단어장에 로컬 수정(overrides)·삭제(deleted)를 덧입힌다 (단어장 탭에서 편집).
+  // " / "로 묶인 다른 표현은 카드를 나눔 — 원래 id 키는 카드 통째, 나뉜 카드는 editKey로 따로 수정·삭제
   const ov = store.overrides();
   const del = new Set(store.deleted());
   ctx.cards = [...vocabBase, ...store.custom()]
     .filter((c) => !del.has(c.id))
-    .map((c) => (ov[c.id] ? { ...c, ...ov[c.id] } : c));
+    .map((c) => (ov[c.id] ? { ...c, ...ov[c.id] } : c))
+    .flatMap(splitVariants)
+    .filter((c) => !c.group || !del.has(editKey(c)))
+    .map((c) => (c.group && ov[editKey(c)] ? { ...c, ...ov[editKey(c)] } : c));
 }
 
 function refreshHeader() {
@@ -74,16 +80,54 @@ function refreshHeader() {
   document.getElementById('progBar').style.width = `${Math.min((today / goal) * 100, 100)}%`;
 }
 
-function show(name) {
-  currentView = name;
+// ---------- 화면 이동 ----------
+// 화면 상태 = { view, params, depth }. 브라우저 history에 그대로 쌓아서 상단 ← 버튼과
+// 폰의 뒤로가기(제스처·버튼)가 같은 동작을 한다. depth = 홈(0)에서 몇 단계 들어왔는지.
+// 탭 첫 화면끼리 옮겨 다닐 땐 기록을 쌓지 않고 바꿔치기 → 뒤로가기는 항상 홈으로.
+// "메뉴 안"(퀴즈·통문장·수업/튜터 상세)은 하단 탭바를 숨기고 상단에 현재 위치 + ←
+const TITLES = { quiz: '✏️ 퀴즈', sentences: '🗣 통문장', lessons: '📞 수업', tutor: '🧑‍🏫 튜터 피드백' };
+const HOME = { view: 'home', params: {}, depth: 0 };
+let nav = HOME;
+const isSub = (s) => s.view === 'quiz' || s.view === 'sentences' || s.params?.label != null;
+
+function render(state) {
+  nav = state;
+  currentView = state.view;
+  kbd.detach(); // 자판은 퀴즈 화면이 세션을 시작할 때 다시 붙임
+  if ('speechSynthesis' in window) speechSynthesis.cancel(); // 통문장 음성이 다른 화면까지 이어지지 않게
+  const sub = isSub(state);
+  document.body.classList.toggle('at-home', state.view === 'home');
+  document.body.classList.toggle('at-sub', sub);
+  const crumb = document.getElementById('crumb');
+  crumb.innerHTML = !sub ? '' : state.params?.label != null
+    ? `<span class="crumb-parent">${esc(TITLES[state.view])}</span><span class="crumb-sep">›</span><b>${esc(state.params.label)}</b>`
+    : `<b>${esc(TITLES[state.view])}</b>`;
   document.querySelectorAll('.view').forEach((v) => v.classList.remove('on'));
   document.querySelectorAll('.tabbar button').forEach((b) =>
-    b.classList.toggle('on', b.dataset.view === name));
-  const el = document.getElementById(`view-${name}`);
+    b.classList.toggle('on', b.dataset.view === state.view));
+  const el = document.getElementById(`view-${state.view}`);
   el.classList.add('on');
-  views[name].render(el, ctx);
+  views[state.view].render(el, ctx, state.params || {});
   document.getElementById('main').scrollTop = 0;
 }
+
+// 화면 열기. params.label이 있으면 그 탭 안의 상세 화면 (예: 수업 › 2026-10-28)
+function show(view, params = {}) {
+  if (view === 'home') {
+    if (nav.depth > 0) history.go(-nav.depth); // popstate가 홈을 그림
+    else render(HOME);
+    return;
+  }
+  const lateral = !isSub({ view, params }) && !isSub(nav) && nav.view !== 'home';
+  const state = { view, params, depth: lateral ? nav.depth : nav.depth + 1 };
+  if (lateral) history.replaceState(state, '');
+  else history.pushState(state, '');
+  render(state);
+}
+
+window.addEventListener('popstate', (e) => {
+  render(e.state && views[e.state.view] ? e.state : HOME);
+});
 
 // 서버 pull로 로컬이 바뀌었을 때만 화면 갱신. 학습 세션(퀴즈·빈칸)이나
 // 입력 중 화면을 리셋하지 않도록 홈에서만 다시 그린다.
@@ -91,7 +135,7 @@ function startSync() {
   return sync.start(() => {
     reloadCards();
     refreshHeader();
-    if (currentView === 'home') show('home');
+    if (currentView === 'home') render(nav);
   });
 }
 
@@ -214,7 +258,7 @@ function initSettings() {
     if (goal >= 1) store.saveGoal(goal);
     dlg.close();
     refreshHeader();
-    show(currentView);
+    render(nav);
   };
   document.getElementById('exportData').onclick = () => {
     const dump = {
@@ -249,13 +293,21 @@ async function main() {
     b.onclick = () => show(b.dataset.view);
   });
   document.getElementById('statsBtn').onclick = () => show('home');
+  document.getElementById('navBack').onclick = () => {
+    if (nav.depth > 0) history.back();
+    else render(HOME);
+  };
   initSettings();
   initAccount();
   initAuthGate();
   initPicker(ctx);
   ctx.show = show;
   refreshHeader();
-  show('home');
+  // 새로고침(앱 업데이트 포함)해도 보던 화면 유지 — history에 남은 상태를 그대로 다시 그림
+  const saved = history.state;
+  const start = saved && views[saved.view] ? saved : HOME;
+  history.replaceState(start, '');
+  render(start);
 
   if ('serviceWorker' in navigator) {
     // 새 서비스워커가 넘겨받으면 한 번 새로고침 — 구/신버전 파일이 섞여 도는 것 방지

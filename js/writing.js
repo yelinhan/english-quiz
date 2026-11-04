@@ -193,7 +193,7 @@ export function render(el, ctx) {
       ${key || mode === 'tr' ? '' : `
         <div class="card-box notice">
           영작 첨삭에는 AI API 키가 필요해요 (Anthropic·OpenAI·Gemini 중 택 1).<br>
-          오른쪽 위 <b>⚙ 설정</b>에서 키를 입력해주세요. (키는 이 기기에만 저장돼요)
+          홈 화면 오른쪽 위 <b>⚙ 설정</b>에서 키를 입력해주세요. (키는 이 기기에만 저장돼요)
         </div>`}
       ${mode === 'free' ? `
         <div class="card-box">

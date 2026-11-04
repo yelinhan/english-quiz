@@ -64,7 +64,7 @@ function scoreTrendChart(reportsDesc) {
     </div>`;
 }
 
-export function render(el, ctx) {
+export function render(el, ctx, params = {}) {
   const reports = [...(ctx.feedback || [])].sort((a, b) => (a.date < b.date ? 1 : -1));
 
   if (!reports.length) {
@@ -92,14 +92,17 @@ export function render(el, ctx) {
           </p>
         </div>`).join('')}`;
     el.querySelectorAll('.lesson-item').forEach((item) => {
-      item.onclick = () => drawDetail(reports[Number(item.dataset.i)]);
+      // 상세는 화면 이동으로 열어서 상단 ← · 폰 뒤로가기로 목록에 돌아옴
+      item.onclick = () => {
+        const i = Number(item.dataset.i);
+        ctx.show('tutor', { i, label: reports[i].date });
+      };
     });
   }
 
   function drawDetail(r) {
     const period = r.period ? `${esc(r.period.from)} ~ ${esc(r.period.to)}` : '';
     el.innerHTML = `
-      <button class="ghost" id="backBtn" style="margin-bottom:12px">← 목록으로</button>
       <p class="notice" style="margin-top:0">💡 마음에 드는 표현을 길게 눌러 하이라이트하면 단어장에 추가할 수 있어요.</p>
       <div data-pick="튜터 피드백">
       <div class="card-box">
@@ -144,9 +147,9 @@ export function render(el, ctx) {
           </ul>
         </div>` : ''}
       </div>`;
-    el.querySelector('#backBtn').onclick = drawList;
-    el.scrollIntoView();
   }
 
-  drawList();
+  const picked = reports[params.i];
+  if (params.label != null && picked) drawDetail(picked);
+  else drawList();
 }

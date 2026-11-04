@@ -41,6 +41,14 @@
     <button id="settingsBtn" class="icon-btn" aria-label="설정">⚙️</button>
   </header>
 
+  <!-- 메뉴 안(퀴즈·통문장·상세 화면): 탭바 대신 현재 위치 + 뒤로가기 -->
+  <header class="subbar">
+    <button id="navBack" class="back-btn" aria-label="뒤로">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div id="crumb" class="crumb"></div>
+  </header>
+
   <main id="main">
     <section id="view-home" class="view"></section>
     <section id="view-quiz" class="view"></section>
@@ -50,6 +58,9 @@
     <section id="view-browse" class="view"></section>
     <section id="view-sentences" class="view"></section>
   </main>
+
+  <!-- 앱 내장 영문 자판 (빈칸 퀴즈) — 화면 레이아웃의 일부라 시스템 키보드처럼 화면을 밀어 올리지 않음 -->
+  <div id="kbd" class="kbd" hidden></div>
 
   <nav class="tabbar">
     <button data-view="home" class="on"><span class="ico">🏠</span>홈</button>

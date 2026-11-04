@@ -1,5 +1,6 @@
 // 단어장 열람/검색 + 내 표현 내보내기
 import { store, esc, splitSentences, pairExamples } from './store.js';
+import { editKey } from './cloze.js';
 
 export function render(el, ctx) {
   const cards = ctx.cards;
@@ -63,13 +64,17 @@ export function render(el, ctx) {
   }
 
   function openCard(c) {
-    const synonyms = c.en.split('/').map((v) => v.trim()).filter(Boolean);
+    // 같은 뜻의 다른 표현 카드 (단어장의 " / "로 묶여 있다가 나뉜 카드들)
+    const sibs = c.group ? ctx.cards.filter((x) => x.group === c.group && x.id !== c.id) : [];
     const pairs = pairExamples(c);
     const sents = splitSentences(c.example);
     dlg.innerHTML = `
       <button class="dialog-close" id="wdClose">✕</button>
       <h2>${esc(c.ko)}</h2>
-      <div class="wd-syns">${synonyms.map((s) => `<span class="wd-syn">${esc(s)}</span>`).join('')}</div>
+      <div class="wd-syns"><span class="wd-syn">${esc(c.en)}</span></div>
+      ${sibs.length ? `
+        <div class="wd-label">같은 뜻 다른 표현 <small>(카드가 따로 있어요)</small></div>
+        <div class="wd-syns">${sibs.map((x) => `<button class="wd-syn wd-sib" data-sib="${esc(x.id)}">${esc(x.en)}</button>`).join('')}</div>` : ''}
       ${pairs ? `
         <div class="wd-label">예문</div>
         <ul class="wd-ex">${pairs.map((p) => `
@@ -90,15 +95,19 @@ export function render(el, ctx) {
     dlg.querySelector('#wdOk').onclick = () => dlg.close();
     dlg.querySelector('#wdDelete').onclick = () => removeCard(c);
     dlg.querySelector('#wdEdit').onclick = () => openEdit(c);
+    dlg.querySelectorAll('[data-sib]').forEach((b) => {
+      b.onclick = () => openCard(ctx.cards.find((x) => x.id === b.dataset.sib));
+    });
   }
 
   function openEdit(c) {
-    const isCustom = c.id.startsWith('custom-');
+    // 나뉜 카드는 직접 추가한 표현이어도 그 카드만 덮어쓰기로 수정 (원래 카드엔 다른 표현이 같이 들어 있음)
+    const isCustom = c.id.startsWith('custom-') && !c.group;
     dlg.innerHTML = `
       <button class="dialog-close" id="wdClose">✕</button>
       <h2>표현 수정</h2>
       <label class="field"><span>한국어 뜻</span><input id="edKo" value="${esc(c.ko)}"></label>
-      <label class="field"><span>영어 (동의어는 / 로 구분)</span><input id="edEn" value="${esc(c.en)}"></label>
+      <label class="field"><span>영어${c.group ? '' : ' <small>(같은 빈칸에 둘 다 맞으면 happy/thrilled처럼 붙여 쓰고, 다른 표현은 " / "로 띄어 쓰면 카드가 따로 생겨요)</small>'}</span><input id="edEn" value="${esc(c.en)}"></label>
       <label class="field"><span>예문</span><input id="edEx" value="${esc(c.example || '')}"></label>
       <label class="field"><span>예문 해석</span><input id="edExKo" value="${esc(c.example_ko || '')}"></label>
       ${isCustom ? '' : '<p class="notice">기본 단어장 카드라서 이 수정은 이 기기에만 적용돼요. 영구 반영은 "동기화" 워크플로를 이용해주세요.</p>'}
@@ -122,7 +131,8 @@ export function render(el, ctx) {
         if (i >= 0) { custom[i] = { ...custom[i], ...upd }; store.saveCustom(custom); }
       } else {
         const ov = store.overrides();
-        ov[c.id] = { ...ov[c.id], ...upd };
+        const k = editKey(c);
+        ov[k] = { ...ov[k], ...upd };
         store.saveOverrides(ov);
       }
       ctx.reloadCards();
@@ -133,11 +143,12 @@ export function render(el, ctx) {
 
   function removeCard(c) {
     if (!confirm(`"${c.ko}" 카드를 삭제할까요?`)) return;
-    if (c.id.startsWith('custom-')) {
+    if (c.id.startsWith('custom-') && !c.group) {
       store.saveCustom(store.custom().filter((x) => x.id !== c.id));
     } else {
       const del = store.deleted();
-      if (!del.includes(c.id)) del.push(c.id);
+      const k = editKey(c);
+      if (!del.includes(k)) del.push(k);
       store.saveDeleted(del);
     }
     ctx.reloadCards();
