@@ -20,6 +20,8 @@ SOURCES = [
 ]
 EXAMPLE_KO = ROOT / "vocab" / "example_ko.json"  # card id → 예문 전체 해석
 OUT = ROOT / "app" / "data" / "vocab.json"
+WRITING = ROOT / "vocab" / "writing_prompts.json"  # card id → [{v, ko, en}] 문장 영작 '📚 내 표현' 문제
+WRITING_OUT = ROOT / "app" / "data" / "writing_prompts.json"
 SENTENCES = ROOT / "vocab" / "sentences.md"
 SENTENCES_OUT = ROOT / "app" / "data" / "sentences.json"
 
@@ -120,7 +122,27 @@ def main():
         by_cat[it["category"]] = by_cat.get(it["category"], 0) + 1
     for cat, n in by_cat.items():
         print(f"  - {cat}: {n}")
+    build_writing(items)
     build_sentences()
+
+
+def build_writing(items: list[dict]):
+    """vocab/writing_prompts.json → app/data/writing_prompts.json (지금 있는 카드만).
+    문장 영작 '📚 내 표현' 세트가 표현(변형 v)마다 이 문제를 냄 — 문제 없는 표현은 경고."""
+    if not WRITING.exists():
+        return
+    src = json.loads(WRITING.read_text(encoding="utf-8"))
+    out = {}
+    for it in items:
+        prompts = src.get(it["id"], [])
+        if prompts:
+            out[it["id"]] = prompts
+        have = {p.get("v", 0) for p in prompts}
+        for v, var in enumerate(split_variants(it["en"])):
+            if v not in have:
+                print(f"  ⚠ 영작 문제 없음: {it['id']} v{v} ({it['ko']} → \"{var}\") → vocab/writing_prompts.json에 추가 필요")
+    WRITING_OUT.write_text(json.dumps(out, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"✓ {WRITING_OUT.relative_to(ROOT)} 생성 — 영작 문제 {sum(map(len, out.values()))}개")
 
 
 def build_sentences():

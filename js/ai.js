@@ -266,8 +266,30 @@ export function correctWriting(text) {
   return callAI('quality', SYSTEM, text, SCHEMA);
 }
 
-export function gradeTranslation(ko, attempt) {
-  return callAI('quality', TR_SYSTEM, `Korean sentence: ${ko}\nLearner's English attempt: ${attempt}`, TR_SCHEMA);
+// 📚 내 표현 세트: 단어장 카드의 표현(target)을 써서 옮기는 문제 — 썼는지(used_target)도 판정
+const TR_TARGET_RULE = `
+7. This prompt practices one expression from the learner's vocab list (given below as "Target expression",
+   with a model answer). Set "used_target" true if the attempt uses that expression (inflected forms count).
+   In "explanation_ko", first say in one short line whether they used it (praise if yes). If they did NOT,
+   make alternatives[0] the most natural version of their sentence that uses the target expression.
+   "chunk" must NOT be the target expression (it's already in their list) — use null unless there's
+   a different reusable expression worth adding.`;
+const TR_TARGET_SCHEMA = {
+  ...TR_SCHEMA,
+  properties: { ...TR_SCHEMA.properties, used_target: { type: 'boolean' } },
+  required: [...TR_SCHEMA.required, 'used_target'],
+};
+
+export function gradeTranslation(ko, attempt, { target, answer } = {}) {
+  if (!target) {
+    return callAI('quality', TR_SYSTEM, `Korean sentence: ${ko}\nLearner's English attempt: ${attempt}`, TR_SCHEMA);
+  }
+  return callAI(
+    'quality',
+    TR_SYSTEM + TR_TARGET_RULE,
+    `Korean sentence: ${ko}\nTarget expression: ${target}\nModel answer: ${answer || '(none)'}\nLearner's English attempt: ${attempt}`,
+    TR_TARGET_SCHEMA,
+  );
 }
 
 // AI가 따옴표 목록("A", "B", "C") 형태로 답한 경우 정리 → A / B / C

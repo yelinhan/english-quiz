@@ -82,6 +82,43 @@ const GRAMMAR_PROMPTS = [
   '어제 몇 시에 집에 들어왔어요?',
 ];
 
+// ---------- 📚 내 표현 세트: 단어장 표현마다 미리 만든 영작 문제 (data/writing_prompts.json) ----------
+let minePrompts = null; // { 카드 원래 id: [{ v(표현 번호), ko, en(예시 답안) }] }
+const recentMine = []; // 최근에 낸 문제 — 연달아 같은 문제 방지
+
+function loadMinePrompts() {
+  if (minePrompts) return Promise.resolve(minePrompts);
+  return fetch('data/writing_prompts.json', { cache: 'no-cache' })
+    .then((r) => (r.ok ? r.json() : {}))
+    .catch(() => ({}))
+    .then((d) => { minePrompts = d; return d; });
+}
+
+// 퀴즈에서 본 카드 위주로, 자주 틀리거나 아직 익히는 중인 카드일수록 자주 나옴 (안 본 카드도 가끔)
+function pickMine(cards) {
+  const srs = store.srs();
+  const pool = [];
+  for (const c of cards) {
+    const list = (minePrompts?.[c.group || c.id] || []).filter((p) => (p.v || 0) === (c.v || 0));
+    const rec = srs[c.id];
+    const w = rec ? 3 + 3 * (rec.lapses || 0) + (rec.st === 'review' ? 0 : 2) : 1;
+    for (const p of list) if (!recentMine.includes(p.ko)) pool.push({ c, p, w });
+  }
+  if (!pool.length) {
+    if (!recentMine.length) return null;
+    recentMine.length = 0;
+    return pickMine(cards);
+  }
+  let r = Math.random() * pool.reduce((s, x) => s + x.w, 0);
+  const hit = pool.find((x) => (r -= x.w) < 0) || pool[pool.length - 1];
+  recentMine.push(hit.p.ko);
+  if (recentMine.length > 20) recentMine.shift();
+  return { ko: hit.p.ko, answer: hit.p.en, target: hit.c.en, meaning: hit.c.ko };
+}
+
+// 힌트 1단계: 단어마다 첫 글자만 (put it on the back burner → p__ i_ o_ t__ b___ b_____)
+const maskWords = (s) => s.replace(/[A-Za-z]+/g, (w) => w[0] + '_'.repeat(w.length - 1));
+
 // ---------- 문법 태그 칩 + 설명 카드 ----------
 let grammarCards = null; // data/grammar.json 캐시
 let lessonsCache = null; // data/lessons.json 캐시 (내 실수 모으기용)
@@ -169,13 +206,31 @@ export function bindTagChips(rootEl) {
 
 export function render(el, ctx) {
   let mode = 'tr'; // 탭에 들어올 때마다 문장 영작이 기본
-  let set = 'all'; // all: 전체 랜덤, grammar: 관사·시제 집중
-  let prompt = pickPrompt();
+  let set = 'mine'; // mine: 단어장 표현 쓰기, all: 전체 랜덤, grammar: 관사·시제 집중
+  let prompt = '';
+  let target = null; // mine 세트 문제의 { target(표현), meaning(카드 뜻), answer(예시 답안) }
+  let hint = 0; // 0 숨김 → 1 첫 글자 → 2 표현 → 3 예시 답안
 
   function pickPrompt() {
+    hint = 0;
+    if (set === 'mine') {
+      target = minePrompts ? pickMine(ctx.cards) : null;
+      prompt = target ? target.ko : '';
+      return;
+    }
+    target = null;
     const pool = set === 'grammar' ? GRAMMAR_PROMPTS : [...PROMPTS, ...GRAMMAR_PROMPTS];
-    return pool[Math.floor(Math.random() * pool.length)];
+    prompt = pool[Math.floor(Math.random() * pool.length)];
   }
+
+  function hintHtml() {
+    if (!target || !hint) return '';
+    if (hint === 1) return `💡 ${esc(maskWords(target.target))}`;
+    if (hint === 2) return `💡 ${esc(target.target)} <span class="notice">· ${esc(target.meaning)}</span>`;
+    return `📘 ${esc(target.answer)}`;
+  }
+  const hintLabel = () => ['💡 힌트', '💡 표현 보기', '📘 예시 답안', '📘 예시 답안'][hint];
+  pickPrompt();
 
   function draw() {
     const key = store.apiKey();
@@ -187,6 +242,7 @@ export function render(el, ctx) {
       </div>
       ${mode === 'tr' ? `
       <div class="chip-row">
+        <button data-set="mine" class="${set === 'mine' ? 'on' : ''}">📚 내 표현</button>
         <button data-set="all" class="${set === 'all' ? 'on' : ''}">🎲 전체 랜덤</button>
         <button data-set="grammar" class="${set === 'grammar' ? 'on' : ''}">🎯 관사·시제·전치사 집중</button>
       </div>` : ''}
@@ -206,11 +262,17 @@ export function render(el, ctx) {
         <div class="card-box">
           <p class="notice" style="margin-top:0">${set === 'grammar'
             ? '아래 문장을 영어로! <b>관사(a/the)와 시제</b>에 특히 신경 써보세요.'
-            : '아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.'}</p>
-          <div class="tr-prompt">${esc(prompt)}</div>
+            : set === 'mine'
+              ? '<b>단어장에서 배운 표현</b>을 써서 옮겨보세요! 막히면 💡 힌트를 눌러봐요.'
+              : '아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.'}</p>
+          <div class="tr-prompt">${prompt ? esc(prompt) : (minePrompts ? '아직 문제가 없어요' : '문제 불러오는 중...')}</div>
+          ${target ? `<div class="tr-hint" id="trHint">${hintHtml()}</div>` : ''}
           <textarea id="writingInput" placeholder="영어로 써보세요..."></textarea>
-          <div style="display:flex; justify-content:space-between; gap:8px; margin-top:10px">
-            <button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:10px">
+            <div style="display:flex; gap:8px">
+              <button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
+              ${target ? `<button class="ghost" id="hintBtn">${hintLabel()}</button>` : ''}
+            </div>
             ${key
               ? '<button class="primary" id="submitBtn">첨삭 받기</button>'
               : '<button class="primary" id="copyBtn">📋 복사해서 Claude에 첨삭받기</button>'}
@@ -229,7 +291,7 @@ export function render(el, ctx) {
     el.querySelectorAll('[data-set]').forEach((b) => {
       b.onclick = () => {
         set = b.dataset.set;
-        prompt = pickPrompt();
+        pickPrompt();
         draw();
       };
     });
@@ -238,17 +300,28 @@ export function render(el, ctx) {
     const submitBtn = el.querySelector('#submitBtn');
     const nextBtn = el.querySelector('#nextPromptBtn');
     const copyBtn = el.querySelector('#copyBtn');
+    const hintBtn = el.querySelector('#hintBtn');
     if (nextBtn) {
       nextBtn.onclick = () => {
-        prompt = pickPrompt();
+        pickPrompt();
         draw();
+      };
+    }
+    // 다시 그리지 않고 힌트 줄만 갱신 (쓰던 답이 지워지지 않게)
+    if (hintBtn) {
+      hintBtn.disabled = hint >= 3;
+      hintBtn.onclick = () => {
+        hint = Math.min(hint + 1, 3);
+        el.querySelector('#trHint').innerHTML = hintHtml();
+        hintBtn.textContent = hintLabel();
+        hintBtn.disabled = hint >= 3;
       };
     }
     if (copyBtn) {
       copyBtn.onclick = async () => {
         const text = el.querySelector('#writingInput').value.trim();
-        if (!text) return;
-        const msg = `문장 영작 첨삭해줘!\n한국어: ${prompt}\n내 영어: ${text}`;
+        if (!text || !prompt) return;
+        const msg =`문장 영작 첨삭해줘!\n한국어: ${prompt}\n${target ? `목표 표현: ${target.target}\n` : ''}내 영어: ${text}`;
         try {
           await navigator.clipboard.writeText(msg);
           store.markWritingDay(); // 복사 흐름은 첨삭 기록이 안 남아서 홈 체크용 마커
@@ -262,13 +335,17 @@ export function render(el, ctx) {
 
     if (submitBtn) submitBtn.onclick = async () => {
       const text = el.querySelector('#writingInput').value.trim();
-      if (!text) return;
+      if (!text || (mode === 'tr' && !prompt)) return;
       submitBtn.disabled = true;
       resultEl.innerHTML = '<div class="card-box spinner">🤖 첨삭 중이에요... (10~20초 정도 걸려요)</div>';
       try {
         const entry = mode === 'free'
           ? { date: todayStr(), mode: 'free', input: text, result: await correctWriting(text, store.apiKey()) }
-          : { date: todayStr(), mode: 'tr', ko: prompt, input: text, result: await gradeTranslation(prompt, text, store.apiKey()) };
+          : {
+            date: todayStr(), mode: 'tr', ko: prompt, input: text,
+            ...(target ? { target: target.target, answer: target.answer } : {}),
+            result: await gradeTranslation(prompt, text, target ? { target: target.target, answer: target.answer } : {}),
+          };
         const history = store.corrections();
         history.unshift(entry);
         store.saveCorrections(history.slice(0, 50));
@@ -289,7 +366,7 @@ export function render(el, ctx) {
         <h2 class="section-title">지난 첨삭</h2>
         ${history.slice(0, 5).map((h, i) => `
           <div class="card-box lesson-item" data-i="${i}">
-            <div class="date">${esc(h.date)}${h.mode === 'tr' ? ' · 문장 영작' : ''}</div>
+            <div class="date">${esc(h.date)}${h.mode === 'tr' ? (h.target ? ' · 📚 내 표현' : ' · 문장 영작') : ''}</div>
             <p>${esc((h.mode === 'tr' ? `${h.ko} → ` : '') + h.input).slice(0, 60)}${(h.input.length > 60) ? '…' : ''}</p>
           </div>`).join('')}`;
       hEl.querySelectorAll('.lesson-item').forEach((item) => {
@@ -303,6 +380,15 @@ export function render(el, ctx) {
   }
 
   draw();
+  // 내 표현 문제는 처음 한 번 받아온 뒤 출제
+  if (!minePrompts) {
+    loadMinePrompts().then(() => {
+      if (set === 'mine' && !prompt && el.isConnected) {
+        pickPrompt();
+        draw();
+      }
+    });
+  }
 }
 
 function showEntry(resultEl, entry, ctx) {
@@ -311,6 +397,7 @@ function showEntry(resultEl, entry, ctx) {
     resultEl.innerHTML = `
       <div class="card-box" data-pick="영작 첨삭">
         <div class="tr-prompt small">${esc(entry.ko)}</div>
+        ${entry.target ? `<p class="tr-target">🎯 ${esc(entry.target)} — ${r.used_target ? '✅ 잘 썼어요!' : '이번엔 안 썼어요'}</p>` : ''}
         <div class="correction">
           ${r.is_natural
             ? `<div class="natural">👍 ${esc(entry.input)}</div>`
@@ -322,6 +409,9 @@ function showEntry(resultEl, entry, ctx) {
         ${(r.alternatives || []).length ? `
           <p class="notice" style="margin-bottom:4px">이렇게도 말해요:</p>
           ${r.alternatives.map((a) => `<div class="fixed">• ${esc(a)}</div>`).join('')}` : ''}
+        ${entry.answer ? `
+          <p class="notice" style="margin-bottom:4px">📘 예시 답안:</p>
+          <div class="fixed">${esc(entry.answer)}</div>` : ''}
         ${r.chunk ? `<button class="add-chunk" data-c="0">＋ 단어장에 추가: ${esc(r.chunk.en)}</button>` : ''}
         <p class="notice">🗣 자연스러운 문장을 소리 내어 3번 읽어보세요!</p>
       </div>`;
