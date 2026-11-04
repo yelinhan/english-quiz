@@ -85,7 +85,7 @@ const GRAMMAR_PROMPTS = [
 
 // ---------- 📚 내 표현 세트: 단어장 표현마다 미리 만든 영작 문제 (data/writing_prompts.json) ----------
 let minePrompts = null; // { 카드 원래 id: [{ v(표현 번호), ko, en(예시 답안) }] }
-const recentMine = []; // 최근에 낸 문제 — 연달아 같은 문제 방지
+const recentMine = []; // 전체 랜덤에서 최근에 낸 문제 — 연달아 같은 문제 방지
 
 function loadMinePrompts() {
   if (minePrompts) return Promise.resolve(minePrompts);
@@ -95,9 +95,8 @@ function loadMinePrompts() {
     .then((d) => { minePrompts = d; return d; });
 }
 
-// 직접 채점(✕/⭕)에서 틀린 문제: 이번에 몇 문제 뒤 다시 + 다음 날부터 맞힐 때까지 복습 (eq.writingReview, 동기화)
+// 직접 채점(❌/⭕)에서 틀린 문제: 오늘 순서 3칸 뒤에 다시 + 다음 날부터 맞힐 때까지 복습 (eq.writingReview, 동기화)
 const RETRY_AFTER = 4; // 틀린 문제는 3문제 뒤에 다시
-const sessionRetry = []; // [{ ko, wait }]
 
 // 문제 한국어 → { c(표현별로 나뉜 카드), p(문제) }
 function mineIndex(cards) {
@@ -118,55 +117,90 @@ function dueReviews(idx) {
     .map(([ko]) => ko);
 }
 
-function remember(ko) {
-  recentMine.push(ko);
-  if (recentMine.length > 20) recentMine.shift();
-}
+// 아직 졸업 안 한 틀린 문제인지 (🔁 복습 배지)
+const pendingReview = (ko) => { const r = store.writingReview()[ko]; return !!r && !r.done; };
 
-const toTarget = ({ c, p }, review = false) => ({
-  ko: p.ko, answer: p.en, target: c.en, meaning: c.ko, cardId: c.id, koHl: p.ko_hl, enHl: p.en_hl, review,
+const toTarget = ({ c, p }) => ({
+  ko: p.ko, answer: p.en, target: c.en, meaning: c.ko, cardId: c.id, koHl: p.ko_hl, enHl: p.en_hl,
+  review: pendingReview(p.ko),
 });
 
-// 출제 순서: ① 이번에 틀린 문제(3문제 뒤) ② 오늘 복습할 문제 ③ 퀴즈에서 푼 카드 중 랜덤 —
-// 자주 틀리거나 아직 익히는 중인 카드일수록 자주 (퀴즈에서 안 푼 카드는 안 나옴)
-function pickMine(cards) {
-  const idx = mineIndex(cards);
-  sessionRetry.forEach((r) => { r.wait--; });
-  const ready = sessionRetry.findIndex((r) => r.wait <= 0 && idx.has(r.ko));
-  if (ready >= 0) {
-    const { ko } = sessionRetry.splice(ready, 1)[0];
-    remember(ko);
-    return toTarget(idx.get(ko), true);
-  }
-  const waiting = new Set(sessionRetry.map((r) => r.ko));
-  // 복습은 바로 직전 몇 문제만 피함 (최근 20문제 규칙은 새 문제에만)
-  const justShown = recentMine.slice(-3);
-  const due = dueReviews(idx).filter((ko) => !justShown.includes(ko) && !waiting.has(ko));
-  if (due.length) {
-    const ko = due[Math.floor(Math.random() * due.length)];
-    remember(ko);
-    return toTarget(idx.get(ko), true);
-  }
-  // 퀴즈에서 한 번이라도 푼 카드만 (아직 안 배운 표현은 안 나옴)
-  const srs = store.srs();
-  const pool = [];
-  for (const [ko, x] of idx) {
-    const rec = srs[x.c.id];
-    if (!rec || recentMine.includes(ko) || waiting.has(ko)) continue;
-    pool.push({ ...x, w: 3 + 3 * (rec.lapses || 0) + (rec.st === 'review' ? 0 : 2) });
-  }
-  if (!pool.length) {
-    if (!recentMine.length) return null;
-    recentMine.length = 0;
-    return pickMine(cards);
-  }
-  let r = Math.random() * pool.reduce((s, x) => s + x.w, 0);
-  const hit = pool.find((x) => (r -= x.w) < 0) || pool[pool.length - 1];
-  remember(hit.p.ko);
-  return toTarget(hit);
+// 가중치 랜덤 순서 (가중치 클수록 앞쪽에 올 확률이 높음)
+function weightedOrder(items) {
+  return items
+    .map((x) => ({ x, k: Math.random() ** (1 / x.w) }))
+    .sort((a, b) => b.k - a.k)
+    .map((y) => y.x.ko);
 }
 
-// 직접 채점 기록. 틀리면 이번에 다시 + 내일 복습, 복습할 날이 된 문제를 맞히면 졸업
+// 📚 내 표현 = 퀴즈에서 한 번이라도 푼 카드의 문제만. 자주 틀렸거나 아직 익히는 중인 카드일수록 앞쪽에
+function mineCandidates(idx, skip) {
+  const srs = store.srs();
+  const out = [];
+  for (const [ko, x] of idx) {
+    const rec = srs[x.c.id];
+    if (rec && !skip.has(ko)) out.push({ ko, w: 3 + 3 * (rec.lapses || 0) + (rec.st === 'review' ? 0 : 2) });
+  }
+  return out;
+}
+
+// 오늘의 순서 (eq.writingToday: { date, order: [문제 한국어], pos }) — 하루 처음 열 때 정해서 저장.
+// 다른 문장·채점으로 넘어가기 전까지는 새로고침해도 같은 문장. 복습할 문제가 맨 앞,
+// 오늘 퀴즈에서 새로 배운 카드의 문제는 뒤에 이어 붙임
+function todayPlan(idx, { fresh = false } = {}) {
+  const today = todayStr();
+  let plan = store.writingToday();
+  if (fresh || !plan || plan.date !== today) {
+    const due = dueReviews(idx);
+    plan = { date: today, order: [...due, ...weightedOrder(mineCandidates(idx, new Set(due)))], pos: 0 };
+    store.saveWritingToday(plan);
+    return plan;
+  }
+  const have = new Set(plan.order);
+  const added = [
+    ...dueReviews(idx).filter((ko) => !have.has(ko)),
+    ...weightedOrder(mineCandidates(idx, have)),
+  ].filter((ko, i, a) => a.indexOf(ko) === i);
+  if (added.length) {
+    plan.order.push(...added);
+    store.saveWritingToday(plan);
+  }
+  return plan;
+}
+
+// 지금 풀 문제: { t(문제) | done(오늘 순서 끝), pos, total, reviewsLeft }
+function mineCurrent(cards, opts) {
+  const idx = mineIndex(cards);
+  const plan = todayPlan(idx, opts);
+  let moved = false;
+  while (plan.pos < plan.order.length && !idx.has(plan.order[plan.pos])) { plan.pos++; moved = true; } // 지워진 카드
+  if (moved) store.saveWritingToday(plan);
+  const rest = plan.order.slice(plan.pos);
+  const info = { pos: plan.pos, total: plan.order.length, reviewsLeft: new Set(rest.filter(pendingReview)).size };
+  if (plan.pos >= plan.order.length) return { ...info, done: plan.order.length > 0 };
+  return { ...info, t: toTarget(idx.get(plan.order[plan.pos])) };
+}
+
+// 다음 문장으로. 틀렸으면 그 문제를 오늘 순서 3칸 뒤에 다시 끼워 넣음
+function mineAdvance(retryKo) {
+  const plan = store.writingToday();
+  if (!plan) return;
+  if (retryKo) plan.order.splice(Math.min(plan.pos + RETRY_AFTER, plan.order.length), 0, retryKo);
+  plan.pos++;
+  store.saveWritingToday(plan);
+}
+
+// 🎲 전체 랜덤: 안 본 카드까지 모든 카드 문제 + 일반 문장 (최근 20문제는 반복 안 함)
+function pickAll(cards) {
+  const idx = mineIndex(cards);
+  const pool = [...idx.keys(), ...PROMPTS, ...GRAMMAR_PROMPTS].filter((ko) => !recentMine.includes(ko));
+  const ko = pool[Math.floor(Math.random() * pool.length)];
+  recentMine.push(ko);
+  if (recentMine.length > 20) recentMine.shift();
+  return idx.has(ko) ? { prompt: ko, target: toTarget(idx.get(ko)) } : { prompt: ko, target: null };
+}
+
+// 직접 채점 기록. 틀리면 내일 복습(내 표현은 오늘 순서 3칸 뒤에도 다시), 복습할 날이 된 문제를 맞히면 졸업
 // (틀린 당일 다시 풀어 맞힌 건 내일 복습 그대로 — 하루 지나서도 기억나는지 확인)
 function gradeMine(t, ok) {
   const rv = store.writingReview();
@@ -174,7 +208,6 @@ function gradeMine(t, ok) {
   const today = todayStr();
   if (!ok) {
     rv[t.ko] = { id: t.cardId, fails: (rec?.fails || 0) + 1, due: addDays(today, 1), t: Date.now() };
-    if (!sessionRetry.some((r) => r.ko === t.ko)) sessionRetry.push({ ko: t.ko, wait: RETRY_AFTER });
   } else if (rec && !rec.done && rec.due <= today) {
     rv[t.ko] = { ...rec, done: true, t: Date.now() };
   } else {
@@ -302,19 +335,31 @@ export function render(el, ctx) {
   let hint = 0; // 0 숨김 → 1 첫 글자 → 2 표현 → 3 예시 답안
   let revealed = false; // 내 표현: 정답 확인 후 → 직접 채점(✕/⭕)
   let draft = ''; // 다시 그릴 때 쓰던 답 유지
+  let mine = null; // 내 표현 오늘 순서 상태 { pos, total, reviewsLeft, done? }
 
-  function pickPrompt() {
+  // 문제 정하기. 내 표현은 저장된 오늘 순서의 현재 칸 (넘기기는 mineAdvance), 나머지는 랜덤
+  function pickPrompt(opts) {
     hint = 0;
     revealed = false;
     draft = '';
+    mine = null;
     if (set === 'mine') {
-      target = minePrompts ? pickMine(ctx.cards) : null;
+      mine = minePrompts ? mineCurrent(ctx.cards, opts) : null;
+      target = mine?.t || null;
       prompt = target ? target.ko : '';
       return;
     }
+    if (set === 'all') {
+      ({ prompt, target } = minePrompts ? pickAll(ctx.cards) : { prompt: '', target: null });
+      return;
+    }
     target = null;
-    const pool = set === 'grammar' ? GRAMMAR_PROMPTS : [...PROMPTS, ...GRAMMAR_PROMPTS];
-    prompt = pool[Math.floor(Math.random() * pool.length)];
+    prompt = GRAMMAR_PROMPTS[Math.floor(Math.random() * GRAMMAR_PROMPTS.length)];
+  }
+  // 다른 문장 / 채점 후 다음: 내 표현은 오늘 순서를 한 칸 넘김 (틀렸으면 3칸 뒤에 다시 끼움)
+  function nextPrompt(retryKo) {
+    if (set === 'mine') mineAdvance(retryKo);
+    pickPrompt();
   }
 
   function hintHtml() {
@@ -342,7 +387,8 @@ export function render(el, ctx) {
 
   function draw() {
     const key = store.apiKey();
-    const dueN = minePrompts ? dueReviews(mineIndex(ctx.cards)).length + sessionRetry.length : 0;
+    // 칩의 🔁 = 오늘 순서에 남은 복습 문제 (다른 세트일 땐 오늘 복습할 문제 수)
+    const dueN = set === 'mine' ? mine?.reviewsLeft || 0 : minePrompts ? dueReviews(mineIndex(ctx.cards)).length : 0;
     const touchKbd = mode === 'tr' && isTouchKbd();
     el.innerHTML = `
       <div class="chip-row">
@@ -372,13 +418,19 @@ export function render(el, ctx) {
           ${set === 'mine' ? '' : `<p class="notice" style="margin-top:0">${set === 'grammar'
             ? '아래 문장을 영어로! <b>관사(a/the)와 시제</b>에 특히 신경 써보세요.'
             : '아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.'}</p>`}
+          ${set === 'mine' && target ? `<div class="tr-progress">오늘 ${mine.pos + 1} / ${mine.total}</div>` : ''}
           <div class="tr-prompt">${target?.review ? '<span class="tr-badge">🔁 복습</span>' : ''}${target
             ? markHl(prompt, target.koHl)
-            : prompt ? esc(prompt) : (minePrompts ? '퀴즈에서 표현을 배우면 여기서 영작 문제가 나와요' : '문제 불러오는 중...')}</div>
+            : prompt ? esc(prompt)
+            : !minePrompts ? '문제 불러오는 중...'
+            : mine?.done ? '🎉 오늘 문장을 다 풀었어요!'
+            : '퀴즈에서 표현을 배우면 여기서 영작 문제가 나와요'}</div>
           ${target ? `<div class="tr-hint" id="trHint">${revealed ? '' : hintHtml()}</div>` : ''}
-          <textarea id="writingInput" rows="3" placeholder="영어로 써보세요..." autocomplete="off" autocapitalize="off"
-            spellcheck="false" ${touchKbd ? 'inputmode="none"' : ''}>${esc(draft)}</textarea>
-          ${target && revealed ? `
+          ${prompt ? `<textarea id="writingInput" rows="3" placeholder="영어로 써보세요..." autocomplete="off" autocapitalize="off"
+            spellcheck="false" ${touchKbd ? 'inputmode="none"' : ''}>${esc(draft)}</textarea>` : ''}
+          ${!prompt ? (mine?.done ? `
+          <div class="tr-actions"><span></span><button class="primary" id="restartBtn">🔄 새 순서로 다시</button></div>` : '')
+          : target && revealed ? `
           <div class="tr-grade">
             <button class="tr-fail" id="failBtn">❌ Missed it</button>
             <button class="tr-ok" id="okBtn">⭕ Got it</button>
@@ -391,7 +443,7 @@ export function render(el, ctx) {
             ${target ? '<button class="primary" id="revealBtn">✅ 정답 확인</button>' : aiBtn()}
           </div>`}
           ${target && revealed ? revealHtml() : ''}
-          ${target || key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
+          ${!prompt || target || key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
         </div>`}
       <div id="result"></div>
       <div id="history"></div>`;
@@ -416,7 +468,14 @@ export function render(el, ctx) {
     const revealBtn = el.querySelector('#revealBtn');
     if (nextBtn) {
       nextBtn.onclick = () => {
-        pickPrompt();
+        nextPrompt();
+        draw();
+      };
+    }
+    const restartBtn = el.querySelector('#restartBtn');
+    if (restartBtn) {
+      restartBtn.onclick = () => {
+        pickPrompt({ fresh: true });
         draw();
       };
     }
@@ -431,7 +490,7 @@ export function render(el, ctx) {
       };
     }
 
-    // 📚 내 표현: AI 없이 정답 확인 → 내 답 아래에 원래 의도한 표현·예시 답안, 버튼은 직접 채점(✕ Missed it / ⭕ Got it)으로
+    // 📚 내 표현: AI 없이 정답 확인 → 내 답 아래에 원래 의도한 표현·예시 답안, 버튼은 직접 채점(❌ Missed it / ⭕ Got it)으로
     const ta = el.querySelector('#writingInput');
     if (revealBtn) {
       revealBtn.onclick = () => {
@@ -447,7 +506,7 @@ export function render(el, ctx) {
       if (!b) return;
       b.onclick = () => {
         gradeMine(target, ok);
-        pickPrompt();
+        nextPrompt(ok ? null : target.ko);
         draw();
       };
     });

@@ -380,6 +380,7 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 }
 .tr-actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .tr-actions-left { display: flex; gap: 8px; }
+.tr-progress { font-size: .78rem; color: var(--sub); text-align: right; margin: -6px 2px 6px; }
 /* 직접 채점: 한 줄을 반씩 꽉 채우는 연한 빨강 / 연한 초록 버튼 */
 .tr-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
 .tr-grade button {

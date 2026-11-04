@@ -44,6 +44,9 @@ export const store = {
   // 영작 '내 표현' 직접 채점에서 틀린 문제: { 문제 한국어: { id(카드), fails, due, t(수정 시각), done? } }
   writingReview: () => get('eq.writingReview', {}),
   saveWritingReview: (v) => set('eq.writingReview', v),
+  // 영작 '내 표현' 오늘의 순서 (이 기기만): { date, order: [문제 한국어], pos }
+  writingToday: () => get('eq.writingToday', null),
+  saveWritingToday: (v) => set('eq.writingToday', v),
   writingDays: () => get('eq.writingDays', []),
   markWritingDay: () => {
     const days = get('eq.writingDays', []);
