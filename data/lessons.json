@@ -457,5 +457,231 @@
       { "who": "tutor", "text": "All right, we're out of time. Always a pleasure. Have a good day!" },
       { "who": "me", "text": "Thank you! Bye!" }
     ]
+  },
+  {
+    "date": "2026-11-04",
+    "topic": "프리토킹 (새 업무 / 연말 조직 변화 / AI와 개발자의 미래 / caught me off guard)",
+    "summary": "프리토킹 15분. 일주일 전 시작한 새 업무(이번 주 마감), 연말 조직 변화와 계약직 임원인 팀장의 재계약 불확실성, 연말인데도 AI 때문에 따라갈 게 많은 개발자 생활, 프로그래밍 배우기와 신입 취업난('우린 AI 코드 리뷰어'), 튜터 일에도 들어온 AI, AI가 번 돈을 나누면 유토피아. 마지막에 단어장에 넣은 caught me off guard를 튜터에게 질문 — 놀람과 무서움 사이의 중립 표현, 보초(on guard)에서 유래. 튜터 평가: 유창성·발음 great, 어휘 good, 문법 2개(going well / there is no work).",
+    "upgrades": [
+      {
+        "said": "I think it is going to very good way",
+        "better": "It's going really well.",
+        "note_ko": "튜터 첨삭. '좋은 방향으로 가고 있다' 직역 대신 going well.",
+        "tags": ["단어선택", "콜로케이션"]
+      },
+      {
+        "said": "it's good because I started a new task about one week ago",
+        "better": "It's going well! I started a new project about a week ago.",
+        "note_ko": "'How's your week going?'엔 going well로. 1주일 전 = a week ago.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "this time is nearly the end of the year",
+        "better": "It's almost the end of the year.",
+        "note_ko": "'이 시기가' 직역. 시간·날짜는 it 주어.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "They're going to happen some different changes",
+        "better": "There are gonna be some changes.",
+        "note_ko": "happen은 주어 뒤에 (Some changes are gonna happen).",
+        "tags": ["어순"]
+      },
+      {
+        "said": "He will be fired.",
+        "better": "He might get let go.",
+        "note_ko": "말로는 get + p.p. — 튜터도 바로 'He's getting fired?'로 받음. 확정 아니면 might.",
+        "tags": ["수동태-get"]
+      },
+      {
+        "said": "he's not the employee, but he's the executive worker",
+        "better": "He's not a regular employee — he's an executive.",
+        "note_ko": "관사 a/an. 임원 = executive. 정규직 = regular employee.",
+        "tags": ["관사"]
+      },
+      {
+        "said": "He is contractor",
+        "better": "He's on a contract.",
+        "note_ko": "관사 a. 튜터 표현: contract employee.",
+        "tags": ["관사"]
+      },
+      {
+        "said": "I don't think he will move me to the another team",
+        "better": "I don't think he'll move me to another team.",
+        "note_ko": "another = an + other라서 the ✗.",
+        "tags": ["관사"]
+      },
+      {
+        "said": "many people in his team will be his power",
+        "better": "More people on his team means more power for him.",
+        "note_ko": "'힘이 되다' 직역. 팀은 on a team.",
+        "tags": ["단어선택", "전치사"]
+      },
+      {
+        "said": "his fire possibility is very high",
+        "better": "There's a good chance he'll get let go.",
+        "note_ko": "'해고 가능성이 높다' 명사 직역. fire는 동사 → 동사로 풀기.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "the economy status now is not that good in Korea, so it is hard to keep his position for the next year",
+        "better": "The economy's not great in Korea right now, so it's gonna be hard for him to keep his job next year.",
+        "note_ko": "'경제 상황' 직역(11/01 situation과 같은 패턴) → the economy. 누가 힘든지 for him.",
+        "tags": ["단어선택", "to부정사"]
+      },
+      {
+        "said": "(That's rough.) Yeah, that's right.",
+        "better": "Yeah, it really is. / Totally.",
+        "note_ko": "that's right = 사실이 맞아. 공감엔 다른 리액션 — 이번 수업 15회+.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "so it is not that good, not that bad",
+        "better": "It's not great, but it's not the end of the world.",
+        "note_ko": "'좋지도 나쁘지도 않다' 직역.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "a few years ago my company is also very, there are no work at the end of year",
+        "better": "A few years ago, there wasn't much work at the end of the year.",
+        "note_ko": "튜터 첨삭: work는 셀 수 없음 → there is. 과거니까 wasn't.",
+        "tags": ["수일치", "시제-과거"]
+      },
+      {
+        "said": "I'm the software developer. So there are a lot of work to follow",
+        "better": "I'm a software developer, so there's a lot to keep up with.",
+        "note_ko": "직업은 a. 뒤처지지 않게 따라가다 = keep up with. work 불가산.",
+        "tags": ["관사", "수일치"]
+      },
+      {
+        "said": "This year is not that peaceful even at the end of the year",
+        "better": "Even the end of the year isn't that chill this year.",
+        "note_ko": "peaceful = 평화로운. 한가하다 = chill / slow. 'not that'은 👍",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "my friends, who is not a developer, always told me I'm good at typing",
+        "better": "My friends who aren't developers always tell me I type really fast.",
+        "note_ko": "friends → who are (11/01 people who was에 이어 2회). 늘 하는 말은 현재형.",
+        "tags": ["수일치", "관계대명사"]
+      },
+      {
+        "said": "there are some semantic rules in that language",
+        "better": "It has its own rules, like grammar.",
+        "note_ko": "프로그래밍 문법 = syntax (semantic = 의미).",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "We have to learn all of the languages type by type like this",
+        "better": "We had to learn them one by one.",
+        "note_ko": "예전 일은 had to. type by type → one by one. 문장 끝 like this 직역 빼기.",
+        "tags": ["시제-과거"]
+      },
+      {
+        "said": "some juniors, the graduate of the university are hard to find their job",
+        "better": "A lot of new grads are having a hard time finding jobs.",
+        "note_ko": "사람 주어 + be hard to ✗ → have a hard time -ing. 신입 = new grads.",
+        "tags": ["동명사", "단어선택"]
+      },
+      {
+        "said": "our AIs coding ability is good, better than them",
+        "better": "AI codes better than they do.",
+        "note_ko": "명사구(coding ability) → 동사(codes).",
+        "tags": ["비교급"]
+      },
+      {
+        "said": "We are just the reviewer of the AI's code",
+        "better": "We're basically just reviewing AI's code now.",
+        "note_ko": "we → reviewers (수일치). 말로는 동사로.",
+        "tags": ["수일치"]
+      },
+      {
+        "said": "Every time I and my coworkers meet and talk about our future, we are always afraid of our future",
+        "better": "Whenever my coworkers and I talk about the future, we get kinda scared.",
+        "note_ko": "I는 뒤로 (11/01 my boyfriend and I에 이어 2회). every time + always 중복.",
+        "tags": ["어순"]
+      },
+      {
+        "said": "we always think about AIs will be dominators or powers",
+        "better": "We always end up thinking AI's gonna take over.",
+        "note_ko": "think about + 명사 / think + 문장. '지배자' 명사 직역 → take over.",
+        "tags": ["단어선택"]
+      },
+      {
+        "said": "If the AI's earning will be divided all of ours equally, it will be good",
+        "better": "If the money AI makes got split equally between all of us, that'd be great.",
+        "note_ko": "상상은 if절에 will ✗ → 과거형 + would. 바로 뒤 'It would be utopian'은 맞게 씀 👍",
+        "tags": ["가정법"]
+      },
+      {
+        "said": "I have learned the new phrase",
+        "better": "I learned a new phrase.",
+        "note_ko": "특정 시점에 배운 건 과거. 처음 꺼내는 거라 a.",
+        "tags": ["시제-현재완료", "관사"]
+      },
+      {
+        "said": "is it very frequent expression? Do you guys use?",
+        "better": "Is it a common expression? Do you guys use it a lot?",
+        "note_ko": "목적어 it 생략 ✗ (한국어 습관). frequent → common.",
+        "tags": ["관사", "단어선택"]
+      }
+    ],
+    "feedback_ko": "튜터 평가: 유창성·발음 great, 어휘 good, 문법 지적 2개뿐(going well / there is no work). 잘한 점: 안부에 'I'm great' — 2회 연속 지적받은 걸 고침 👍. 10/28에 배운 snore로 'my snoring coworker' 농담, 단어장에 넣은 caught me off guard를 직접 질문 — 배운 표현을 실제로 꺼냄. 'is it right?', 'Oh, like the reviewing?'으로 확인하는 습관 좋음. very very 10회+ → 1회, a little bit 0회, 'not that + 형용사' 5회 자연스러움. 교정 포인트: ① 명사 직역 — fire possibility, economy status, will be his power, dominators → 동사로(get let go, take over) ② 'that's right' 15회+ → 공감엔 Totally / It really is / I know, right? ③ 수일치 — there are no work, my friends who is(11/01 people who was에 이어 2회) ④ 관사 — the another team, I'm the software developer, he is contractor ⑤ 가정법 if절에 will ✗ ⑥ 목적어 생략 'Do you guys use?' → use it.",
+    "script_en": [
+      { "who": "tutor", "text": "Hi! How are you doing?" },
+      { "who": "me", "text": "I'm doing great, thanks!" },
+      { "who": "tutor", "text": "Wonderful. Would you like a free talk class or a textbook class?" },
+      { "who": "me", "text": "Free talk, please." },
+      { "who": "tutor", "text": "How's your week going? Having a good week at work?" },
+      { "who": "me", "text": "Yeah, it's going well! I started a new project about a week ago." },
+      { "who": "tutor", "text": "Right, you're on the new team, helping out your coworker." },
+      { "who": "me", "text": "Yep — my snoring coworker. It's going really well, so I think I can get it done by the deadline." },
+      { "who": "tutor", "text": "When's the deadline?" },
+      { "who": "me", "text": "It's due at the end of this week." },
+      { "who": "tutor", "text": "Oh, wow. And are they going to put you back on your old team?" },
+      { "who": "me", "text": "Hmm, I'm not sure. It's almost the end of the year, so there are gonna be some changes." },
+      { "who": "tutor", "text": "That's what I'm hearing." },
+      { "who": "me", "text": "Like, my team lead is an executive, so he's not a regular employee — he's on a contract. Is that the right word?" },
+      { "who": "tutor", "text": "We'd just say he's a contract employee." },
+      { "who": "me", "text": "Right. So they're deciding whether to renew his contract or not. He might get let go." },
+      { "who": "tutor", "text": "Oh, so he doesn't know if he's going to keep working there. That's rough." },
+      { "who": "me", "text": "Yeah, it really is. But I don't think he'll move me to another team. For him, more people on his team means more power." },
+      { "who": "tutor", "text": "That's so competitive. I always tell people I wouldn't make a good Korean. I'm not good at competition." },
+      { "who": "me", "text": "Yeah, it's super competitive. And the economy's not great in Korea right now, so it's gonna be hard for him to keep his job next year." },
+      { "who": "tutor", "text": "That's just rough. I hear that at the end of the year, work slows down for you guys." },
+      { "who": "me", "text": "Not anymore. A few years ago, there wasn't much work at the end of the year. But AI's moving so fast these days, and I'm a software developer, so there's a lot to keep up with." },
+      { "who": "tutor", "text": "There's a lot of work for you." },
+      { "who": "me", "text": "Yeah. Even the end of the year isn't that chill this year." },
+      { "who": "tutor", "text": "I guess for a software developer, you always have work, right?" },
+      { "who": "me", "text": "Yeah, pretty much." },
+      { "who": "tutor", "text": "Are you a fast typer?" },
+      { "who": "me", "text": "I guess? I never really thought about it, but my friends who aren't developers always tell me I type really fast." },
+      { "who": "tutor", "text": "Interesting. How hard is learning programming? It's like a language, right?" },
+      { "who": "me", "text": "Yeah, it's basically a language. It has its own rules, like grammar. But it's not that hard these days, because AI coding tools help a lot." },
+      { "who": "tutor", "text": "But before AI, was it difficult learning all of this?" },
+      { "who": "me", "text": "Yeah, it was really hard. There are so many programming languages, like C, Java, and Python. We had to learn them one by one. But these days, you don't really need to." },
+      { "who": "tutor", "text": "Oh, that's not fair! You had to study all that, and now young people don't have to." },
+      { "who": "me", "text": "I know, right? I've heard a lot of new grads are having a hard time finding jobs, because AI codes better than they do." },
+      { "who": "tutor", "text": "That's what I've heard too. They just kind of need someone to check it." },
+      { "who": "me", "text": "Yeah. We're basically just reviewing AI's code now." },
+      { "who": "tutor", "text": "Exactly. Even at my teaching jobs, we use AI now. It checks the kids' essays and gives me a rundown of each lesson." },
+      { "who": "me", "text": "Oh, really? Like a review of the lesson?" },
+      { "who": "tutor", "text": "Exactly. And this is all new — like, in the last two or three weeks. AI is here to stay." },
+      { "who": "me", "text": "Yeah, for sure. Whenever my coworkers and I talk about the future, we get kinda scared. We always end up thinking AI's gonna take over." },
+      { "who": "tutor", "text": "You know what? It wouldn't be a bad thing if we didn't have to work. We could all just sit around eating grapes." },
+      { "who": "me", "text": "That sounds like something out of a sci-fi movie." },
+      { "who": "tutor", "text": "Exactly. But we're still going to have to go to work. It's a little stressful." },
+      { "who": "me", "text": "I agree. If the money AI makes got split equally between all of us, that'd be great." },
+      { "who": "tutor", "text": "That's what should happen. AI does the work, and we hang out on the beach." },
+      { "who": "me", "text": "That'd be, like, a total utopia." },
+      { "who": "tutor", "text": "Unfortunately, that's not what's going to happen. Okay, English stuff. Your fluency and pronunciation were great, and your vocabulary was good. Just two grammar things: say 'It's going well,' and 'There is no work,' because work is uncountable." },
+      { "who": "me", "text": "Got it. I have a question! I learned a new expression — 'caught me off guard.' Is it a common expression? Do you guys use it a lot?" },
+      { "who": "tutor", "text": "Very common. It's kind of in between scared and surprised — it's pretty neutral. When you weren't expecting something, you can say, 'Oh, you caught me off guard.'" },
+      { "who": "me", "text": "Oh, so it's not really a positive thing." },
+      { "who": "tutor", "text": "Right. It comes from soldiers. They have to stand on guard and watch for the enemy." },
+      { "who": "me", "text": "Oh, so they're always on the lookout." },
+      { "who": "tutor", "text": "Exactly. So being caught off guard is like the enemy surprising you. Any questions?" },
+      { "who": "me", "text": "Nope, I'm good. Thanks!" }
+    ]
   }
 ]
