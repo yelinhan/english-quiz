@@ -1258,9 +1258,9 @@
   "example_ko": "서울은 모든 게 정신없이 빨리 돌아가. 빨리빨리 돌아가는 일이지만 난 좋아. 한국 결혼식은 진짜 빨리 끝나."
  },
  {
-  "id": "chunk-8e1ab5b4",
+  "id": "chunk-5a6a68ae",
   "type": "chunk",
-  "ko": "~할 가능성이 높아 (좋은 기회 ✗)",
+  "ko": "~할 가능성이 높아 (chance + 문장)",
   "en": "There's a good chance ~",
   "example": "There's a good chance it'll rain tomorrow. There's a good chance we'll finish early. There's a good chance I'll be late, so start without me.",
   "category": "일상 회화",
@@ -1272,6 +1272,22 @@
    ]
   ],
   "example_ko": "내일 비 올 가능성이 높아. 우리 일찍 끝날 가능성이 높아. 나 늦을 가능성이 높으니까 먼저 시작해."
+ },
+ {
+  "id": "chunk-a3a0ceec",
+  "type": "chunk",
+  "ko": "~할 좋은 기회야 (chance + to 동사)",
+  "en": "It's a good chance to ~",
+  "example": "It's a good chance to practice my English. This trip is a great chance to meet new people. Don't miss your chance!",
+  "category": "일상 회화",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "chance"
+   ]
+  ],
+  "example_ko": "영어 연습할 좋은 기회야. 이번 여행은 새로운 사람들 만날 좋은 기회야. 기회 놓치지 마!"
  },
  {
   "id": "chunk-235f6e1f",
