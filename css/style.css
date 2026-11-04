@@ -18,6 +18,8 @@
   --radius: 20px;
   --kbd-bg: #DCE8E5;
   --kbd-key: #FFFFFF;
+  --kbd-fn: #BFD2CD;
+  --blank-line: #B9CEC9;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -38,6 +40,8 @@
     --shadow: 0 8px 24px rgba(0, 0, 0, .35);
     --kbd-bg: #0A1513;
     --kbd-key: #24433F;
+    --kbd-fn: #16302C;
+    --blank-line: #45665F;
   }
 }
 
@@ -187,26 +191,48 @@ body:not(.at-home):not(.at-sub) #main { padding-top: 14px; }
   margin-bottom: 12px;
   color: var(--sub);
 }
-.cloze-hint { font-size: .85rem; color: var(--warm); font-weight: 600; text-align: center; }
-/* 자판이 아래에 고정돼 있어도 정답 공개 후 예문까지 한 화면에 들어오도록 빈칸 퀴즈는 촘촘하게 */
+/* ---------- 빈칸 퀴즈 ---------- */
+/* 카드: 위에 태그·남은 수 → 한글 뜻(문제) → 영어 빈칸 문장(답) → 힌트 */
 #view-quiz .cardzone { gap: 10px; padding-top: 0; }
-.flashcard.cloze-card { min-height: 0; padding: 16px 16px 14px; cursor: default; position: relative; }
-.flashcard.cloze-card .ex { margin-top: 8px; }
+.flashcard.cloze-card {
+  min-height: 0;
+  padding: 12px 18px 16px;
+  align-items: stretch;
+  text-align: left;
+  cursor: default;
+  position: relative;
+}
 .flashcard.cloze-card:active { transform: none; }
-.flashcard .cz-sentence { font-size: 1.25rem; line-height: 1.7; }
+.cz-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; font-size: .74rem; color: var(--sub); }
+.cz-count { font-variant-numeric: tabular-nums; }
+.cz-ko { font-size: 1rem; line-height: 1.6; }
+.cloze-card .cz-sentence {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.65;
+}
+.cz-hint { margin-top: 10px; font-family: ui-monospace, Menlo, monospace; font-size: .9rem; letter-spacing: .06em; color: var(--warm); }
+.cz-hint::before { content: "💡 "; letter-spacing: 0; }
+.cz-hint:empty { display: none; }
+/* 빈칸 = 밑줄 칸. 지금 칸은 옅은 강조색 바탕, 정답 공개 후엔 맞음/틀림 색 바탕 */
 .cz-box {
   display: inline-block;
   min-height: 1.4em;
-  padding: 0 5px;
-  border-radius: 6px;
-  background: var(--line);
+  padding: 0 4px;
+  border-bottom: 2px solid var(--blank-line);
+  border-radius: 6px 6px 0 0;
   line-height: 1.4;
   text-align: center;
   cursor: text;
 }
-.cz-box.on { box-shadow: inset 0 -2px 0 var(--accent); }
-.cz-box.ok { background: var(--good-soft); color: var(--good); }
-.cz-box.no { background: var(--bad-soft); color: var(--bad); }
+.cz-box.on { border-bottom-color: var(--accent); background: var(--accent-soft); }
+.cz-box.ok { border-bottom-color: var(--good); }
+.cz-box.no { border-bottom-color: var(--bad); }
+.cz-box.done.ok { background: var(--good-soft); color: var(--good); }
+.cz-box.done.no { background: var(--bad-soft); color: var(--bad); }
 .cz-box s { color: var(--sub); font-weight: 500; margin-right: 5px; }
 .cz-ok { color: var(--good); }
 .cz-no { color: var(--bad); }
@@ -220,40 +246,16 @@ body:not(.at-home):not(.at-sub) #main { padding-top: 14px; }
   animation: cz-blink 1s steps(1) infinite;
 }
 @keyframes cz-blink { 50% { opacity: 0; } }
-/* 정답 공개 후: 같은 빈칸의 대안 / 같은 뜻 다른 표현 (표현은 한 줄에 하나씩) */
-.cz-more {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 6px 12px;
-  align-items: baseline;
-  padding: 9px 12px;
-  border-radius: 12px;
-  background: var(--accent-soft);
-  font-size: .88rem;
-  line-height: 1.4;
-  text-align: left;
-}
-.cz-more-label { font-size: .74rem; color: var(--sub); white-space: nowrap; }
-.cz-more b { color: var(--accent-ink); }
-.cz-more-list { display: grid; gap: 3px; }
-.cz-status { font-size: .95rem; font-weight: 700; text-align: center; }
-.cz-status.ok { color: var(--good); }
-.cz-status.no { color: var(--bad); }
-.cloze-below { width: 100%; display: grid; gap: 8px; }
-.cloze-extra {
-  padding-top: 8px;
-  border-top: 1px dashed var(--line);
-  display: grid;
-  gap: 6px;
-  text-align: left;
-  font-size: .88rem;
-  line-height: 1.5;
-}
-.cloze-extra-ko { font-size: .78rem; color: var(--sub); margin-top: 1px; }
-.blank { color: var(--accent); font-weight: 800; letter-spacing: .05em; }
-.cloze-actions { display: flex; gap: 8px; width: 100%; }
-.cloze-actions button { flex: 1; padding-left: 8px; padding-right: 8px; }
-.cloze-actions .ghost:disabled { opacity: .4; cursor: default; }
+.cloze-below { width: 100%; display: grid; gap: 10px; }
+.cloze-below:empty { display: none; }
+/* 정답 공개 후: 다 정답 / 같은 뜻 / 예문 — 왼쪽 라벨 + 한 줄에 하나씩 */
+.cz-notes { display: grid; gap: 8px; padding: 0 6px; }
+.cz-row { display: grid; grid-template-columns: 3.6em 1fr; gap: 10px; align-items: baseline; font-size: .9rem; line-height: 1.45; }
+.cz-label { font-size: .74rem; font-weight: 600; color: var(--sub); white-space: nowrap; }
+.cz-list { display: grid; gap: 6px; }
+.cz-row b { color: var(--accent-ink); }
+.cz-ex-ko { display: block; font-size: .78rem; color: var(--sub); margin-top: 1px; }
+.blank { color: var(--accent-ink); font-weight: 700; }
 
 .grade-btns { display: flex; gap: 12px; width: 100%; }
 .grade-btns button {
@@ -276,6 +278,18 @@ body:not(.at-home):not(.at-sub) #main { padding-top: 14px; }
 .btn-good { background: var(--accent); color: #fff; }
 .btn-easy { background: var(--accent-soft); color: var(--accent-ink); }
 .grade-btns button.suggest { outline: 2px solid var(--ink); outline-offset: 2px; }
+/* 빈칸 퀴즈 채점 버튼: 평소엔 흰 바탕 + 글자색, 추천(Enter) 버튼만 색을 채움 */
+#view-quiz .grade-btns.four { gap: 6px; }
+#view-quiz .grade-btns.four button { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 8px 0; font-size: .9rem; }
+#view-quiz .grade-btns .btn-again { color: var(--bad); }
+#view-quiz .grade-btns .btn-hard { color: var(--warm); }
+#view-quiz .grade-btns .btn-good { color: var(--accent-ink); }
+#view-quiz .grade-btns .btn-easy { color: var(--good); }
+#view-quiz .grade-btns button.suggest { outline: none; border-color: transparent; color: var(--card); }
+#view-quiz .grade-btns .btn-again.suggest { background: var(--bad); }
+#view-quiz .grade-btns .btn-hard.suggest { background: var(--warm); }
+#view-quiz .grade-btns .btn-good.suggest { background: var(--accent); }
+#view-quiz .grade-btns .btn-easy.suggest { background: var(--good); }
 
 .done-box { text-align: center; padding: 48px 12px; }
 .done-box .big { font-size: 2.4rem; }
@@ -726,8 +740,8 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
 /* ---------- 앱 내장 자판 (빈칸 퀴즈) ---------- */
 .kbd {
   display: grid;
-  gap: 8px;
-  padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+  gap: 7px;
+  padding: 6px 4px calc(8px + env(safe-area-inset-bottom));
   background: var(--kbd-bg);
   user-select: none;
   -webkit-user-select: none;
@@ -747,10 +761,42 @@ html.kbd-on #view-quiz .cardzone { margin: auto 0; }
 @media (hover: hover) and (pointer: fine) { .kbd { display: none; } }
 .kb-row { display: grid; grid-template-columns: repeat(20, 1fr); gap: 5px; }
 .kb-pad { grid-column: span 1; }
-.kb-pad3 { grid-column: span 3; }
+.kb-actions { position: relative; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; height: 34px; }
+.kb-act {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 600;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.kb-act { position: relative; }
+.kb-act + .kb-act::before { content: ""; position: absolute; left: 0; top: 28%; height: 44%; width: 1px; background: var(--blank-line); }
+.kb-act.down { background: var(--kbd-key); }
+.kb-act:disabled { opacity: .35; }
+/* 한/영 등 잠깐 안내: 기능 줄 자리에 문구 */
+.kb-actions.noting > * { visibility: hidden; }
+.kb-actions.noting::after {
+  content: attr(data-note);
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--accent-ink);
+}
 .kb-key {
   grid-column: span 2;
-  height: 46px;
+  height: 44px;
   padding: 0;
   border: none;
   border-radius: 8px;
@@ -763,16 +809,24 @@ html.kbd-on #view-quiz .cardzone { margin: auto 0; }
   -webkit-tap-highlight-color: transparent;
 }
 .kb-key.down { background: var(--accent-soft); box-shadow: none; transform: translateY(1px); }
-.kb-back { grid-column: span 3; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-ink); }
-.kb-space { grid-column: span 14; font-size: .85rem; color: var(--sub); }
+.kb-fn { grid-column: span 3; display: grid; place-items: center; background: var(--kbd-fn); }
+.kb-lang { font-size: .82rem; font-weight: 600; }
+.kb-shift .kb-caps-bar { display: none; }
+.kb-shift.on { background: var(--kbd-key); }
+.kb-shift.on .kb-shift-arrow { fill: currentColor; }
+.kb-shift.caps .kb-caps-bar { display: inline; }
+.kbd.upper .kb-letter { text-transform: uppercase; }
+.kb-space { grid-column: span 11; display: grid; place-items: center; color: var(--sub); }
 .kb-enter { grid-column: span 6; background: var(--accent); color: #fff; font-size: .95rem; font-weight: 700; }
 .kb-enter.down { background: var(--accent-ink); }
 .kbd.idle .kb-key:not(.kb-enter) { opacity: .4; }
+.kb-key.kb-fn.down { background: var(--kbd-key); }
 /* 작은 폰: 자판을 조금 낮춰서 문제·예문 자리 확보 */
 @media (max-height: 700px) {
-  .kbd { gap: 6px; padding-top: 6px; }
-  .kb-key { height: 40px; }
-  .flashcard .cz-sentence { font-size: 1.1rem; }
+  .kbd { gap: 6px; padding-top: 4px; }
+  .kb-key { height: 38px; }
+  .kb-actions { height: 30px; }
+  .cloze-card .cz-sentence { font-size: 1.1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

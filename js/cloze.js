@@ -143,9 +143,12 @@ export const editKey = (c) => (c.group ? `${c.group}-v${c.v}` : c.id);
 // 추가 예문에서 표현 구간을 강조 표시 (대안 표현처럼 그대로 안 든 경우엔 핵심 단어만)
 function highlight(sentence, variants, keys) {
   const words = sentence.split(' ');
-  const m = exactSpan(words, variants) || partialSpan(words, variants);
+  // 표현이 그대로 들었으면 표현 전체, 아니면 핵심 단어(대안 포함), 그것도 없으면 앞부분 일치
+  const m = exactSpan(words, variants);
   let on = m ? range(m.start, m.len) : null;
   for (const segs of keys) if (!on && segs) on = findKey(words, segs);
+  const part = on ? null : partialSpan(words, variants);
+  if (part) on = range(part.start, part.len);
   if (!on) return esc(sentence);
   return words.map((w, i) => (on.includes(i) ? `<span class="blank">${esc(w)}</span>` : esc(w))).join(' ');
 }
@@ -331,15 +334,17 @@ export function render(el, ctx, { moreNew = false } = {}) {
   // 입력하므로 키보드가 화면을 밀어 올리지 않음. 빈칸을 탭하면 그 칸으로
   body.innerHTML = `
     <div class="cardzone">
-      <div class="session-info" id="czInfo"></div>
       <div class="flashcard cloze-card" id="czCard">
-        <div class="ko cz-sentence" id="czSentence"></div>
-        <div class="ex" id="czKo"></div>
+        <div class="cz-meta" id="czInfo"></div>
+        <div class="cz-ko" id="czKo"></div>
+        <div class="cz-sentence" id="czSentence"></div>
+        <div class="cz-hint" id="czHint"></div>
       </div>
       <div class="cloze-below" id="czBelow"></div>
     </div>`;
   const info = body.querySelector('#czInfo');
   const sentence = body.querySelector('#czSentence');
+  const hintEl = body.querySelector('#czHint');
   const below = body.querySelector('#czBelow');
   body.querySelector('#czCard').addEventListener('click', (e) => {
     if (result) return;
@@ -354,9 +359,9 @@ export function render(el, ctx, { moreNew = false } = {}) {
   function drawSentence() {
     if (result) {
       sentence.innerHTML = sentenceHtml(cz, (j, core) => {
-        if (groupOk(groupOf(j), result.boxes)) return `<span class="cz-box ok">${esc(core)}</span>`;
+        if (groupOk(groupOf(j), result.boxes)) return `<span class="cz-box done ok">${esc(core)}</span>`;
         const t = result.boxes[j].trim();
-        return `<span class="cz-box no">${t ? `<s>${esc(t)}</s>` : ''}${esc(core)}</span>`;
+        return `<span class="cz-box done no">${t ? `<s>${esc(t)}</s>` : ''}${esc(core)}</span>`;
       });
       return;
     }
@@ -375,25 +380,16 @@ export function render(el, ctx, { moreNew = false } = {}) {
       `<span class="cz-box${live[j].cls}${j === active ? ' on' : ''}" data-j="${j}" style="min-width:${Math.min(core.length + 1, 14)}ch">&#8203;${live[j].html}${j === active ? '<i class="cz-caret"></i>' : ''}</span>`);
   }
 
+  // 힌트·정답 보기는 자판 맨 위 기능 줄, 확인은 자판 Enter (PC는 물리 키보드 Enter)
   function drawBelow() {
-    kbd.setState(result ? { idle: true, enter: '다음' } : { idle: false, enter: '확인' });
     if (!result) {
       const answer = cz.cores.join(' ');
-      below.innerHTML = `
-        ${hintCount > 0 ? `<div class="cloze-hint">힌트: ${esc(hintStr(answer, hintCount))}</div>` : ''}
-        <div class="cloze-actions">
-          <button class="ghost" id="hintBtn" ${hintCount >= answer.replace(/ /g, '').length ? 'disabled' : ''}>💡 힌트</button>
-          <button class="ghost" id="giveupBtn">모르겠어요</button>
-          <button class="primary" id="checkBtn">확인</button>
-        </div>`;
-      below.querySelector('#hintBtn').onclick = () => {
-        hintCount++;
-        drawBelow();
-      };
-      below.querySelector('#giveupBtn').onclick = () => finish(false, []);
-      below.querySelector('#checkBtn').onclick = submit;
+      hintEl.textContent = hintCount > 0 ? hintStr(answer, hintCount) : '';
+      kbd.setState({ idle: false, enter: '확인', disabled: hintCount >= answer.replace(/ /g, '').length ? ['hint'] : [] });
+      below.innerHTML = '';
       return;
     }
+    kbd.setState({ idle: true, enter: '다음' });
     // 오늘 학습은 정답을 본 뒤 기억한 정도를 직접 골라 복습 주기에 반영. 추천 버튼(테두리)은 Enter로 바로 선택
     let actions = '<button class="primary" id="nextBtn">다음 →</button>';
     if (!practice) {
@@ -410,18 +406,17 @@ export function render(el, ctx, { moreNew = false } = {}) {
     const c = session[idx];
     const sibs = c.group ? ctx.cards.filter((x) => x.group === c.group && x.id !== c.id) : [];
     const alts = cz.groups.filter((g) => g.alts.length > 1);
+    hintEl.textContent = '';
+    const rows = [
+      alts.length && ['다 정답', `<span>${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</span>`],
+      sibs.length && ['같은 뜻', sibs.map((x) => `<b>${esc(x.en)}</b>`).join('')],
+      cz.extras.length && ['예문', cz.extras.map((x) => `<span>${x.html}${x.ko ? `<span class="cz-ex-ko">${esc(x.ko)}</span>` : ''}</span>`).join('')],
+    ].filter(Boolean);
     below.innerHTML = `
       ${actions}
-      ${alts.length || sibs.length ? `
-        <div class="cz-more">
-          ${alts.length ? `<span class="cz-more-label">✅ 다 정답</span>
-            <span>${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</span>` : ''}
-          ${sibs.length ? `<span class="cz-more-label">🔁 같은 뜻</span>
-            <span class="cz-more-list">${sibs.map((x) => `<b>${esc(x.en)}</b>`).join('')}</span>` : ''}
-        </div>` : ''}
-      ${cz.extras.length ? `
-        <div class="cloze-extra">
-          ${cz.extras.map((x) => `<div>${x.html}${x.ko ? `<div class="cloze-extra-ko">${esc(x.ko)}</div>` : ''}</div>`).join('')}
+      ${rows.length ? `
+        <div class="cz-notes">
+          ${rows.map(([label, html]) => `<div class="cz-row"><span class="cz-label">${label}</span><span class="cz-list">${html}</span></div>`).join('')}
         </div>` : ''}`;
     if (practice) below.querySelector('#nextBtn').onclick = next;
     else below.querySelectorAll('[data-r]').forEach((b) => { b.onclick = () => rate(Number(b.dataset.r)); });
@@ -441,7 +436,7 @@ export function render(el, ctx, { moreNew = false } = {}) {
     const tag = practice ? '' : freshIds.has(c.id)
       ? '<span class="pill new">신규</span> '
       : '<span class="pill review">복습</span> ';
-    info.innerHTML = `<span>남은 카드 ${session.length - idx}</span><span>${tag}<span class="pill">${esc(c.category || '표현')}</span></span>`;
+    info.innerHTML = `<span>${tag}<span class="pill">${esc(c.category || '표현')}</span></span><span class="cz-count">남은 ${session.length - idx}</span>`;
     body.querySelector('#czKo').textContent = cz.ko;
     drawSentence();
     drawBelow();
@@ -454,7 +449,7 @@ export function render(el, ctx, { moreNew = false } = {}) {
     result = { ok, boxes: cz.parts.map((_, j) => boxes[j] || '') };
     drawSentence();
     drawBelow();
-    info.querySelector('span').textContent = `남은 카드 ${session.length - idx}`;
+    info.querySelector('.cz-count').textContent = `남은 ${session.length - idx}`;
   }
 
   function rate(r) {
@@ -503,6 +498,12 @@ export function render(el, ctx, { moreNew = false } = {}) {
 
   // 앱 자판·물리 키보드 공통 입력
   function onKey(type, v) {
+    if (type === 'action') {
+      if (result) return;
+      if (v === 'hint') { hintCount++; drawBelow(); }
+      if (v === 'giveup') finish(false, []);
+      return;
+    }
     if (result) {
       // 정답 공개 후엔 Enter(다음)와 숫자 1~4(4단계 버튼 단축키)만
       if (type === 'enter') submit();
@@ -527,6 +528,6 @@ export function render(el, ctx, { moreNew = false } = {}) {
     drawSentence();
     if (sentence.querySelector('.cz-box.no')) slipped = true;
   }
-  kbd.attach(onKey);
+  kbd.attach(onKey, { actions: [{ id: 'hint', label: '💡 힌트' }, { id: 'giveup', label: '❓ 정답 보기' }] });
   start();
 }
