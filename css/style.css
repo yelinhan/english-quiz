@@ -352,6 +352,11 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 .tr-hint:empty { display: none; }
 .tr-hint .notice { font-weight: 400; letter-spacing: 0; }
 .tr-target { font-size: .85rem; font-weight: 700; color: var(--accent-ink); margin: 0 0 8px; }
+.tr-reveal { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); }
+.tr-row { display: grid; grid-template-columns: 4.5em 1fr; gap: 8px; align-items: baseline; margin-bottom: 8px; line-height: 1.5; }
+.tr-label { font-size: .78rem; font-weight: 600; color: var(--sub); }
+.tr-mine { color: var(--sub); }
+.tr-answer { font-weight: 700; }
 .correction { border-left: 3px solid var(--accent); padding-left: 12px; margin: 14px 0; }
 .correction .orig { color: var(--sub); text-decoration: line-through; font-size: .88rem; }
 .correction .fixed { font-weight: 700; margin: 4px 0; line-height: 1.5; }

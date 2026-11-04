@@ -230,6 +230,10 @@ export function render(el, ctx) {
     return `📘 ${esc(target.answer)}`;
   }
   const hintLabel = () => ['💡 힌트', '💡 표현 보기', '📘 예시 답안', '📘 예시 답안'][hint];
+  // AI 첨삭 버튼: 키 있으면 앱에서 첨삭, 없으면 복사해서 Claude에 (primary = 일반 세트 / ghost = 내 표현 정답 확인 뒤 선택)
+  const aiBtn = (cls) => (store.apiKey()
+    ? `<button class="${cls}" id="submitBtn">${cls === 'primary' ? '첨삭 받기' : '🤖 AI 첨삭도 받기'}</button>`
+    : `<button class="${cls}" id="copyBtn">📋 ${cls === 'primary' ? '복사해서 ' : ''}Claude에 첨삭받기</button>`);
   pickPrompt();
 
   function draw() {
@@ -273,11 +277,10 @@ export function render(el, ctx) {
               <button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
               ${target ? `<button class="ghost" id="hintBtn">${hintLabel()}</button>` : ''}
             </div>
-            ${key
-              ? '<button class="primary" id="submitBtn">첨삭 받기</button>'
-              : '<button class="primary" id="copyBtn">📋 복사해서 Claude에 첨삭받기</button>'}
+            ${target ? '<button class="primary" id="revealBtn">✅ 정답 확인</button>' : aiBtn('primary')}
           </div>
-          ${key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
+          ${target ? '<div id="trReveal"></div>'
+            : key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
         </div>`}
       <div id="result"></div>
       <div id="history"></div>`;
@@ -297,10 +300,9 @@ export function render(el, ctx) {
     });
 
     const resultEl = el.querySelector('#result');
-    const submitBtn = el.querySelector('#submitBtn');
     const nextBtn = el.querySelector('#nextPromptBtn');
-    const copyBtn = el.querySelector('#copyBtn');
     const hintBtn = el.querySelector('#hintBtn');
+    const revealBtn = el.querySelector('#revealBtn');
     if (nextBtn) {
       nextBtn.onclick = () => {
         pickPrompt();
@@ -317,23 +319,60 @@ export function render(el, ctx) {
         hintBtn.disabled = hint >= 3;
       };
     }
-    if (copyBtn) {
-      copyBtn.onclick = async () => {
-        const text = el.querySelector('#writingInput').value.trim();
-        if (!text || !prompt) return;
-        const msg =`문장 영작 첨삭해줘!\n한국어: ${prompt}\n${target ? `목표 표현: ${target.target}\n` : ''}내 영어: ${text}`;
-        try {
-          await navigator.clipboard.writeText(msg);
-          store.markWritingDay(); // 복사 흐름은 첨삭 기록이 안 남아서 홈 체크용 마커
-          copyBtn.textContent = '✓ 복사됐어요';
-          setTimeout(() => { copyBtn.textContent = '📋 복사해서 Claude에 첨삭받기'; }, 2000);
-        } catch {
-          window.prompt('아래 내용을 복사해서 Claude에 붙여넣으세요:', msg);
+
+    // 📚 내 표현: AI 없이 바로 정답 확인 — 내 답 아래에 원래 의도한 표현·예시 답안 표시 (다시 누르면 다음 문장)
+    if (revealBtn) {
+      revealBtn.onclick = () => {
+        if (revealBtn.dataset.done) {
+          pickPrompt();
+          draw();
+          return;
         }
+        const text = el.querySelector('#writingInput').value.trim();
+        if (text) store.markWritingDay(); // 홈 '오늘 할 일' 체크용
+        hint = 3;
+        el.querySelector('#trHint').innerHTML = '';
+        if (hintBtn) hintBtn.disabled = true;
+        el.querySelector('#trReveal').innerHTML = `
+          <div class="tr-reveal">
+            ${text ? `<div class="tr-row"><span class="tr-label">내 답</span><div class="tr-mine">${esc(text)}</div></div>` : ''}
+            <div class="tr-row"><span class="tr-label">🎯 표현</span>
+              <div><b>${esc(target.target)}</b> <span class="notice">· ${esc(target.meaning)}</span></div></div>
+            <div class="tr-row"><span class="tr-label">📘 예시</span><div class="tr-answer">${esc(target.answer)}</div></div>
+            <p class="notice" style="margin:10px 0 8px">🗣 예시 답안을 소리 내어 3번 읽어보세요!</p>
+            ${aiBtn('ghost')}
+          </div>`;
+        revealBtn.textContent = '다음 문장 →';
+        revealBtn.dataset.done = '1';
+        bindAi();
       };
     }
+    bindAi();
 
-    if (submitBtn) submitBtn.onclick = async () => {
+    // AI 첨삭 버튼 (키 있으면 앱에서 첨삭, 없으면 복사해서 Claude에) — 내 표현 세트는 정답 확인 뒤에 선택으로
+    function bindAi() {
+      const submitBtn = el.querySelector('#submitBtn');
+      const copyBtn = el.querySelector('#copyBtn');
+      if (copyBtn) copyBtn.onclick = () => copyForClaude(copyBtn);
+      if (submitBtn) submitBtn.onclick = () => submitAi(submitBtn);
+    }
+
+    async function copyForClaude(copyBtn) {
+      const text = el.querySelector('#writingInput').value.trim();
+      if (!text || !prompt) return;
+      const msg = `문장 영작 첨삭해줘!\n한국어: ${prompt}\n${target ? `목표 표현: ${target.target}\n` : ''}내 영어: ${text}`;
+      const label = copyBtn.textContent;
+      try {
+        await navigator.clipboard.writeText(msg);
+        store.markWritingDay(); // 복사 흐름은 첨삭 기록이 안 남아서 홈 체크용 마커
+        copyBtn.textContent = '✓ 복사됐어요';
+        setTimeout(() => { copyBtn.textContent = label; }, 2000);
+      } catch {
+        window.prompt('아래 내용을 복사해서 Claude에 붙여넣으세요:', msg);
+      }
+    }
+
+    async function submitAi(submitBtn) {
       const text = el.querySelector('#writingInput').value.trim();
       if (!text || (mode === 'tr' && !prompt)) return;
       submitBtn.disabled = true;
@@ -356,7 +395,7 @@ export function render(el, ctx) {
       } finally {
         submitBtn.disabled = false;
       }
-    };
+    }
 
     function drawHistory() {
       const history = store.corrections();

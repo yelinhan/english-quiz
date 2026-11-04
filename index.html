@@ -35,7 +35,7 @@
   <header class="top">
     <button id="statsBtn" class="streak-area" aria-label="홈으로">
       <span id="streak">🔥 0일 연속</span>
-      <div class="prog-label"><span>오늘 학습</span><span id="todayCount">0 / 20</span></div>
+      <div class="prog-label"><span>오늘 새 카드</span><span id="todayCount">0 / 10</span></div>
       <div class="prog"><i id="progBar"></i></div>
     </button>
     <button id="settingsBtn" class="icon-btn" aria-label="설정">⚙️</button>
@@ -111,7 +111,7 @@
       <input type="password" id="apiKeyInput" placeholder="sk-ant-..." autocomplete="off">
     </label>
     <label class="field">
-      <span>하루 목표 (카드 수)</span>
+      <span>하루 목표 (새 카드 수 — 복습은 기한 된 카드 전부)</span>
       <input type="number" id="goalInput" min="5" max="100" step="5">
     </label>
     <div class="dialog-actions">
