@@ -5,7 +5,7 @@ import { auth, api } from './auth.js';
 
 const SYNC_KEYS = [
   'eq.srsVersion', 'eq.srs', 'eq.log', 'eq.custom', 'eq.overrides',
-  'eq.deleted', 'eq.corrections', 'eq.writingDays', 'eq.goal', 'eq.sentences',
+  'eq.deleted', 'eq.corrections', 'eq.writingDays', 'eq.goal', 'eq.sentences', 'eq.writingReview',
 ];
 const PUSH_DELAY = 1500;
 
@@ -97,6 +97,14 @@ function mergeKey(key, local, server) {
           reps: Math.max(l.reps || 0, rec.reps || 0),
           last: (l.last || '') > (rec.last || '') ? l.last : rec.last,
         };
+      }
+      return out;
+    }
+    case 'eq.writingReview': {
+      // 문제별로 나중에 채점한 쪽 (졸업은 지우지 않고 done 표시라 다른 기기에서 되살아나지 않음)
+      const out = { ...local };
+      for (const [ko, rec] of Object.entries(server)) {
+        if (!out[ko] || (rec.t || 0) > (out[ko].t || 0)) out[ko] = rec;
       }
       return out;
     }

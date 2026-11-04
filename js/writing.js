@@ -1,6 +1,7 @@
 // AI 영작 탭: 자유 영작 + 문장 영작(한국어 문장 → 영어로 옮기기)
-import { store, todayStr, esc } from './store.js';
+import { store, todayStr, addDays, esc } from './store.js';
 import { correctWriting, gradeTranslation } from './ai.js';
+import * as kbd from './keyboard.js';
 
 const PROMPTS = [
   '오늘은 너무 힘든 하루였어요.',
@@ -94,15 +95,64 @@ function loadMinePrompts() {
     .then((d) => { minePrompts = d; return d; });
 }
 
-// 퀴즈에서 본 카드 위주로, 자주 틀리거나 아직 익히는 중인 카드일수록 자주 나옴 (안 본 카드도 가끔)
+// 직접 채점(✕/⭕)에서 틀린 문제: 이번에 몇 문제 뒤 다시 + 다음 날부터 맞힐 때까지 복습 (eq.writingReview, 동기화)
+const RETRY_AFTER = 4; // 틀린 문제는 3문제 뒤에 다시
+const sessionRetry = []; // [{ ko, wait }]
+
+// 문제 한국어 → { c(표현별로 나뉜 카드), p(문제) }
+function mineIndex(cards) {
+  const idx = new Map();
+  for (const c of cards) {
+    for (const p of minePrompts?.[c.group || c.id] || []) {
+      if ((p.v || 0) === (c.v || 0)) idx.set(p.ko, { c, p });
+    }
+  }
+  return idx;
+}
+
+// 오늘 복습할 문제 (다음 날로 넘어온 틀린 문제)
+function dueReviews(idx) {
+  const today = todayStr();
+  return Object.entries(store.writingReview())
+    .filter(([ko, r]) => !r.done && r.due <= today && idx.has(ko))
+    .map(([ko]) => ko);
+}
+
+function remember(ko) {
+  recentMine.push(ko);
+  if (recentMine.length > 20) recentMine.shift();
+}
+
+const toTarget = ({ c, p }, review = false) => ({
+  ko: p.ko, answer: p.en, target: c.en, meaning: c.ko, cardId: c.id, koHl: p.ko_hl, enHl: p.en_hl, review,
+});
+
+// 출제 순서: ① 이번에 틀린 문제(3문제 뒤) ② 오늘 복습할 문제 ③ 퀴즈에서 본 카드 위주 랜덤 —
+// 자주 틀리거나 아직 익히는 중인 카드일수록 자주 (안 본 카드도 가끔)
 function pickMine(cards) {
+  const idx = mineIndex(cards);
+  sessionRetry.forEach((r) => { r.wait--; });
+  const ready = sessionRetry.findIndex((r) => r.wait <= 0 && idx.has(r.ko));
+  if (ready >= 0) {
+    const { ko } = sessionRetry.splice(ready, 1)[0];
+    remember(ko);
+    return toTarget(idx.get(ko), true);
+  }
+  const waiting = new Set(sessionRetry.map((r) => r.ko));
+  // 복습은 바로 직전 몇 문제만 피함 (최근 20문제 규칙은 새 문제에만)
+  const justShown = recentMine.slice(-3);
+  const due = dueReviews(idx).filter((ko) => !justShown.includes(ko) && !waiting.has(ko));
+  if (due.length) {
+    const ko = due[Math.floor(Math.random() * due.length)];
+    remember(ko);
+    return toTarget(idx.get(ko), true);
+  }
   const srs = store.srs();
   const pool = [];
-  for (const c of cards) {
-    const list = (minePrompts?.[c.group || c.id] || []).filter((p) => (p.v || 0) === (c.v || 0));
-    const rec = srs[c.id];
-    const w = rec ? 3 + 3 * (rec.lapses || 0) + (rec.st === 'review' ? 0 : 2) : 1;
-    for (const p of list) if (!recentMine.includes(p.ko)) pool.push({ c, p, w });
+  for (const [ko, x] of idx) {
+    if (recentMine.includes(ko) || waiting.has(ko)) continue;
+    const rec = srs[x.c.id];
+    pool.push({ ...x, w: rec ? 3 + 3 * (rec.lapses || 0) + (rec.st === 'review' ? 0 : 2) : 1 });
   }
   if (!pool.length) {
     if (!recentMine.length) return null;
@@ -111,9 +161,48 @@ function pickMine(cards) {
   }
   let r = Math.random() * pool.reduce((s, x) => s + x.w, 0);
   const hit = pool.find((x) => (r -= x.w) < 0) || pool[pool.length - 1];
-  recentMine.push(hit.p.ko);
-  if (recentMine.length > 20) recentMine.shift();
-  return { ko: hit.p.ko, answer: hit.p.en, target: hit.c.en, meaning: hit.c.ko };
+  remember(hit.p.ko);
+  return toTarget(hit);
+}
+
+// 직접 채점 기록. 틀리면 이번에 다시 + 내일 복습, 복습할 날이 된 문제를 맞히면 졸업
+// (틀린 당일 다시 풀어 맞힌 건 내일 복습 그대로 — 하루 지나서도 기억나는지 확인)
+function gradeMine(t, ok) {
+  const rv = store.writingReview();
+  const rec = rv[t.ko];
+  const today = todayStr();
+  if (!ok) {
+    rv[t.ko] = { id: t.cardId, fails: (rec?.fails || 0) + 1, due: addDays(today, 1), t: Date.now() };
+    if (!sessionRetry.some((r) => r.ko === t.ko)) sessionRetry.push({ ko: t.ko, wait: RETRY_AFTER });
+  } else if (rec && !rec.done && rec.due <= today) {
+    rv[t.ko] = { ...rec, done: true, t: Date.now() };
+  } else {
+    return;
+  }
+  store.saveWritingReview(rv);
+}
+
+// 목표 표현에 해당하는 부분만 색으로 (문제 한국어 ↔ 예시 답안 영어를 같은 색으로 연결)
+function markHl(text, hl) {
+  const i = hl ? text.indexOf(hl) : -1;
+  if (i < 0) return esc(text);
+  return `${esc(text.slice(0, i))}<mark class="tr-hl">${esc(hl)}</mark>${esc(text.slice(i + hl.length))}`;
+}
+
+// 앱 내장 자판 (빈칸 퀴즈와 같은 자판, 터치 기기만): 맨 위 기능 줄에 문장부호
+const PUNCT = [["'", "'"], [',', ','], ['.', '.'], ['?', '?'], ['!', '!']];
+const isTouchKbd = () => !matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+// 입력칸에 커서가 있으면 그 자리에, 아니면 맨 끝에
+function kbEdit(ta, text) {
+  const focused = document.activeElement === ta;
+  let s = focused ? ta.selectionStart : ta.value.length;
+  const e = focused ? ta.selectionEnd : ta.value.length;
+  if (text === null) {
+    if (s === e && s > 0) s--;
+    text = '';
+  }
+  ta.setRangeText(text, s, e, 'end');
 }
 
 // 힌트 1단계: 단어마다 첫 글자만 (put it on the back burner → p__ i_ o_ t__ b___ b_____)
@@ -208,11 +297,15 @@ export function render(el, ctx) {
   let mode = 'tr'; // 탭에 들어올 때마다 문장 영작이 기본
   let set = 'mine'; // mine: 단어장 표현 쓰기, all: 전체 랜덤, grammar: 관사·시제 집중
   let prompt = '';
-  let target = null; // mine 세트 문제의 { target(표현), meaning(카드 뜻), answer(예시 답안) }
+  let target = null; // mine 세트 문제의 { target(표현), meaning(카드 뜻), answer(예시 답안), koHl·enHl(색칠 구간), review }
   let hint = 0; // 0 숨김 → 1 첫 글자 → 2 표현 → 3 예시 답안
+  let revealed = false; // 내 표현: 정답 확인 후 → 직접 채점(✕/⭕)
+  let draft = ''; // 다시 그릴 때 쓰던 답 유지
 
   function pickPrompt() {
     hint = 0;
+    revealed = false;
+    draft = '';
     if (set === 'mine') {
       target = minePrompts ? pickMine(ctx.cards) : null;
       prompt = target ? target.ko : '';
@@ -236,17 +329,30 @@ export function render(el, ctx) {
     : `<button class="${cls}" id="copyBtn">📋 ${cls === 'primary' ? '복사해서 ' : ''}Claude에 첨삭받기</button>`);
   pickPrompt();
 
+  // 정답 확인 후: 내 답 · 목표 표현 · 예시 답안 (목표 표현 부분은 문제의 색칠과 같은 색)
+  const revealHtml = () => `
+    <div class="tr-reveal">
+      ${draft.trim() ? `<div class="tr-row"><span class="tr-label">내 답</span><div class="tr-mine">${esc(draft.trim())}</div></div>` : ''}
+      <div class="tr-row"><span class="tr-label">🎯 표현</span>
+        <div><b class="tr-hl-text">${esc(target.target)}</b> <span class="notice">· ${esc(target.meaning)}</span></div></div>
+      <div class="tr-row"><span class="tr-label">📘 예시</span><div class="tr-answer">${markHl(target.answer, target.enHl)}</div></div>
+      <p class="notice" style="margin:10px 0 8px">맞게 옮겼으면 ⭕, 표현이 안 떠올랐거나 틀렸으면 ✕ — 틀린 문제는 3문제 뒤와 내일 다시 나와요.
+        🗣 예시 답안은 소리 내어 3번!</p>
+      ${aiBtn('ghost')}
+    </div>`;
+
   function draw() {
     const key = store.apiKey();
+    const dueN = minePrompts ? dueReviews(mineIndex(ctx.cards)).length + sessionRetry.length : 0;
+    const touchKbd = mode === 'tr' && isTouchKbd();
     el.innerHTML = `
-      <h2 class="section-title">✍️ 오늘의 영작</h2>
       <div class="chip-row">
         <button data-mode="tr" class="${mode === 'tr' ? 'on' : ''}">문장 영작</button>
         <button data-mode="free" class="${mode === 'free' ? 'on' : ''}">자유 영작</button>
       </div>
       ${mode === 'tr' ? `
       <div class="chip-row">
-        <button data-set="mine" class="${set === 'mine' ? 'on' : ''}">📚 내 표현</button>
+        <button data-set="mine" class="${set === 'mine' ? 'on' : ''}">📚 내 표현${dueN ? ` · 🔁${dueN}` : ''}</button>
         <button data-set="all" class="${set === 'all' ? 'on' : ''}">🎲 전체 랜덤</button>
         <button data-set="grammar" class="${set === 'grammar' ? 'on' : ''}">🎯 관사·시제·전치사 집중</button>
       </div>` : ''}
@@ -264,23 +370,26 @@ export function render(el, ctx) {
           </div>
         </div>` : `
         <div class="card-box">
-          <p class="notice" style="margin-top:0">${set === 'grammar'
+          ${set === 'mine' ? '' : `<p class="notice" style="margin-top:0">${set === 'grammar'
             ? '아래 문장을 영어로! <b>관사(a/the)와 시제</b>에 특히 신경 써보세요.'
-            : set === 'mine'
-              ? '<b>단어장에서 배운 표현</b>을 써서 옮겨보세요! 막히면 💡 힌트를 눌러봐요.'
-              : '아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.'}</p>
-          <div class="tr-prompt">${prompt ? esc(prompt) : (minePrompts ? '아직 문제가 없어요' : '문제 불러오는 중...')}</div>
-          ${target ? `<div class="tr-hint" id="trHint">${hintHtml()}</div>` : ''}
-          <textarea id="writingInput" placeholder="영어로 써보세요..."></textarea>
-          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:10px">
-            <div style="display:flex; gap:8px">
-              <button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
-              ${target ? `<button class="ghost" id="hintBtn">${hintLabel()}</button>` : ''}
+            : '아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.'}</p>`}
+          <div class="tr-prompt">${target?.review ? '<span class="tr-badge">🔁 복습</span>' : ''}${target
+            ? markHl(prompt, target.koHl)
+            : prompt ? esc(prompt) : (minePrompts ? '아직 문제가 없어요' : '문제 불러오는 중...')}</div>
+          ${target ? `<div class="tr-hint" id="trHint">${revealed ? '' : hintHtml()}</div>` : ''}
+          <textarea id="writingInput" rows="3" placeholder="영어로 써보세요..." autocomplete="off" autocapitalize="off"
+            spellcheck="false" ${touchKbd ? 'inputmode="none"' : ''}>${esc(draft)}</textarea>
+          <div class="tr-actions">
+            <div class="tr-actions-left">
+              ${target && revealed
+                ? '<button class="ghost tr-fail" id="failBtn">✕ 틀림</button><button class="ghost tr-ok" id="okBtn">⭕ 맞음</button>'
+                : `<button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
+                   ${target ? `<button class="ghost" id="hintBtn">${hintLabel()}</button>` : ''}`}
             </div>
-            ${target ? '<button class="primary" id="revealBtn">✅ 정답 확인</button>' : aiBtn('primary')}
+            ${target ? (revealed ? '' : '<button class="primary" id="revealBtn">✅ 정답 확인</button>') : aiBtn('primary')}
           </div>
-          ${target ? '<div id="trReveal"></div>'
-            : key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
+          ${target && revealed ? revealHtml() : ''}
+          ${target || key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
         </div>`}
       <div id="result"></div>
       <div id="history"></div>`;
@@ -320,34 +429,48 @@ export function render(el, ctx) {
       };
     }
 
-    // 📚 내 표현: AI 없이 바로 정답 확인 — 내 답 아래에 원래 의도한 표현·예시 답안 표시 (다시 누르면 다음 문장)
+    // 📚 내 표현: AI 없이 정답 확인 → 내 답 아래에 원래 의도한 표현·예시 답안, 버튼은 직접 채점(✕ 틀림 / ⭕ 맞음)으로
+    const ta = el.querySelector('#writingInput');
     if (revealBtn) {
       revealBtn.onclick = () => {
-        if (revealBtn.dataset.done) {
-          pickPrompt();
-          draw();
-          return;
-        }
-        const text = el.querySelector('#writingInput').value.trim();
-        if (text) store.markWritingDay(); // 홈 '오늘 할 일' 체크용
-        hint = 3;
-        el.querySelector('#trHint').innerHTML = '';
-        if (hintBtn) hintBtn.disabled = true;
-        el.querySelector('#trReveal').innerHTML = `
-          <div class="tr-reveal">
-            ${text ? `<div class="tr-row"><span class="tr-label">내 답</span><div class="tr-mine">${esc(text)}</div></div>` : ''}
-            <div class="tr-row"><span class="tr-label">🎯 표현</span>
-              <div><b>${esc(target.target)}</b> <span class="notice">· ${esc(target.meaning)}</span></div></div>
-            <div class="tr-row"><span class="tr-label">📘 예시</span><div class="tr-answer">${esc(target.answer)}</div></div>
-            <p class="notice" style="margin:10px 0 8px">🗣 예시 답안을 소리 내어 3번 읽어보세요!</p>
-            ${aiBtn('ghost')}
-          </div>`;
-        revealBtn.textContent = '다음 문장 →';
-        revealBtn.dataset.done = '1';
-        bindAi();
+        draft = ta.value;
+        if (draft.trim()) store.markWritingDay(); // 홈 '오늘 할 일' 체크용
+        revealed = true;
+        draw();
       };
     }
+    const failBtn = el.querySelector('#failBtn');
+    const okBtn = el.querySelector('#okBtn');
+    [[failBtn, false], [okBtn, true]].forEach(([b, ok]) => {
+      if (!b) return;
+      b.onclick = () => {
+        gradeMine(target, ok);
+        pickPrompt();
+        draw();
+      };
+    });
     bindAi();
+
+    // 문장 영작은 빈칸 퀴즈와 같은 내장 자판 (터치 기기). 정답 확인 후엔 자판을 내려서 답·채점 버튼이 보이게
+    if (mode === 'tr' && prompt && !revealed && el.classList.contains('on')) {
+      kbd.attach((type, value) => {
+        if (type === 'char') kbEdit(ta, value);
+        else if (type === 'space') kbEdit(ta, ' ');
+        else if (type === 'back') kbEdit(ta, null);
+        else if (type === 'action') kbEdit(ta, value);
+        else if (type === 'enter') el.querySelector('#revealBtn, #submitBtn, #copyBtn')?.click();
+      }, { actions: PUNCT.map(([id, label]) => ({ id, label })) });
+    } else {
+      kbd.detach();
+    }
+    // PC: 입력칸에서 Enter = 정답 확인 / 첨삭 (Shift+Enter는 줄바꿈)
+    if (ta && mode === 'tr') {
+      ta.onkeydown = (e) => {
+        if (e.key !== 'Enter' || e.shiftKey || e.isComposing) return;
+        e.preventDefault();
+        el.querySelector('#revealBtn, #submitBtn, #copyBtn')?.click();
+      };
+    }
 
     // AI 첨삭 버튼 (키 있으면 앱에서 첨삭, 없으면 복사해서 Claude에) — 내 표현 세트는 정답 확인 뒤에 선택으로
     function bindAi() {
@@ -422,7 +545,7 @@ export function render(el, ctx) {
   // 내 표현 문제는 처음 한 번 받아온 뒤 출제
   if (!minePrompts) {
     loadMinePrompts().then(() => {
-      if (set === 'mine' && !prompt && el.isConnected) {
+      if (set === 'mine' && !prompt && el.classList.contains('on')) {
         pickPrompt();
         draw();
       }

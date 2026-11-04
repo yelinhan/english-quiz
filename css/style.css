@@ -371,6 +371,18 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 .tr-label { font-size: .78rem; font-weight: 600; color: var(--sub); }
 .tr-mine { color: var(--sub); }
 .tr-answer { font-weight: 700; }
+/* 목표 표현 연상: 문제 한국어의 해당 부분 ↔ 예시 답안의 표현 ↔ 🎯 표현 줄을 같은 색으로 */
+.tr-hl { background: none; color: var(--warm); font-weight: 800; text-decoration: underline 2px; text-underline-offset: 4px; }
+.tr-hl-text { color: var(--warm); }
+.tr-badge {
+  display: inline-block; margin-right: 6px; padding: 1px 8px; border-radius: 99px;
+  background: var(--warm-soft); color: var(--warm); font-size: .75rem; font-weight: 700; vertical-align: 2px;
+}
+.tr-actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.tr-actions-left { display: flex; gap: 8px; }
+.tr-fail { color: var(--bad); border-color: var(--bad-soft); font-weight: 700; }
+.tr-ok { color: var(--good); border-color: var(--good-soft); font-weight: 700; }
+#view-writing textarea { min-height: 0; }
 .correction { border-left: 3px solid var(--accent); padding-left: 12px; margin: 14px 0; }
 .correction .orig { color: var(--sub); text-decoration: line-through; font-size: .88rem; }
 .correction .fixed { font-weight: 700; margin: 4px 0; line-height: 1.5; }

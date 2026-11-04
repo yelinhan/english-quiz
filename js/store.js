@@ -39,8 +39,11 @@ export const store = {
   saveDeleted: (d) => set('eq.deleted', d),
   sentences: () => get('eq.sentences', {}),
   saveSentences: (p) => set('eq.sentences', p),
-  goal: () => get('eq.goal', 10), // 하루 새 카드 수
+  goal: () => get('eq.goal', 15), // 하루 새 카드 수
   saveGoal: (g) => set('eq.goal', g),
+  // 영작 '내 표현' 직접 채점에서 틀린 문제: { 문제 한국어: { id(카드), fails, due, t(수정 시각), done? } }
+  writingReview: () => get('eq.writingReview', {}),
+  saveWritingReview: (v) => set('eq.writingReview', v),
   writingDays: () => get('eq.writingDays', []),
   markWritingDay: () => {
     const days = get('eq.writingDays', []);

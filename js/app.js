@@ -85,10 +85,10 @@ function refreshHeader() {
 // 폰의 뒤로가기(제스처·버튼)가 같은 동작을 한다. depth = 홈(0)에서 몇 단계 들어왔는지.
 // 탭 첫 화면끼리 옮겨 다닐 땐 기록을 쌓지 않고 바꿔치기 → 뒤로가기는 항상 홈으로.
 // "메뉴 안"(퀴즈·통문장·수업/튜터 상세)은 하단 탭바를 숨기고 상단에 현재 위치 + ←
-const TITLES = { quiz: '✏️ 퀴즈', sentences: '🗣 통문장', lessons: '📞 수업', tutor: '🧑‍🏫 튜터 피드백' };
+const TITLES = { quiz: '✏️ 퀴즈', sentences: '🗣 통문장', writing: '✍️ 영작', lessons: '📞 수업', tutor: '🧑‍🏫 튜터 피드백' };
 const HOME = { view: 'home', params: {}, depth: 0 };
 let nav = HOME;
-const isSub = (s) => s.view === 'quiz' || s.view === 'sentences' || s.params?.label != null;
+const isSub = (s) => s.view === 'quiz' || s.view === 'sentences' || s.view === 'writing' || s.params?.label != null;
 
 function render(state) {
   nav = state;
