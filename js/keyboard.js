@@ -1,6 +1,7 @@
 // 앱 내장 영문 자판: 시스템 키보드를 띄우지 않고 화면 아래에 고정된 레이아웃의 일부로 둔다
 // (시스템 키보드가 올라오며 화면을 밀어 올리는 일이 없음). 실제 폰 쿼티 배열처럼
-// 맨 위 기능 줄(힌트·정답 보기) / q~p / a~l / ⇧ z~m ⌫ / 한영 ⎵ 확인.
+// 맨 위 기능 줄(힌트 보기·정답 보기) / q~p / a~l / ⇧ z~m ⌫ / 한영 ⎵ 확인.
+// 한/영은 배열만 맞춘 자리 — 빈칸 퀴즈는 영어만 받으므로 비활성 (한글 입력은 아직 없음).
 // 터치 기기에서만 보이고, PC에선 숨긴 채 물리 키보드 입력을 같은 핸들러로 넘긴다.
 // handler(type, value): type = 'char'(value=글자) | 'space' | 'back' | 'enter'
 //   | 'action'(value=기능 줄 버튼 id) | 'digit'(value=1~4, 물리 키보드만)
@@ -8,7 +9,6 @@ let handler = null;
 let el = null;
 let shift = 0; // 0 소문자, 1 다음 한 글자만 대문자, 2 대문자 고정
 let lastShiftTap = 0;
-let noteTimer = null;
 
 const ROWS = ['qwertyuiop', 'asdfghjkl', 'zxcvbnm'];
 const key = (ch) => `<button type="button" class="kb-key kb-letter" data-k="${ch}">${ch}</button>`;
@@ -29,7 +29,7 @@ function build() {
       <button type="button" class="kb-key kb-fn kb-back" data-k="back" aria-label="지우기">${BACK_ICON}</button>
     </div>
     <div class="kb-row">
-      <button type="button" class="kb-key kb-fn kb-lang" data-k="lang">한/영</button>
+      <button type="button" class="kb-key kb-fn kb-lang" data-k="lang" disabled aria-disabled="true">한/영</button>
       <button type="button" class="kb-key kb-space" data-k="space" aria-label="띄어쓰기">${SPACE_ICON}</button>
       <button type="button" class="kb-key kb-enter" data-k="enter">확인</button>
     </div>`;
@@ -68,15 +68,6 @@ function setShift(v) {
   el.querySelector('.kb-shift').classList.toggle('caps', shift === 2);
 }
 
-// 기능 줄에 잠깐 안내 문구 (예: 한/영 키)
-function note(text) {
-  const bar = el.querySelector('#kbActions');
-  bar.classList.add('noting');
-  bar.dataset.note = text;
-  clearTimeout(noteTimer);
-  noteTimer = setTimeout(() => bar.classList.remove('noting'), 1600);
-}
-
 function press(t) {
   if (!handler) return;
   if (t === 'shift') {
@@ -85,7 +76,6 @@ function press(t) {
     lastShiftTap = now;
     return;
   }
-  if (t === 'lang') { note('빈칸은 영어로만 입력해요'); return; }
   if (t.length === 1) {
     handler('char', shift ? t.toUpperCase() : t);
     if (shift === 1) setShift(0);

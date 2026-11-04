@@ -741,7 +741,8 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
 .kbd {
   display: grid;
   gap: 7px;
-  padding: 6px 4px calc(8px + env(safe-area-inset-bottom));
+  /* 아래 여백: 둥근 화면 모서리에 한/영·확인 키 가장자리가 잘리지 않게 (홈 인디케이터가 있으면 그만큼 + 8px) */
+  padding: 6px 6px max(22px, calc(env(safe-area-inset-bottom) + 8px));
   background: var(--kbd-bg);
   user-select: none;
   -webkit-user-select: none;
@@ -782,18 +783,6 @@ html.kbd-on #view-quiz .cardzone { margin: auto 0; }
 .kb-act + .kb-act::before { content: ""; position: absolute; left: 0; top: 28%; height: 44%; width: 1px; background: var(--blank-line); }
 .kb-act.down { background: var(--kbd-key); }
 .kb-act:disabled { opacity: .35; }
-/* 한/영 등 잠깐 안내: 기능 줄 자리에 문구 */
-.kb-actions.noting > * { visibility: hidden; }
-.kb-actions.noting::after {
-  content: attr(data-note);
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  font-size: .85rem;
-  font-weight: 600;
-  color: var(--accent-ink);
-}
 .kb-key {
   grid-column: span 2;
   height: 44px;
@@ -811,6 +800,7 @@ html.kbd-on #view-quiz .cardzone { margin: auto 0; }
 .kb-key.down { background: var(--accent-soft); box-shadow: none; transform: translateY(1px); }
 .kb-fn { grid-column: span 3; display: grid; place-items: center; background: var(--kbd-fn); }
 .kb-lang { font-size: .82rem; font-weight: 600; }
+.kb-lang:disabled { color: var(--sub); opacity: .45; box-shadow: none; }
 .kb-shift .kb-caps-bar { display: none; }
 .kb-shift.on { background: var(--kbd-key); }
 .kb-shift.on .kb-shift-arrow { fill: currentColor; }

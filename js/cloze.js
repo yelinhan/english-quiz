@@ -528,6 +528,6 @@ export function render(el, ctx, { moreNew = false } = {}) {
     drawSentence();
     if (sentence.querySelector('.cz-box.no')) slipped = true;
   }
-  kbd.attach(onKey, { actions: [{ id: 'hint', label: '💡 힌트' }, { id: 'giveup', label: '❓ 정답 보기' }] });
+  kbd.attach(onKey, { actions: [{ id: 'hint', label: '💡 힌트 보기' }, { id: 'giveup', label: '❓ 정답 보기' }] });
   start();
 }
