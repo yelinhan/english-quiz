@@ -127,8 +127,8 @@ const toTarget = ({ c, p }, review = false) => ({
   ko: p.ko, answer: p.en, target: c.en, meaning: c.ko, cardId: c.id, koHl: p.ko_hl, enHl: p.en_hl, review,
 });
 
-// 출제 순서: ① 이번에 틀린 문제(3문제 뒤) ② 오늘 복습할 문제 ③ 퀴즈에서 본 카드 위주 랜덤 —
-// 자주 틀리거나 아직 익히는 중인 카드일수록 자주 (안 본 카드도 가끔)
+// 출제 순서: ① 이번에 틀린 문제(3문제 뒤) ② 오늘 복습할 문제 ③ 퀴즈에서 푼 카드 중 랜덤 —
+// 자주 틀리거나 아직 익히는 중인 카드일수록 자주 (퀴즈에서 안 푼 카드는 안 나옴)
 function pickMine(cards) {
   const idx = mineIndex(cards);
   sessionRetry.forEach((r) => { r.wait--; });
@@ -147,12 +147,13 @@ function pickMine(cards) {
     remember(ko);
     return toTarget(idx.get(ko), true);
   }
+  // 퀴즈에서 한 번이라도 푼 카드만 (아직 안 배운 표현은 안 나옴)
   const srs = store.srs();
   const pool = [];
   for (const [ko, x] of idx) {
-    if (recentMine.includes(ko) || waiting.has(ko)) continue;
     const rec = srs[x.c.id];
-    pool.push({ ...x, w: rec ? 3 + 3 * (rec.lapses || 0) + (rec.st === 'review' ? 0 : 2) : 1 });
+    if (!rec || recentMine.includes(ko) || waiting.has(ko)) continue;
+    pool.push({ ...x, w: 3 + 3 * (rec.lapses || 0) + (rec.st === 'review' ? 0 : 2) });
   }
   if (!pool.length) {
     if (!recentMine.length) return null;
@@ -373,7 +374,7 @@ export function render(el, ctx) {
             : '아래 문장을 영어로 어떻게 말할까요? <b>자연스럽고 캐주얼하게</b> 옮겨보세요.'}</p>`}
           <div class="tr-prompt">${target?.review ? '<span class="tr-badge">🔁 복습</span>' : ''}${target
             ? markHl(prompt, target.koHl)
-            : prompt ? esc(prompt) : (minePrompts ? '아직 문제가 없어요' : '문제 불러오는 중...')}</div>
+            : prompt ? esc(prompt) : (minePrompts ? '퀴즈에서 표현을 배우면 여기서 영작 문제가 나와요' : '문제 불러오는 중...')}</div>
           ${target ? `<div class="tr-hint" id="trHint">${revealed ? '' : hintHtml()}</div>` : ''}
           <textarea id="writingInput" rows="3" placeholder="영어로 써보세요..." autocomplete="off" autocapitalize="off"
             spellcheck="false" ${touchKbd ? 'inputmode="none"' : ''}>${esc(draft)}</textarea>
