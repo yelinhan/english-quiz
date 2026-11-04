@@ -1863,6 +1863,38 @@
    "en_hl": "took over"
   }
  ],
+ "chunk-5dc9a717": [
+  {
+   "v": 0,
+   "ko": "(PT 받는 중) 아, 허벅지가 진짜 불타는 것 같아요.",
+   "en": "Ugh, I'm really feeling the burn in my thighs.",
+   "ko_hl": "불타는 것 같아요",
+   "en_hl": "feeling the burn"
+  },
+  {
+   "v": 0,
+   "ko": "계단으로 10층 올라왔더니 다리가 후끈거려.",
+   "en": "I took the stairs up ten floors, and my legs are feeling the burn.",
+   "ko_hl": "후끈거려",
+   "en_hl": "feeling the burn"
+  }
+ ],
+ "chunk-745a14a9": [
+  {
+   "v": 0,
+   "ko": "월세가 올라서 요즘 좀 빠듯해.",
+   "en": "My rent went up, so I'm feeling the pinch these days.",
+   "ko_hl": "좀 빠듯해",
+   "en_hl": "feeling the pinch"
+  },
+  {
+   "v": 0,
+   "ko": "(친구: 여행 같이 갈래?) 이번 달은 카드값 때문에 좀 쪼들려서 힘들 것 같아.",
+   "en": "I'm feeling the pinch from my credit card bill this month, so I don't think I can.",
+   "ko_hl": "좀 쪼들려서",
+   "en_hl": "feeling the pinch"
+  }
+ ],
  "chunk-3c129e63": [
   {
    "v": 0,
@@ -3217,6 +3249,22 @@
    "en": "I put my YouTube channel on the back burner while I job hunt.",
    "ko_hl": "뒤로 미뤄뒀어",
    "en_hl": "put my YouTube channel on the back burner"
+  }
+ ],
+ "chunk-154bae0a": [
+  {
+   "v": 0,
+   "ko": "(동료: 요즘 어때요?) 출시가 다음 주라 다들 압박이 장난 아니에요.",
+   "en": "The launch is next week, so everyone's really feeling the heat.",
+   "ko_hl": "압박이 장난 아니에요",
+   "en_hl": "feeling the heat"
+  },
+  {
+   "v": 0,
+   "ko": "경쟁사가 비슷한 기능을 내서 우리 팀도 좀 긴장하고 있어.",
+   "en": "Our competitor launched a similar feature, so our team's feeling the heat too.",
+   "ko_hl": "긴장하고 있어",
+   "en_hl": "feeling the heat"
   }
  ],
  "chunk-a40a11c6": [

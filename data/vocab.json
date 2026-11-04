@@ -1318,6 +1318,38 @@
   "example_ko": "AI가 다 장악할 거야. 우리 고양이가 내 침대를 완전히 차지했어. 로봇이 당장 세상을 장악하진 않을 거야."
  },
  {
+  "id": "chunk-5dc9a717",
+  "type": "chunk",
+  "ko": "(운동할 때) 근육이 타는 느낌이야",
+  "en": "feel the burn",
+  "example": "Ten more squats — I'm really feeling the burn. No pain, no gain, just feel the burn! My legs are feeling the burn after that hike.",
+  "category": "일상 회화",
+  "added": "2026-11-05",
+  "source": "질문",
+  "keys": [
+   [
+    "feel the burn"
+   ]
+  ],
+  "example_ko": "스쿼트 열 개 더… 근육이 진짜 타는 것 같아. 고통 없이는 얻는 것도 없어, 그냥 버텨! 등산하고 나니까 다리가 후끈거려."
+ },
+ {
+  "id": "chunk-745a14a9",
+  "type": "chunk",
+  "ko": "(돈이) 쪼들리다 / 빠듯하다",
+  "en": "feel the pinch",
+  "example": "Everything's so expensive — I'm really feeling the pinch. After moving out, I'm feeling the pinch a bit. Small businesses are feeling the pinch these days.",
+  "category": "일상 회화",
+  "added": "2026-11-05",
+  "source": "질문",
+  "keys": [
+   [
+    "feel the pinch"
+   ]
+  ],
+  "example_ko": "물가가 너무 올라서 요즘 진짜 쪼들려. 독립하고 나니까 좀 빠듯해. 요즘 자영업자들이 많이 힘들어."
+ },
+ {
   "id": "chunk-3c129e63",
   "type": "chunk",
   "ko": "확인하고 알려드릴게요",
@@ -2263,6 +2295,22 @@
    ]
   ],
   "example_ko": "일단 뒤로 미뤄뒀어. 그 프로젝트는 몇 달째 뒤로 밀려 있어. 이건 1분기까지 뒤로 미뤄두자."
+ },
+ {
+  "id": "chunk-154bae0a",
+  "type": "chunk",
+  "ko": "(마감·경쟁에) 압박받다 / 더위를 느끼다",
+  "en": "feel the heat",
+  "example": "With the deadline on Friday, we're really feeling the heat. The new competitor has us feeling the heat. I'm feeling the heat today — it's 35 degrees!",
+  "category": "직장·업무",
+  "added": "2026-11-05",
+  "source": "질문",
+  "keys": [
+   [
+    "feel the heat"
+   ]
+  ],
+  "example_ko": "금요일 마감이라 우리 진짜 압박받고 있어. 새 경쟁사 때문에 우리도 긴장하고 있어. 오늘 35도라 더위가 장난 아니야!"
  },
  {
   "id": "chunk-a40a11c6",
