@@ -1,4 +1,4 @@
-// 홈: 오늘 할 일 + 학습 통계 (월간 캘린더·최근 7일 차트)
+// 홈: 오늘 할 일 + 학습 통계 (월간 캘린더)
 import { store, todayStr, addDays, esc } from './store.js';
 import { counts, newLeftToday } from './srs.js';
 import { computeStreak, todayCount, newCardsByDay, calendarHtml } from './stats.js';
@@ -21,14 +21,6 @@ export function render(el, ctx) {
   const quizTodo = [due ? `복습 ${due}장` : '', newLeft ? `새 카드 ${newLeft}장` : ''].filter(Boolean).join(' + ');
   const sent = todayStatus(ctx.sentences || []);
   const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
-
-  // 최근 7일 학습량 — 그날 공부한 카드 수 (같은 카드를 여러 번 풀어도 1장)
-  const days = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = addDays(todayStr(), -i);
-    days.push({ d, n: new Set(log.filter((e) => e.d === d).map((e) => e.id)).size });
-  }
-  const max = Math.max(...days.map((x) => x.n), 1);
 
   const byDay = newCardsByDay(log);
   const studied = new Set(log.map((e) => e.d));
@@ -75,23 +67,6 @@ export function render(el, ctx) {
       <div class="cal-dow">${dayNames.map((d) => `<span>${d}</span>`).join('')}</div>
       <div class="cal-grid" id="calGrid"></div>
       <p class="notice" style="margin-bottom:0">색이 진할수록 새 카드를 많이 배운 날 · 목표(새 카드 ${goal}장) 달성 시 제일 진해져요</p>
-    </div>
-    <div class="card-box">
-      <h3 style="margin:0 0 4px; font-size:.9rem">최근 7일 학습량</h3>
-      <p class="notice" style="margin:0 0 6px">하루에 공부한 카드 수 (새 카드 + 복습, 같은 카드는 1장)</p>
-      <div class="chart">
-        ${days.map((x) => {
-          const [y, m, dd] = x.d.split('-').map(Number);
-          const dow = dayNames[new Date(y, m - 1, dd).getDay()];
-          const h = Math.round((x.n / max) * 100);
-          return `
-            <div class="col ${x.d === todayStr() ? 'today' : ''}" title="${esc(x.d)}: ${x.n}장">
-              <span class="val">${x.n || ''}</span>
-              <div class="bar ${x.n ? '' : 'zero'}" style="height:${Math.max(h, 2)}%"></div>
-              <span class="day">${dow}</span>
-            </div>`;
-        }).join('')}
-      </div>
     </div>
     <div class="stat-tiles">
       <div class="tile"><div class="num">${accuracy}%</div><div class="lbl">7일 정답률</div></div>
