@@ -392,7 +392,6 @@ export function render(el, ctx) {
       <div class="tr-row"><span class="tr-label">🎯 표현</span>
         <div><b class="tr-hl-text">${esc(target.target)}</b> <span class="notice">· ${esc(target.meaning)}</span></div></div>
       <div class="tr-row"><span class="tr-label">📘 예시</span><div class="tr-answer">${markHl(target.answer, target.enHl)}</div></div>
-      <p class="notice" style="margin:10px 0 0">🗣 예시 답안은 소리 내어 3번!</p>
     </div>`;
 
   function draw() {
