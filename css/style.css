@@ -193,7 +193,7 @@ body:not(.at-home):not(.at-sub) #main { padding-top: 14px; }
 .flashcard.cloze-card { min-height: 0; padding: 16px 16px 14px; cursor: default; position: relative; }
 .flashcard.cloze-card .ex { margin-top: 8px; }
 .flashcard.cloze-card:active { transform: none; }
-.flashcard .cz-sentence { font-size: 1.1rem; line-height: 1.75; }
+.flashcard .cz-sentence { font-size: 1.25rem; line-height: 1.7; }
 .cz-box {
   display: inline-block;
   min-height: 1.4em;
@@ -220,8 +220,22 @@ body:not(.at-home):not(.at-sub) #main { padding-top: 14px; }
   animation: cz-blink 1s steps(1) infinite;
 }
 @keyframes cz-blink { 50% { opacity: 0; } }
-.cz-sibs { font-size: .84rem; color: var(--sub); text-align: center; line-height: 1.6; }
-.cz-sibs b { color: var(--accent-ink); }
+/* 정답 공개 후: 같은 빈칸의 대안 / 같은 뜻 다른 표현 (표현은 한 줄에 하나씩) */
+.cz-more {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+  align-items: baseline;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  font-size: .88rem;
+  line-height: 1.4;
+  text-align: left;
+}
+.cz-more-label { font-size: .74rem; color: var(--sub); white-space: nowrap; }
+.cz-more b { color: var(--accent-ink); }
+.cz-more-list { display: grid; gap: 3px; }
 .cz-status { font-size: .95rem; font-weight: 700; text-align: center; }
 .cz-status.ok { color: var(--good); }
 .cz-status.no { color: var(--bad); }
@@ -719,7 +733,11 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
 .kbd[hidden] { display: none; }
 /* 자판이 떠 있는 동안 페이지 자체는 고정, 내용 영역만 (넘칠 때) 스크롤 */
 html.kbd-on, html.kbd-on body { overflow: hidden; overscroll-behavior: none; }
-html.kbd-on #main { overscroll-behavior: contain; padding-bottom: 10px; }
+html.kbd-on #main { overscroll-behavior: contain; padding-bottom: 10px; display: flex; flex-direction: column; }
+/* 문제는 자판 위 빈 공간의 가운데에. 정답·예문이 붙으면 그 묶음 전체를 가운데로 —
+   한 화면을 넘으면 auto 여백이 0이 돼서 위에서부터 스크롤 (justify-content: center와 달리 위가 안 잘림) */
+html.kbd-on #view-quiz.on, html.kbd-on #czBody { flex: 1 0 auto; display: flex; flex-direction: column; }
+html.kbd-on #view-quiz .cardzone { margin: auto 0; }
 /* PC(마우스)에선 숨기고 물리 키보드로 입력 */
 @media (hover: hover) and (pointer: fine) { .kbd { display: none; } }
 .kb-row { display: grid; grid-template-columns: repeat(20, 1fr); gap: 5px; }
@@ -749,6 +767,7 @@ html.kbd-on #main { overscroll-behavior: contain; padding-bottom: 10px; }
 @media (max-height: 700px) {
   .kbd { gap: 6px; padding-top: 6px; }
   .kb-key { height: 40px; }
+  .flashcard .cz-sentence { font-size: 1.1rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

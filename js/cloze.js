@@ -412,8 +412,13 @@ export function render(el, ctx, { moreNew = false } = {}) {
     const alts = cz.groups.filter((g) => g.alts.length > 1);
     below.innerHTML = `
       ${actions}
-      ${alts.length ? `<div class="cz-sibs">✅ 다 정답: ${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</div>` : ''}
-      ${sibs.length ? `<div class="cz-sibs">🔁 같은 뜻 다른 표현: ${sibs.map((x) => `<b>${esc(x.en)}</b>`).join(' · ')}</div>` : ''}
+      ${alts.length || sibs.length ? `
+        <div class="cz-more">
+          ${alts.length ? `<span class="cz-more-label">✅ 다 정답</span>
+            <span>${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</span>` : ''}
+          ${sibs.length ? `<span class="cz-more-label">🔁 같은 뜻</span>
+            <span class="cz-more-list">${sibs.map((x) => `<b>${esc(x.en)}</b>`).join('')}</span>` : ''}
+        </div>` : ''}
       ${cz.extras.length ? `
         <div class="cloze-extra">
           ${cz.extras.map((x) => `<div>${x.html}${x.ko ? `<div class="cloze-extra-ko">${esc(x.ko)}</div>` : ''}</div>`).join('')}
