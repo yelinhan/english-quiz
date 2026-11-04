@@ -323,10 +323,10 @@ export function render(el, ctx) {
     return `📘 ${esc(target.answer)}`;
   }
   const hintLabel = () => ['💡 힌트', '💡 표현 보기', '📘 예시 답안', '📘 예시 답안'][hint];
-  // AI 첨삭 버튼: 키 있으면 앱에서 첨삭, 없으면 복사해서 Claude에 (primary = 일반 세트 / ghost = 내 표현 정답 확인 뒤 선택)
-  const aiBtn = (cls) => (store.apiKey()
-    ? `<button class="${cls}" id="submitBtn">${cls === 'primary' ? '첨삭 받기' : '🤖 AI 첨삭도 받기'}</button>`
-    : `<button class="${cls}" id="copyBtn">📋 ${cls === 'primary' ? '복사해서 ' : ''}Claude에 첨삭받기</button>`);
+  // AI 첨삭 버튼 (전체 랜덤·관사 세트): 키 있으면 앱에서 첨삭, 없으면 복사해서 Claude에. 내 표현은 직접 채점만
+  const aiBtn = () => (store.apiKey()
+    ? '<button class="primary" id="submitBtn">첨삭 받기</button>'
+    : '<button class="primary" id="copyBtn">📋 복사해서 Claude에 첨삭받기</button>');
   pickPrompt();
 
   // 정답 확인 후: 내 답 · 목표 표현 · 예시 답안 (목표 표현 부분은 문제의 색칠과 같은 색)
@@ -336,9 +336,7 @@ export function render(el, ctx) {
       <div class="tr-row"><span class="tr-label">🎯 표현</span>
         <div><b class="tr-hl-text">${esc(target.target)}</b> <span class="notice">· ${esc(target.meaning)}</span></div></div>
       <div class="tr-row"><span class="tr-label">📘 예시</span><div class="tr-answer">${markHl(target.answer, target.enHl)}</div></div>
-      <p class="notice" style="margin:10px 0 8px">맞게 옮겼으면 ⭕, 표현이 안 떠올랐거나 틀렸으면 ✕ — 틀린 문제는 3문제 뒤와 내일 다시 나와요.
-        🗣 예시 답안은 소리 내어 3번!</p>
-      ${aiBtn('ghost')}
+      <p class="notice" style="margin:10px 0 0">표현이 안 떠올랐거나 틀렸으면 ❌ — 3문제 뒤와 내일 다시 나와요. 🗣 예시 답안은 소리 내어 3번!</p>
     </div>`;
 
   function draw() {
@@ -379,15 +377,18 @@ export function render(el, ctx) {
           ${target ? `<div class="tr-hint" id="trHint">${revealed ? '' : hintHtml()}</div>` : ''}
           <textarea id="writingInput" rows="3" placeholder="영어로 써보세요..." autocomplete="off" autocapitalize="off"
             spellcheck="false" ${touchKbd ? 'inputmode="none"' : ''}>${esc(draft)}</textarea>
+          ${target && revealed ? `
+          <div class="tr-grade">
+            <button class="tr-fail" id="failBtn">❌ Missed it</button>
+            <button class="tr-ok" id="okBtn">⭕ Got it</button>
+          </div>` : `
           <div class="tr-actions">
             <div class="tr-actions-left">
-              ${target && revealed
-                ? '<button class="ghost tr-fail" id="failBtn">✕ Missed it</button><button class="ghost tr-ok" id="okBtn">⭕ Got it</button>'
-                : `<button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
-                   ${target ? `<button class="ghost" id="hintBtn">${hintLabel()}</button>` : ''}`}
+              <button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
+              ${target ? `<button class="ghost" id="hintBtn">${hintLabel()}</button>` : ''}
             </div>
-            ${target ? (revealed ? '' : '<button class="primary" id="revealBtn">✅ 정답 확인</button>') : aiBtn('primary')}
-          </div>
+            ${target ? '<button class="primary" id="revealBtn">✅ 정답 확인</button>' : aiBtn()}
+          </div>`}
           ${target && revealed ? revealHtml() : ''}
           ${target || key ? '' : '<p class="notice" style="margin-bottom:0">복사한 내용을 Claude에 붙여넣으면 첨삭해줘요. (⚙ 설정에 API 키를 넣으면 앱에서 바로 첨삭돼요)</p>'}
         </div>`}

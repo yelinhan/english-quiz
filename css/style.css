@@ -380,8 +380,14 @@ h2.section-title { font-size: 1.05rem; margin: 10px 0 12px; }
 }
 .tr-actions { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .tr-actions-left { display: flex; gap: 8px; }
-.tr-fail { color: var(--bad); border-color: var(--bad-soft); font-weight: 700; }
-.tr-ok { color: var(--good); border-color: var(--good-soft); font-weight: 700; }
+/* 직접 채점: 한 줄을 반씩 꽉 채우는 연한 빨강 / 연한 초록 버튼 */
+.tr-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.tr-grade button {
+  border: none; border-radius: 14px; padding: 14px 8px;
+  font-family: inherit; font-size: 1rem; font-weight: 700; color: var(--ink);
+}
+.tr-fail { background: var(--bad-soft); }
+.tr-ok { background: var(--good-soft); }
 #view-writing textarea { min-height: 0; }
 .correction { border-left: 3px solid var(--accent); padding-left: 12px; margin: 14px 0; }
 .correction .orig { color: var(--sub); text-decoration: line-through; font-size: .88rem; }
