@@ -74,12 +74,15 @@ export function attach(h) {
   if (!el) build();
   handler = h;
   el.hidden = false;
+  // 자판이 떠 있는 동안 페이지 전체가 밀리거나 튕기지 않게 (내용 영역만 필요할 때 스크롤)
+  document.documentElement.classList.add('kbd-on');
   setState({ idle: false, enter: '확인' });
 }
 
 export function detach() {
   handler = null;
   if (el) el.hidden = true;
+  document.documentElement.classList.remove('kbd-on');
 }
 
 // idle = 정답 공개 후 (글자 키를 흐리게, Enter만 의미 있음)

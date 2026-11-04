@@ -98,6 +98,7 @@ function render(state) {
   const sub = isSub(state);
   document.body.classList.toggle('at-home', state.view === 'home');
   document.body.classList.toggle('at-sub', sub);
+  document.getElementById('barAction').innerHTML = ''; // 화면별 상단 바 버튼 (퀴즈의 오늘 복습 토글 등)은 각 화면이 채움
   const crumb = document.getElementById('crumb');
   crumb.innerHTML = !sub ? '' : state.params?.label != null
     ? `<span class="crumb-parent">${esc(TITLES[state.view])}</span><span class="crumb-sep">›</span><b>${esc(state.params.label)}</b>`

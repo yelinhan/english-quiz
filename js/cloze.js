@@ -288,20 +288,14 @@ export function render(el, ctx, { moreNew = false } = {}) {
   let active = 0; // 지금 입력 중인 빈칸
   kbd.detach(); // 세션이 시작될 때만 자판을 붙임
 
-  el.innerHTML = `
-    <div class="chip-row">
-      <button data-mode="srs" class="${practice ? '' : 'on'}">📅 오늘 학습</button>
-      <button data-mode="today" class="${practice ? 'on' : ''}">🔁 오늘 배운 카드 연습</button>
-    </div>
-    ${practice ? '<p class="count-note" style="margin:0 0 10px">오늘 푼 카드로 연습해요. 복습 일정엔 영향 없어요.</p>' : ''}
-    <div id="czBody"></div>`;
-  el.querySelectorAll('[data-mode]').forEach((b) => {
-    b.onclick = () => {
-      if (b.dataset.mode === mode) return;
-      mode = b.dataset.mode;
-      render(el, ctx);
-    };
-  });
+  // 한 화면에 다 보이도록 안내 문구 없이. 오늘 푼 카드 다시 풀기(복습 일정·기록 영향 없음)는 상단 바 오른쪽 토글
+  el.innerHTML = '<div id="czBody"></div>';
+  const bar = document.getElementById('barAction');
+  bar.innerHTML = `<button class="bar-toggle${practice ? ' on' : ''}" aria-pressed="${practice}">🔁 오늘 복습</button>`;
+  bar.firstElementChild.onclick = () => {
+    mode = practice ? 'srs' : 'today';
+    render(el, ctx);
+  };
   const body = el.querySelector('#czBody');
 
   // 끝 화면: 연습은 다시 하기, 오늘 학습은 하루 상한과 별개로 새 카드를 더 받을 수 있게
@@ -324,7 +318,7 @@ export function render(el, ctx, { moreNew = false } = {}) {
 
   if (session.length === 0) {
     if (practice) {
-      body.innerHTML = '<p class="notice">오늘 푼 카드가 아직 없어요. 📅 오늘 학습부터 풀어보세요!</p>';
+      body.innerHTML = '<p class="notice">오늘 푼 카드가 아직 없어요. 오른쪽 위 🔁 오늘 복습을 끄고 오늘 학습부터 풀어보세요!</p>';
     } else if (!ctx.cards.some((c) => c.example)) {
       body.innerHTML = '<p class="notice">예문이 있는 카드가 없어요.</p>';
     } else {
@@ -410,21 +404,15 @@ export function render(el, ctx, { moreNew = false } = {}) {
           ${[['btn-again', '다시', p.again], ['btn-hard', '어려움', p.hard], ['btn-good', '알맞음', p.good], ['btn-easy', '쉬움', p.easy]]
             .map(([cls, label, ivl], r) => `<button class="${cls}${r === sug ? ' suggest' : ''}" data-r="${r}">${label}<span class="sub">${ivl}</span></button>`)
             .join('')}
-        </div>
-        <p class="count-note" style="text-align:center; margin:0">다음(Enter) = 테두리 버튼</p>`;
+        </div>`;
     }
     // 정답 공개 후에만 (미리 보이면 힌트가 됨): 같은 빈칸에 들어갈 수 있는 대안 + 같은 뜻의 다른 표현 카드
     const c = session[idx];
     const sibs = c.group ? ctx.cards.filter((x) => x.group === c.group && x.id !== c.id) : [];
     const alts = cz.groups.filter((g) => g.alts.length > 1);
-    // 예문과 다른 대안으로 맞혔으면 예문 쪽 표현도 알려줌
-    const otherAlt = result.ok && alts.find((g) => typedIn(g, result.boxes) !== g.answers[0]);
     below.innerHTML = `
-      <div class="cz-status ${result.ok ? 'ok' : 'no'}">${result.ok
-        ? `⭕ 정답이에요!${hintCount > 0 ? ' <small>(힌트 사용)</small>' : ''}${otherAlt ? ` <small>(예문엔 ${esc(otherAlt.boxes.map((b) => cz.cores[b]).join(' '))})</small>` : ''}`
-        : '✕ 틀렸어요'}</div>
       ${actions}
-      ${alts.length ? `<div class="cz-sibs">✅ 이 빈칸엔 다 정답: ${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</div>` : ''}
+      ${alts.length ? `<div class="cz-sibs">✅ 다 정답: ${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</div>` : ''}
       ${sibs.length ? `<div class="cz-sibs">🔁 같은 뜻 다른 표현: ${sibs.map((x) => `<b>${esc(x.en)}</b>`).join(' · ')}</div>` : ''}
       ${cz.extras.length ? `
         <div class="cloze-extra">

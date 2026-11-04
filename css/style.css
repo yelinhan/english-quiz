@@ -108,6 +108,18 @@ body.at-sub .subbar { display: flex; }
 .crumb { min-width: 0; font-size: .95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .crumb-parent { color: var(--sub); }
 .crumb-sep { color: var(--sub); margin: 0 6px; }
+.bar-action { margin-left: auto; flex: none; }
+.bar-action:empty { display: none; }
+.bar-toggle {
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--sub);
+  border-radius: 99px;
+  padding: 7px 12px;
+  font-size: .8rem;
+  font-weight: 600;
+}
+.bar-toggle.on { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 /* ---------- layout ---------- */
 #main { flex: 1; overflow-y: auto; padding: 8px 16px 16px; }
@@ -176,10 +188,12 @@ body:not(.at-home):not(.at-sub) #main { padding-top: 14px; }
   color: var(--sub);
 }
 .cloze-hint { font-size: .85rem; color: var(--warm); font-weight: 600; text-align: center; }
-/* 자판이 아래에 고정돼 있어도 문장이 한 화면에 보이도록 카드를 낮게 */
-.flashcard.cloze-card { min-height: 0; padding: 22px 18px; cursor: default; position: relative; }
+/* 자판이 아래에 고정돼 있어도 정답 공개 후 예문까지 한 화면에 들어오도록 빈칸 퀴즈는 촘촘하게 */
+#view-quiz .cardzone { gap: 10px; padding-top: 0; }
+.flashcard.cloze-card { min-height: 0; padding: 16px 16px 14px; cursor: default; position: relative; }
+.flashcard.cloze-card .ex { margin-top: 8px; }
 .flashcard.cloze-card:active { transform: none; }
-.flashcard .cz-sentence { font-size: 1.1rem; line-height: 1.9; }
+.flashcard .cz-sentence { font-size: 1.1rem; line-height: 1.75; }
 .cz-box {
   display: inline-block;
   min-height: 1.4em;
@@ -211,12 +225,12 @@ body:not(.at-home):not(.at-sub) #main { padding-top: 14px; }
 .cz-status { font-size: .95rem; font-weight: 700; text-align: center; }
 .cz-status.ok { color: var(--good); }
 .cz-status.no { color: var(--bad); }
-.cloze-below { width: 100%; display: grid; gap: 10px; }
+.cloze-below { width: 100%; display: grid; gap: 8px; }
 .cloze-extra {
-  padding-top: 12px;
+  padding-top: 8px;
   border-top: 1px dashed var(--line);
   display: grid;
-  gap: 8px;
+  gap: 6px;
   text-align: left;
   font-size: .88rem;
   line-height: 1.5;
@@ -700,9 +714,12 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  touch-action: none; /* 자판 위에서 손가락이 미끄러져도 화면이 안 움직이게 */
 }
 .kbd[hidden] { display: none; }
+/* 자판이 떠 있는 동안 페이지 자체는 고정, 내용 영역만 (넘칠 때) 스크롤 */
+html.kbd-on, html.kbd-on body { overflow: hidden; overscroll-behavior: none; }
+html.kbd-on #main { overscroll-behavior: contain; padding-bottom: 10px; }
 /* PC(마우스)에선 숨기고 물리 키보드로 입력 */
 @media (hover: hover) and (pointer: fine) { .kbd { display: none; } }
 .kb-row { display: grid; grid-template-columns: repeat(20, 1fr); gap: 5px; }
@@ -719,7 +736,7 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
   font-family: inherit;
   font-size: 1.2rem;
   box-shadow: 0 1px 0 rgba(23, 50, 46, .22);
-  touch-action: manipulation;
+  touch-action: none;
   -webkit-tap-highlight-color: transparent;
 }
 .kb-key.down { background: var(--accent-soft); box-shadow: none; transform: translateY(1px); }
@@ -728,6 +745,11 @@ dialog h2 { margin: 0 0 16px; font-size: 1.1rem; }
 .kb-enter { grid-column: span 6; background: var(--accent); color: #fff; font-size: .95rem; font-weight: 700; }
 .kb-enter.down { background: var(--accent-ink); }
 .kbd.idle .kb-key:not(.kb-enter) { opacity: .4; }
+/* 작은 폰: 자판을 조금 낮춰서 문제·예문 자리 확보 */
+@media (max-height: 700px) {
+  .kbd { gap: 6px; padding-top: 6px; }
+  .kb-key { height: 40px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .flashcard, .prog i { transition: none; }
