@@ -690,6 +690,27 @@
   "example_ko": "이번 주말에도 일해? 힘들겠다. 요즘 같은 시장에서 구직이라니, 힘들겠다. 아, 고생이네. 안됐다."
  },
  {
+  "id": "chunk-cb73dfcb",
+  "type": "chunk",
+  "ko": "그러게, 진짜 그래 (공감 — that's right ✗)",
+  "en": "Yeah, it really is. / Totally.",
+  "example": "This place is so expensive. Yeah, it really is. Totally, I feel the same way.",
+  "category": "의견·반응",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "it",
+    "really",
+    "is"
+   ],
+   [
+    "Totally"
+   ]
+  ],
+  "example_ko": "여기 진짜 비싸다. 그러게, 진짜 그래. 완전, 나도 그렇게 생각해."
+ },
+ {
   "id": "chunk-a60bffdd",
   "type": "chunk",
   "ko": "오랜만이야",
@@ -1235,6 +1256,54 @@
   "added": "2026-11-04",
   "source": "전화영어",
   "example_ko": "서울은 모든 게 정신없이 빨리 돌아가. 빨리빨리 돌아가는 일이지만 난 좋아. 한국 결혼식은 진짜 빨리 끝나."
+ },
+ {
+  "id": "chunk-8e1ab5b4",
+  "type": "chunk",
+  "ko": "~할 가능성이 높아 (좋은 기회 ✗)",
+  "en": "There's a good chance ~",
+  "example": "There's a good chance it'll rain tomorrow. There's a good chance we'll finish early. There's a good chance I'll be late, so start without me.",
+  "category": "일상 회화",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "chance"
+   ]
+  ],
+  "example_ko": "내일 비 올 가능성이 높아. 우리 일찍 끝날 가능성이 높아. 나 늦을 가능성이 높으니까 먼저 시작해."
+ },
+ {
+  "id": "chunk-235f6e1f",
+  "type": "chunk",
+  "ko": "(뒤처지지 않게) 따라가다",
+  "en": "keep up with",
+  "example": "There's so much to keep up with these days. It's hard to keep up with all the AI news. Slow down, I can't keep up!",
+  "category": "일상 회화",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "keep up with"
+   ]
+  ],
+  "example_ko": "요즘은 따라가야 할 게 너무 많아. AI 소식을 다 따라가기 힘들어. 천천히 가, 못 따라가겠어!"
+ },
+ {
+  "id": "chunk-8b9361dd",
+  "type": "chunk",
+  "ko": "장악하다 / 다 차지하다",
+  "en": "take over",
+  "example": "AI's gonna take over everything. My cat totally took over my bed. Robots won't take over the world anytime soon.",
+  "category": "일상 회화",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "take over"
+   ]
+  ],
+  "example_ko": "AI가 다 장악할 거야. 우리 고양이가 내 침대를 완전히 차지했어. 로봇이 당장 세상을 장악하진 않을 거야."
  },
  {
   "id": "chunk-3c129e63",
@@ -2026,6 +2095,17 @@
   "category": "직장·업무",
   "added": "2026-10-29",
   "source": "전화영어",
+  "keys": [
+   [
+    "coworker"
+   ],
+   [
+    "colleague"
+   ],
+   [
+    "teammate"
+   ]
+  ],
   "example_ko": "그 사람 내 회사 동료야. 동료들한테 확인해보고 다시 연락드릴게요. 우리 같은 팀이라 같이 앉아."
  },
  {
@@ -2057,6 +2137,81 @@
   "added": "2026-11-04",
   "source": "전화영어",
   "example_ko": "꽤 좁은 분야라서 일자리가 별로 없어. 그건 좀 특수한 기술이야. 거기는 진짜 마니아용 제품을 만들어."
+ },
+ {
+  "id": "chunk-63bd1384",
+  "type": "chunk",
+  "ko": "잘 되고 있어 (진행 상황)",
+  "en": "It's going well.",
+  "example": "The new project's going really well. How's work going? It's going well! Things are going pretty well so far.",
+  "category": "직장·업무",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "going well"
+   ]
+  ],
+  "example_ko": "새 프로젝트 진짜 잘 되고 있어. 일은 좀 어때? 잘 되고 있어! 지금까진 꽤 잘 풀리고 있어."
+ },
+ {
+  "id": "chunk-c733a7b4",
+  "type": "chunk",
+  "ko": "잘리다 / 해고되다",
+  "en": "get let go / get fired",
+  "example": "He might get let go next year. A lot of people got let go last month. She got fired for always being late.",
+  "category": "직장·업무",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "let go"
+   ],
+   [
+    "fired"
+   ]
+  ],
+  "example_ko": "그 사람 내년에 잘릴 수도 있어. 지난달에 사람들이 많이 잘렸어. 걔는 맨날 지각해서 잘렸어."
+ },
+ {
+  "id": "chunk-3a7b7603",
+  "type": "chunk",
+  "ko": "한가한 / 여유로운 (peaceful ✗)",
+  "en": "chill / slow",
+  "example": "Work's been pretty chill this week. Even the end of the year isn't that chill this year. Things usually get slow in December.",
+  "category": "직장·업무",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "chill"
+   ],
+   [
+    "slow"
+   ]
+  ],
+  "example_ko": "이번 주는 일이 꽤 한가했어. 올해는 연말인데도 별로 한가하지 않아. 12월엔 보통 일이 좀 한가해져."
+ },
+ {
+  "id": "chunk-73569af4",
+  "type": "chunk",
+  "ko": "연차 쓸게요 (하루 쉬어요)",
+  "en": "I'm taking a day off. / I'm off tomorrow.",
+  "example": "I'm taking a day off on Friday. I'm off tomorrow, so text me if anything comes up. How many PTO days do you have left?",
+  "category": "직장·업무",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "a",
+    "day",
+    "off"
+   ],
+   [
+    "off"
+   ]
+  ],
+  "example_ko": "금요일에 연차 쓸게요. 저 내일 쉬니까 무슨 일 있으면 문자 주세요. 연차 며칠 남았어?"
  },
  {
   "id": "chunk-a40a11c6",
@@ -2405,6 +2560,22 @@
    ]
   ],
   "example_ko": "결혼식 진짜 재밌었어! 어젯밤 진짜 재밌게 놀았어. 걔 진짜 웃겨 — 맨날 나 웃게 해."
+ },
+ {
+  "id": "chunk-0f2b7ac8",
+  "type": "chunk",
+  "ko": "~하느라 애먹다 (사람 + be hard to ✗)",
+  "en": "have a hard time -ing",
+  "example": "New grads are having a hard time finding jobs. I had a hard time finding parking. I'm having a hard time focusing today.",
+  "category": "한국식 영어 탈출",
+  "added": "2026-11-04",
+  "source": "전화영어",
+  "keys": [
+   [
+    "hard time"
+   ]
+  ],
+  "example_ko": "요즘 신입들은 취업하느라 애먹고 있어. 주차할 데 찾느라 애먹었어. 오늘 집중이 잘 안 돼."
  },
  {
   "id": "word-5514ee08",

@@ -238,5 +238,85 @@
   "note": "are living ✗ (상태는 단순현재)",
   "added": "2026-11-04",
   "source": "전화영어 11/01"
+ },
+ {
+  "id": "sent-11763430",
+  "ko": "새 프로젝트 잘 되고 있어.",
+  "en": "The new project's going really well.",
+  "note": "going in a very good way ✗ → going well (튜터)",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-687fd84b",
+  "ko": "요즘 AI가 너무 빨리 바뀌어서 따라갈 게 많아.",
+  "en": "AI's moving so fast these days, so there's a lot to keep up with.",
+  "note": "a lot of work to follow ✗ → keep up with",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-e1741268",
+  "ko": "올해는 연말인데도 별로 한가하지 않아.",
+  "en": "Even the end of the year isn't that chill this year.",
+  "note": "peaceful ✗ → chill",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-eef61cd8",
+  "ko": "개발자 아닌 친구들이 맨날 나 타자 빠르다고 해.",
+  "en": "My friends who aren't developers always tell me I type really fast.",
+  "note": "friends who is ✗ · 늘 하는 말은 현재형",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-d4c38346",
+  "ko": "요즘 신입들은 취업하느라 애먹는대.",
+  "en": "I've heard a lot of new grads are having a hard time finding jobs.",
+  "note": "are hard to find ✗ → have a hard time -ing",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-78dd4d73",
+  "ko": "우린 이제 거의 AI 코드 검토만 해.",
+  "en": "We're basically just reviewing AI's code now.",
+  "note": "the reviewer of AI's code ✗ → 동사로",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-5e267841",
+  "ko": "동료들이랑 미래 얘기하면 좀 무서워져.",
+  "en": "Whenever my coworkers and I talk about the future, we get kinda scared.",
+  "note": "I and my coworkers ✗ → my coworkers and I",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-a610cd73",
+  "ko": "AI가 번 돈을 다 같이 똑같이 나누면 좋겠다.",
+  "en": "If the money AI makes got split equally between all of us, that'd be great.",
+  "note": "가정법: if절에 will ✗ · the money (that) AI makes",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-3620a5c8",
+  "ko": "그 표현 자주 써?",
+  "en": "Do you guys use it a lot?",
+  "note": "목적어 it 생략 ✗",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
+ },
+ {
+  "id": "sent-12c34bf0",
+  "ko": "요즘 한국 경기가 별로 안 좋아.",
+  "en": "The economy's not great in Korea right now.",
+  "note": "economy status ✗ → the economy",
+  "added": "2026-11-04",
+  "source": "전화영어 11/04"
  }
 ]
