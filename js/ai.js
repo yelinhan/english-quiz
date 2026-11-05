@@ -152,9 +152,9 @@ const PROVIDERS = {
       'anthropic-version': '2023-06-01',
       'anthropic-dangerous-direct-browser-access': 'true',
     }),
-    body: (model, system, user, schema, tier) => ({
+    body: (model, system, user, schema, tier, maxTokens) => ({
       model,
-      max_tokens: tier === 'quality' ? 4096 : 300,
+      max_tokens: maxTokens || (tier === 'quality' ? 4096 : 300),
       ...(system ? { system } : {}),
       ...(schema ? { output_config: { format: { type: 'json_schema', schema } } } : {}),
       messages: [{ role: 'user', content: user }],
@@ -176,10 +176,12 @@ const PROVIDERS = {
       'content-type': 'application/json',
       authorization: `Bearer ${key}`,
     }),
-    body: (model, system, user, schema) => ({
+    body: (model, system, user, schema, tier) => ({
       model,
       // reasoning 토큰이 completion에 포함되므로 여유 있게
       max_completion_tokens: 8000,
+      // 경량(채점·뜻 생성)은 빨리 답하도록 생각을 짧게
+      ...(tier === 'fast' ? { reasoning_effort: 'low' } : {}),
       messages: [
         ...(system ? [{ role: 'system', content: system }] : []),
         { role: 'user', content: user },
@@ -223,7 +225,7 @@ const PROVIDERS = {
   },
 };
 
-async function callAI(tier, system, user, schema) {
+async function callAI(tier, system, user, schema, { maxTokens } = {}) {
   const provider = store.aiProvider();
   const key = store.apiKey();
   if (!key) throw new Error('API 키가 없어요. 설정(⚙)에서 입력해주세요.');
@@ -234,7 +236,7 @@ async function callAI(tier, system, user, schema) {
     res = await fetch(p.url(model), {
       method: 'POST',
       headers: p.headers(key),
-      body: JSON.stringify(p.body(model, system, user, schema, tier)),
+      body: JSON.stringify(p.body(model, system, user, schema, tier, maxTokens)),
     });
   } catch {
     throw new Error('네트워크 오류예요. 인터넷 연결을 확인해주세요.');
@@ -289,6 +291,64 @@ export function gradeTranslation(ko, attempt, { target, answer } = {}) {
     TR_SYSTEM + TR_TARGET_RULE,
     `Korean sentence: ${ko}\nTarget expression: ${target}\nModel answer: ${answer || '(none)'}\nLearner's English attempt: ${attempt}`,
     TR_TARGET_SCHEMA,
+  );
+}
+
+// 📚 내 표현 AI 채점 (정답 확인 때, 키 있으면 자동 — 경량 모델로 빠르게).
+// Got it = 목표 표현 사용 + 문법 OK + 뜻 OK (판정은 writing.js가 세 값으로 계산, 사용자가 바꿀 수 있음)
+const GRADE_SYSTEM = `You grade one short Korean→English translation drill for a Korean native speaker (OPIc IH level).
+The drill practices ONE target expression from the learner's vocab list. You get the Korean sentence,
+the target expression (with its Korean meaning) and a model answer. Judge the learner's attempt:
+
+- "used_target": true if the attempt uses the target expression. Inflected forms count (feel → felt,
+  I'm → I am), and "a/b" inside the target means either word is fine. A synonym does NOT count.
+- "grammar_ok": false only for real grammar errors — tense, articles (a/the), subject-verb agreement,
+  prepositions, word order, verb forms, missing words. Casual style, contractions, missing final
+  punctuation or capitalization are fine. A small typo that doesn't change the word is fine
+  (mention it briefly), but a misspelled target expression is an error.
+- "meaning_ok": true if the attempt gets the Korean meaning across (not word-for-word). Text in
+  parentheses at the start of the Korean is context only (the situation, or what someone else said) —
+  the learner does not have to translate it.
+- "is_natural": true if a native speaker would say it as is (casual is good).
+- "corrected": the most natural casual version CLOSEST to the learner's attempt that USES the target
+  expression and has no grammar errors. If the attempt is already fine, copy it unchanged.
+- "explanation_ko": 1-2 short friendly Korean lines — praise if it's good, otherwise the main fix.
+- "grammar_ko": when grammar_ok is false, explain each grammar error in Korean: what's wrong, the
+  rule in one line, and the fixed phrase. Short and friendly. Empty string when grammar_ok is true.
+- "diff_ko": when used_target is false, explain in Korean how what the learner wrote differs from
+  the target expression — nuance, tone, when natives pick each — so they can tell the two apart.
+  If they wrote something unrelated or nothing similar, just say how the target fits this sentence.
+  Empty string when used_target is true.
+- "tags": 0-3 items from this FIXED list (exact strings) naming the grammar errors:
+  ${GRAMMAR_TAGS.join(', ')}.
+  Use [] when grammar_ok is true — not using the target expression is not a tag.
+All Korean text must be in casual friendly 해요체, no long lectures.`;
+
+const GRADE_SCHEMA = {
+  type: 'object',
+  properties: {
+    used_target: { type: 'boolean' },
+    grammar_ok: { type: 'boolean' },
+    meaning_ok: { type: 'boolean' },
+    is_natural: { type: 'boolean' },
+    corrected: { type: 'string' },
+    explanation_ko: { type: 'string' },
+    grammar_ko: { type: 'string' },
+    diff_ko: { type: 'string' },
+    tags: TAGS_FIELD,
+  },
+  required: ['used_target', 'grammar_ok', 'meaning_ok', 'is_natural', 'corrected',
+    'explanation_ko', 'grammar_ko', 'diff_ko', 'tags'],
+  additionalProperties: false,
+};
+
+export function gradeTarget(ko, attempt, { target, meaning, answer }) {
+  return callAI(
+    'fast',
+    GRADE_SYSTEM,
+    `Korean sentence: ${ko}\nTarget expression: ${target}${meaning ? ` (= ${meaning})` : ''}\nModel answer: ${answer || '(none)'}\nLearner's English attempt: ${attempt}`,
+    GRADE_SCHEMA,
+    { maxTokens: 1500 },
   );
 }
 

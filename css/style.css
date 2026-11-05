@@ -831,3 +831,20 @@ html.kbd-on #view-quiz .cardzone { margin: auto 0; }
 @media (prefers-reduced-motion: reduce) {
   .flashcard, .prog i { transition: none; }
 }
+
+/* 영작 AI 채점 (정답 확인 후): 판정 줄 + 고친 문장 + 문법·표현 차이 설명. 채점 버튼은 AI 판정 쪽 강조 */
+.tr-ai { border-left: 3px solid var(--line); padding: 2px 0 2px 12px; margin: 12px 0 0; }
+.tr-ai.loading { color: var(--sub); font-size: .88rem; }
+.tr-ai.ok { border-left-color: var(--good); }
+.tr-ai.miss { border-left-color: var(--bad); }
+.tr-ai-head { font-weight: 800; margin-bottom: 6px; }
+.tr-ai.ok .tr-ai-head { color: var(--good); }
+.tr-ai.miss .tr-ai-head { color: var(--bad); }
+.tr-ai-miss { font-size: .78rem; font-weight: 600; color: var(--sub); margin-left: 4px; }
+.tr-ai-fixed { font-weight: 700; line-height: 1.5; margin-bottom: 6px; }
+.tr-ai .why { font-size: .84rem; color: var(--sub); line-height: 1.55; }
+.tr-ai-sec { font-size: .84rem; line-height: 1.55; margin-top: 8px; }
+.tr-ai-sec b { display: block; font-size: .78rem; color: var(--sub); margin-bottom: 2px; }
+.tr-grade.has-pick button:not(.ai-pick) { opacity: .5; }
+.tr-grade .tr-fail.ai-pick { box-shadow: inset 0 0 0 2px var(--bad); }
+.tr-grade .tr-ok.ai-pick { box-shadow: inset 0 0 0 2px var(--good); }

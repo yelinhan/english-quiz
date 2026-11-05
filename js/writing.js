@@ -1,6 +1,6 @@
 // AI 영작 탭: 자유 영작 + 문장 영작(한국어 문장 → 영어로 옮기기)
 import { store, todayStr, addDays, esc } from './store.js';
-import { correctWriting, gradeTranslation } from './ai.js';
+import { correctWriting, gradeTranslation, gradeTarget } from './ai.js';
 import * as kbd from './keyboard.js';
 
 const PROMPTS = [
@@ -216,6 +216,9 @@ function gradeMine(t, ok) {
   store.saveWritingReview(rv);
 }
 
+// AI 채점 판정: 목표 표현을 쓰고 + 문법·뜻이 맞아야 Got it
+const gotIt = (r) => r.used_target && r.grammar_ok && r.meaning_ok;
+
 // 목표 표현에 해당하는 부분만 색으로 (문제 한국어 ↔ 예시 답안 영어를 같은 색으로 연결)
 function markHl(text, hl) {
   const i = hl ? text.indexOf(hl) : -1;
@@ -343,7 +346,9 @@ export function render(el, ctx) {
   let prompt = '';
   let target = null; // mine 세트 문제의 { target(표현), meaning(카드 뜻), answer(예시 답안), koHl·enHl(색칠 구간), review }
   let hint = 0; // 0 숨김 → 1 첫 글자 → 2 표현 → 3 예시 답안
-  let revealed = false; // 내 표현: 정답 확인 후 → 직접 채점(✕/⭕)
+  let revealed = false; // 내 표현: 정답 확인 후 → 채점(✕/⭕)
+  let ai = null; // 정답 확인 때 AI 채점 (키 있을 때): { status: 'loading'|'done'|'error', r?, msg? }
+  let aiSeq = 0; // 문제가 바뀌면 늦게 온 채점 결과는 버림
   let draft = ''; // 다시 그릴 때 쓰던 답 유지
   let mine = null; // 내 표현 오늘 순서 상태 { pos, total, reviewsLeft, done? }
 
@@ -351,6 +356,8 @@ export function render(el, ctx) {
   function pickPrompt(opts) {
     hint = 0;
     revealed = false;
+    ai = null;
+    aiSeq++;
     draft = '';
     mine = null;
     if (set === 'mine') {
@@ -379,7 +386,8 @@ export function render(el, ctx) {
     return `📘 ${esc(target.answer)}`;
   }
   const hintLabel = () => ['💡 힌트', '💡 표현 보기', '📘 예시 답안', '📘 예시 답안'][hint];
-  // AI 첨삭 버튼 (전체 랜덤·관사 세트): 키 있으면 앱에서 첨삭, 없으면 복사해서 Claude에. 내 표현은 직접 채점만
+  // AI 첨삭 버튼 (표현 없는 일반 문장): 키 있으면 앱에서 첨삭, 없으면 복사해서 Claude에.
+  // 내 표현 문제는 정답 확인 → AI 채점(키 있을 때) 또는 직접 채점
   const aiBtn = () => (store.apiKey()
     ? '<button class="primary" id="submitBtn">첨삭 받기</button>'
     : '<button class="primary" id="copyBtn">📋 복사해서 Claude에 첨삭받기</button>');
@@ -392,7 +400,78 @@ export function render(el, ctx) {
       <div class="tr-row"><span class="tr-label">🎯 표현</span>
         <div><b class="tr-hl-text">${esc(target.target)}</b> <span class="notice">· ${esc(target.meaning)}</span></div></div>
       <div class="tr-row"><span class="tr-label">📘 예시</span><div class="tr-answer">${markHl(target.answer, target.enHl)}</div></div>
+      <div id="aiGrade">${aiGradeHtml()}</div>
     </div>`;
+
+  // AI 채점 결과 → Got it = 표현 사용 + 문법 OK + 뜻 OK. 표현 안 썼으면 두 표현 차이, 문법 틀렸으면 문법 설명
+  function aiGradeHtml() {
+    if (!ai) return '';
+    if (ai.status === 'loading') return '<div class="tr-ai loading">🤖 AI가 채점하고 있어요...</div>';
+    if (ai.status === 'error') return `<div class="tr-ai"><div class="why">⚠️ ${esc(ai.msg)} 직접 채점해주세요.</div></div>`;
+    const r = ai.r;
+    const ok = gotIt(r);
+    const misses = [!r.used_target && '표현 안 씀', !r.grammar_ok && '문법', !r.meaning_ok && '뜻'].filter(Boolean);
+    const changed = r.corrected && r.corrected.trim() !== draft.trim();
+    return `
+      <div class="tr-ai ${ok ? 'ok' : 'miss'}">
+        <div class="tr-ai-head">🤖 ${ok ? '⭕ Got it' : '❌ Missed it'}${misses.length ? ` <span class="tr-ai-miss">${misses.map(esc).join(' · ')}</span>` : ''}</div>
+        ${changed ? `<div class="tr-ai-fixed">✏️ ${esc(r.corrected)}</div>` : ''}
+        <div class="why">${esc(r.explanation_ko)}</div>
+        ${r.grammar_ko ? `<div class="tr-ai-sec"><b>📐 문법</b>${esc(r.grammar_ko)}</div>` : ''}
+        ${r.diff_ko ? `<div class="tr-ai-sec"><b>🔀 표현 차이</b>${esc(r.diff_ko)}</div>` : ''}
+        ${tagChips(r.tags)}
+      </div>`;
+  }
+  // 채점 버튼: AI 판정이 나오면 그쪽을 강조 (다른 쪽을 눌러 바꿀 수 있음)
+  function gradeHtml() {
+    const pick = ai?.status === 'done' ? (gotIt(ai.r) ? 'ok' : 'fail') : '';
+    return `
+      <div class="tr-grade${pick ? ' has-pick' : ''}">
+        <button class="tr-fail${pick === 'fail' ? ' ai-pick' : ''}" id="failBtn">❌ Missed it</button>
+        <button class="tr-ok${pick === 'ok' ? ' ai-pick' : ''}" id="okBtn">⭕ Got it</button>
+      </div>`;
+  }
+  function bindGrade() {
+    [[el.querySelector('#failBtn'), false], [el.querySelector('#okBtn'), true]].forEach(([b, ok]) => {
+      if (!b) return;
+      b.onclick = () => {
+        gradeMine(target, ok);
+        nextPrompt(ok ? null : target.ko);
+        draw();
+      };
+    });
+  }
+  // 정답 확인과 동시에 요청 — 기다리는 동안에도 예시 답안을 보고 직접 채점 가능
+  function startAiGrade() {
+    const seq = aiSeq;
+    const t = target;
+    const input = draft.trim();
+    ai = { status: 'loading' };
+    gradeTarget(t.ko, input, { target: t.target, meaning: t.meaning, answer: t.answer })
+      .then((r) => {
+        if (seq !== aiSeq) return;
+        ai = { status: 'done', r };
+        // 틀린 것만 첨삭 기록에 (태그가 홈 '자주 틀리는 포인트'에 합산, 기록은 50개 한도라 맞힌 건 안 남김)
+        if (!gotIt(r)) {
+          const history = store.corrections();
+          history.unshift({ date: todayStr(), mode: 'tr', graded: true, ko: t.ko, input, target: t.target, answer: t.answer, result: r });
+          store.saveCorrections(history.slice(0, 50));
+        }
+      })
+      .catch((e) => {
+        if (seq === aiSeq) ai = { status: 'error', msg: e.message };
+      })
+      .finally(() => {
+        if (seq !== aiSeq) return;
+        const box = el.querySelector('#aiGrade');
+        const grade = el.querySelector('.tr-grade');
+        if (!box || !grade) return;
+        box.innerHTML = aiGradeHtml();
+        bindTagChips(box);
+        grade.outerHTML = gradeHtml();
+        bindGrade();
+      });
+  }
 
   function draw() {
     const key = store.apiKey();
@@ -438,11 +517,7 @@ export function render(el, ctx) {
             spellcheck="false" ${touchKbd ? 'inputmode="none"' : ''}>${esc(draft)}</textarea>` : ''}
           ${!prompt ? (mine?.done ? `
           <div class="tr-actions"><span></span><button class="primary" id="restartBtn">🔄 새 순서로 다시</button></div>` : '')
-          : target && revealed ? `${revealHtml()}
-          <div class="tr-grade">
-            <button class="tr-fail" id="failBtn">❌ Missed it</button>
-            <button class="tr-ok" id="okBtn">⭕ Got it</button>
-          </div>` : `
+          : target && revealed ? `${revealHtml()}${gradeHtml()}` : `
           <div class="tr-actions">
             <div class="tr-actions-left">
               <button class="ghost" id="nextPromptBtn">🔄 다른 문장</button>
@@ -497,26 +572,21 @@ export function render(el, ctx) {
       };
     }
 
-    // 📚 내 표현: AI 없이 정답 확인 → 내 답 아래에 원래 의도한 표현·예시 답안, 버튼은 직접 채점(❌ Missed it / ⭕ Got it)으로
+    // 📚 내 표현: 정답 확인 → 내 답 아래에 원래 의도한 표현·예시 답안 + (키 있으면) AI 채점,
+    // 버튼은 채점(❌ Missed it / ⭕ Got it) — AI 판정이 강조되고 직접 바꿀 수도 있음
     const ta = el.querySelector('#writingInput');
     if (revealBtn) {
       revealBtn.onclick = () => {
         draft = ta.value;
         if (draft.trim()) store.markWritingDay(); // 홈 '오늘 할 일' 체크용
         revealed = true;
+        if (key && draft.trim()) startAiGrade();
         draw();
       };
     }
-    const failBtn = el.querySelector('#failBtn');
-    const okBtn = el.querySelector('#okBtn');
-    [[failBtn, false], [okBtn, true]].forEach(([b, ok]) => {
-      if (!b) return;
-      b.onclick = () => {
-        gradeMine(target, ok);
-        nextPrompt(ok ? null : target.ko);
-        draw();
-      };
-    });
+    bindGrade();
+    const aiBox = el.querySelector('#aiGrade');
+    if (aiBox) bindTagChips(aiBox);
     bindAi();
 
     // 문장 영작은 빈칸 퀴즈와 같은 내장 자판 (터치 기기). 정답 확인 후엔 자판을 내려서 답·채점 버튼이 보이게
@@ -596,7 +666,7 @@ export function render(el, ctx) {
         <h2 class="section-title">지난 첨삭</h2>
         ${history.slice(0, 5).map((h, i) => `
           <div class="card-box lesson-item" data-i="${i}">
-            <div class="date">${esc(h.date)}${h.mode === 'tr' ? (h.target ? ' · 📚 내 표현' : ' · 문장 영작') : ''}</div>
+            <div class="date">${esc(h.date)}${h.mode === 'tr' ? (h.graded ? ' · 🤖 AI 채점' : h.target ? ' · 📚 내 표현' : ' · 문장 영작') : ''}</div>
             <p>${esc((h.mode === 'tr' ? `${h.ko} → ` : '') + h.input).slice(0, 60)}${(h.input.length > 60) ? '…' : ''}</p>
           </div>`).join('')}`;
       hEl.querySelectorAll('.lesson-item').forEach((item) => {
@@ -629,11 +699,13 @@ function showEntry(resultEl, entry, ctx) {
         <div class="tr-prompt small">${esc(entry.ko)}</div>
         ${entry.target ? `<p class="tr-target">🎯 ${esc(entry.target)} — ${r.used_target ? '✅ 잘 썼어요!' : '이번엔 안 썼어요'}</p>` : ''}
         <div class="correction">
-          ${r.is_natural
+          ${r.is_natural && (!r.corrected || r.corrected.trim() === entry.input.trim())
             ? `<div class="natural">👍 ${esc(entry.input)}</div>`
             : `<div class="orig">${esc(entry.input)}</div>
                <div class="fixed">${esc(r.corrected)}</div>`}
           <div class="why">${esc(r.explanation_ko)}</div>
+          ${r.grammar_ko ? `<div class="tr-ai-sec"><b>📐 문법</b>${esc(r.grammar_ko)}</div>` : ''}
+          ${r.diff_ko ? `<div class="tr-ai-sec"><b>🔀 표현 차이</b>${esc(r.diff_ko)}</div>` : ''}
           ${tagChips(r.tags)}
         </div>
         ${(r.alternatives || []).length ? `
