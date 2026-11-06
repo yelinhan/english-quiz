@@ -255,6 +255,7 @@ body:not(.at-home):not(.at-sub) #main { padding-top: 14px; }
 .cz-list { display: grid; gap: 6px; }
 .cz-row b { color: var(--accent-ink); }
 .cz-ex-ko { display: block; font-size: .78rem; color: var(--sub); margin-top: 1px; }
+.cz-mean { display: block; margin-top: 1px; }
 .blank { color: var(--accent-ink); font-weight: 700; }
 
 .grade-btns { display: flex; gap: 12px; width: 100%; }

@@ -402,13 +402,15 @@ export function render(el, ctx, { moreNew = false } = {}) {
             .join('')}
         </div>`;
     }
-    // 정답 공개 후에만 (미리 보이면 힌트가 됨): 같은 빈칸에 들어갈 수 있는 대안 + 같은 뜻의 다른 표현 카드
+    // 정답 공개 후에만 (미리 보이면 힌트가 됨): 표현 자체의 뜻 + 같은 빈칸에 들어갈 수 있는 대안 + 같은 뜻의 다른 표현 카드
+    // (위 한국어는 예문 문장 해석이라, 빈칸에 들어간 표현이 정확히 무슨 뜻인지는 '뜻' 줄로 따로 보여줌)
     const c = session[idx];
     const sibs = c.group ? ctx.cards.filter((x) => x.group === c.group && x.id !== c.id) : [];
     const alts = cz.groups.filter((g) => g.alts.length > 1);
     hintEl.textContent = '';
     const rows = [
-      alts.length && ['다 정답', `<span>${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</span>`],
+      c.ko && ['뜻', `<span><b>${esc(c.en)}</b><span class="cz-mean">${esc(c.ko)}</span></span>`],
+      alts.length && ['다 정답',`<span>${alts.map((g) => g.alts.map((a) => `<b>${esc(a)}</b>`).join(' · ')).join(' / ')}</span>`],
       sibs.length && ['같은 뜻', sibs.map((x) => `<b>${esc(x.en)}</b>`).join('')],
       cz.extras.length && ['예문', cz.extras.map((x) => `<span>${x.html}${x.ko ? `<span class="cz-ex-ko">${esc(x.ko)}</span>` : ''}</span>`).join('')],
     ].filter(Boolean);
